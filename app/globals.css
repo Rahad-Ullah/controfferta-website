@@ -1,0 +1,353 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-sans), sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-heading: var(--font-sans), sans-serif;
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-neutral-1: var(--neutral-1);
+  --color-neutral-2: var(--neutral-2);
+  --color-alert: var(--alert);
+  --color-white: var(--white);
+  --color-divider: var(--divider);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+.font-serif {
+  font-family: var(--font-sans), sans-serif !important;
+}
+
+/* Hide Google Translate toolbar */
+.goog-te-banner-frame,
+.goog-te-balloon-frame,
+.goog-te-ftab-float,
+.skiptranslate>iframe,
+#goog-gt-tt,
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+body {
+  top: 0px !important;
+}
+
+html body[style*="top"] {
+  top: 0px !important;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --font-sans: var(--font-sans), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --background: #FFFFFF;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+
+  /* Brand Colors */
+  --primary: #00BC7D;
+  --primary-foreground: #FFFFFF;
+  --secondary: #0F172A;
+  --secondary-foreground: #FFFFFF;
+  --neutral-1: #0F172A;
+  --neutral-2: #64748B;
+  --alert: #DC3545;
+  --white: #FFFFFF;
+  --divider: #E2E8F0;
+
+  /* Shadcn Overrides */
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  --accent: #F8FAFC;
+  --accent-foreground: #00BC7D;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #00BC7D;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --font-sans: var(--font-sans), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --background: #020617;
+  --foreground: #F8FAFC;
+  --card: #0F172A;
+  --card-foreground: #F8FAFC;
+  --popover: #0F172A;
+  --popover-foreground: #F8FAFC;
+
+  --primary: #00BC7D;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1E293B;
+  --secondary-foreground: #F8FAFC;
+  --neutral-1: #F8FAFC;
+  --neutral-2: #94A3B8;
+  --alert: #EF4444;
+  --white: #FFFFFF;
+  --divider: #1E293B;
+
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+  --accent: #1E293B;
+  --accent-foreground: #00BC7D;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  --border: #1E293B;
+  --input: #1E293B;
+  --ring: #00BC7D;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
+
+  /* Also hide for all scrollable elements if needed */
+  * {
+    @apply border-border outline-ring/50;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Google Places Autocomplete dropdown (.pac-container is appended directly to <body>) */
+.pac-container {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  margin-top: 6px;
+  font-family: var(--font-sans);
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.pac-item {
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: normal;
+  cursor: pointer;
+  border-top: 1px solid #f3f4f6;
+}
+
+.pac-item:first-child {
+  border-top: none;
+}
+
+.pac-item:hover,
+.pac-item-selected {
+  background-color: #f9fafb;
+}
+
+.pac-item-query {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: normal;
+}
+
+.pac-matched {
+  font-weight: 600;
+}
+
+/* Hide the "powered by Google" footer */
+.pac-container:after {
+  display: none !important;
+  height: 0;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+/* -- Chatbot typing indicator bounce -- */
+@keyframes typingBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+/* Hide scrollbar for suggestion chips row */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom react-phone-number-input styling */
+.PhoneInput {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.PhoneInputCountry {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  color: var(--foreground);
+  height: 3rem;
+}
+
+.PhoneInputCountrySelect {
+  cursor: pointer;
+  background-color: var(--card);
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: none;
+  outline: none;
+}
+
+.PhoneInputCountrySelect option {
+  background-color: var(--card);
+  color: var(--foreground);
+  padding: 8px;
+}
+
+.PhoneInputCountryIcon {
+  width: 1.5rem;
+  height: 1rem;
+  border-radius: 0.2rem;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.PhoneInputCountrySelectArrow {
+  opacity: 0.7;
+  color: var(--foreground);
+  border-color: var(--foreground);
+}
+
+/* =========================================================
+   PREMIUM CIRCULAR SHEET REVEAL THEME TRANSITION
+   ========================================================= */
+
+/* Disable browser default view transition animations */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+/* Old theme view snapshot sits underneath */
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+/* New theme view snapshot sits on top to expand over the screen */
+::view-transition-new(root) {
+  z-index: 99999;
+}
+
+/* Disable element transition delays during snapshot generation */
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: none !important;
+}
