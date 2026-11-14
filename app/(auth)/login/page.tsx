@@ -3,9 +3,8 @@
 import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Loader2, KeyRound } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { loginDemo } from "@/lib/demoAuth";
 
 function LoginFormContent() {
   const router = useRouter();
@@ -16,13 +15,6 @@ function LoginFormContent() {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
-
-  const fillDemoCredentials = () => {
-    setEmail("company@gmail.com");
-    setPassword("hello123");
-    setErrors({});
-    toast.info("Demo credentials filled: company@gmail.com / hello123");
-  };
 
   const validate = () => {
     const newErrors: { email?: string; password?: string; general?: string } = {};
@@ -52,29 +44,10 @@ function LoginFormContent() {
 
     setIsLoading(true);
     setTimeout(() => {
-      const result = loginDemo(email, password);
       setIsLoading(false);
-
-      if (result.success && result.user) {
-        try {
-          if (typeof window !== "undefined") {
-            localStorage.setItem("user_role", "provider");
-            localStorage.setItem("has_seen_onboarding", "true");
-            document.cookie = `user_role=provider; path=/; max-age=2592000; SameSite=Lax`;
-          }
-        } catch {
-          // ignore storage errors
-        }
-        toast.success(`Welcome back, ${result.user.companyName}!`);
-        router.push(redirectParam || "/");
-      } else {
-        setErrors({
-          general: result.error || "Invalid credentials. Use demo: company@gmail.com / hello123",
-          password: "Check password or click demo autofill below",
-        });
-        toast.error(result.error || "Login failed");
-      }
-    }, 600);
+      toast.info("Sign-in is a placeholder. No account session is stored.");
+      router.push(redirectParam || "/dashboard");
+    }, 400);
   };
 
   return (
@@ -87,26 +60,6 @@ function LoginFormContent() {
         <p className="text-xs sm:text-sm text-zinc-500">
           Welcome back! Enter your company credentials.
         </p>
-      </div>
-
-      {/* Demo Credentials Helper Pill */}
-      <div className="mb-5 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-2">
-        <div className="text-left text-xs">
-          <p className="font-semibold text-emerald-800 flex items-center gap-1.5">
-            <KeyRound className="w-3.5 h-3.5 text-[#00BC7D]" />
-            Demo Credentials
-          </p>
-          <p className="text-zinc-600 text-[11px] font-mono mt-0.5">
-            company@gmail.com · hello123
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={fillDemoCredentials}
-          className="text-[11px] font-bold text-white bg-[#00BC7D] hover:bg-[#00a86b] px-3 py-1.5 rounded-lg shadow-sm transition-all cursor-pointer whitespace-nowrap"
-        >
-          Auto Fill
-        </button>
       </div>
 
       {/* Form */}

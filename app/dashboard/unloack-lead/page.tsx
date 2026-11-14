@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -15,32 +15,12 @@ import {
   Search,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  DemoLead,
-  getDemoLeads,
-  updateLeadContactStatus,
-} from "@/lib/demoAuth";
+import { placeholderLeads, type PlaceholderLead } from "@/lib/placeholders";
 
 export default function UnlockedLeadsPage() {
-  const [leads, setLeads] = useState<DemoLead[]>([]);
+  const [leads, setLeads] = useState<PlaceholderLead[]>(placeholderLeads);
   const [activeTab, setActiveTab] = useState<"All" | "Contacted" | "In Progress" | "Completed">("All");
-  const [selectedLead, setSelectedLead] = useState<DemoLead | null>(null);
-
-  useEffect(() => {
-    const allLeads = getDemoLeads();
-    setLeads(allLeads);
-
-    const handleUpdate = () => {
-      const updated = getDemoLeads();
-      setLeads(updated);
-      setSelectedLead((prev) => {
-        if (!prev) return null;
-        return updated.find((l) => l.id === prev.id) || prev;
-      });
-    };
-    window.addEventListener("company_session_updated", handleUpdate);
-    return () => window.removeEventListener("company_session_updated", handleUpdate);
-  }, []);
+  const [selectedLead, setSelectedLead] = useState<PlaceholderLead | null>(null);
 
   const unlockedLeads = leads.filter((l) => l.isUnlocked);
   const completedCount = unlockedLeads.filter((l) => l.contactStatus === "Completed").length;
@@ -52,14 +32,10 @@ export default function UnlockedLeadsPage() {
 
   const handleStatusChange = (newStatus: "Contacted" | "In Progress" | "Completed") => {
     if (!selectedLead) return;
-    const ok = updateLeadContactStatus(selectedLead.id, newStatus);
-    if (ok) {
-      const updated = { ...selectedLead, contactStatus: newStatus };
-      setSelectedLead(updated);
-      setLeads((prev) => prev.map((l) => (l.id === updated.id ? updated : l)));
-      window.dispatchEvent(new Event("company_session_updated"));
-      toast.success(`Status updated to "${newStatus}"`);
-    }
+    const updated = { ...selectedLead, contactStatus: newStatus };
+    setSelectedLead(updated);
+    setLeads((prev) => prev.map((l) => (l.id === updated.id ? updated : l)));
+    toast.info(`Placeholder. Status shown as "${newStatus}" on this screen only.`);
   };
 
   const getStatusBadgeClass = (status?: string) => {

@@ -1,32 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
-import {
-  DemoNotification,
-  getDemoNotifications,
-} from "@/lib/demoAuth";
+import { placeholderNotifications, type PlaceholderNotification } from "@/lib/placeholders";
 
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<DemoNotification[]>([]);
-
-  useEffect(() => {
-    setNotifications(getDemoNotifications());
-  }, []);
+  const [notifications, setNotifications] = useState<PlaceholderNotification[]>(placeholderNotifications);
 
   const handleMarkAllRead = () => {
-    const updated = notifications.map((n) => ({ ...n, read: true }));
-    setNotifications(updated);
-    try {
-      localStorage.setItem("demo_company_notifs", JSON.stringify(updated));
-    } catch {
-      // ignore
-    }
-    toast.success("All notifications marked as read.");
-    window.dispatchEvent(new Event("notifications_updated"));
+    setNotifications((current) => current.map((n) => ({ ...n, read: true })));
+    toast.info("Placeholder. Read state stays on this screen only.");
   };
 
-  const getCardStyle = (notif: DemoNotification, idx: number) => {
+  const getCardStyle = (notif: PlaceholderNotification, idx: number) => {
     // If not read:
     if (!notif.read) {
       if (idx === 0) {

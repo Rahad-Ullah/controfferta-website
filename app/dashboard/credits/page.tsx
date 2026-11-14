@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Coins,
   Plus,
@@ -8,34 +8,15 @@ import {
   Check,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  DemoCompanyUser,
-  getCompanySession,
-  buyDemoCredits,
-} from "@/lib/demoAuth";
+import { placeholderCompany } from "@/lib/placeholders";
 
 export default function CreditsPage() {
-  const [user, setUser] = useState<DemoCompanyUser | null>(null);
+  const user = placeholderCompany;
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
 
-  useEffect(() => {
-    setUser(getCompanySession());
-
-    const handleUpdate = () => {
-      setUser(getCompanySession());
-    };
-    window.addEventListener("company_session_updated", handleUpdate);
-    return () => window.removeEventListener("company_session_updated", handleUpdate);
-  }, []);
-
   const handleBuyCredits = (amount: number, packageName: string) => {
-    const res = buyDemoCredits(amount, packageName);
-    if (res.success) {
-      setUser(getCompanySession());
-      setTopUpModalOpen(false);
-      window.dispatchEvent(new Event("company_session_updated"));
-      toast.success(`Success! Added ${amount} credits. Current balance: ${res.newBalance} credits.`);
-    }
+    setTopUpModalOpen(false);
+    toast.info(`Placeholder. ${packageName} (${amount} credits) is not connected yet.`);
   };
 
   // Exact 7 usage rows matching the screenshot

@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import OnboardingScreen from "@/components/onboarding/OnboardingScreen";
 import CustomerLandingPage from "@/components/landing/CustomerLandingPage";
-import { getCompanySession, clearCompanySession } from "@/lib/demoAuth";
 
 export default function HomePage() {
   const [currentRole, setCurrentRole] = useState<"customer" | "provider" | null>(null);
@@ -13,12 +12,9 @@ export default function HomePage() {
     // Check if the user has already selected a role or is logged in
     try {
       const savedRole = localStorage.getItem("user_role");
-      const session = getCompanySession();
 
-      if (savedRole === "customer") {
-        setCurrentRole("customer");
-      } else if (savedRole === "provider" || session) {
-        setCurrentRole("provider");
+      if (savedRole === "customer" || savedRole === "provider") {
+        setCurrentRole(savedRole);
       } else {
         setCurrentRole(null);
       }
@@ -30,7 +26,6 @@ export default function HomePage() {
 
   const handleSelectCustomer = () => {
     try {
-      clearCompanySession();
       localStorage.setItem("user_role", "customer");
       localStorage.setItem("has_seen_onboarding", "true");
       document.cookie = `user_role=customer; path=/; max-age=2592000; SameSite=Lax`;
@@ -42,7 +37,6 @@ export default function HomePage() {
 
   const handleSwitchRole = () => {
     try {
-      clearCompanySession();
       localStorage.removeItem("user_role");
       localStorage.removeItem("has_seen_onboarding");
       document.cookie = `user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;

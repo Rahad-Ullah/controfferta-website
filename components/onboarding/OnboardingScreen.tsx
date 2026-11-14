@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Search, Mail, Check, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { clearCompanySession } from "@/lib/demoAuth";
 
 type RoleType = "provider" | "customer";
 
@@ -36,8 +35,6 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
     }
 
     if (role === "customer") {
-      // 1. Customer: Zero auth, no login/signup required, straight to main website
-      clearCompanySession();
       if (onSelectCustomer) {
         onSelectCustomer();
         setIsSubmitting(false);

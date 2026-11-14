@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -8,11 +8,7 @@ import {
   Lock,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  DemoCompanyUser,
-  getCompanySession,
-  buyDemoCredits,
-} from "@/lib/demoAuth";
+import { placeholderCompany } from "@/lib/placeholders";
 
 interface CreditPackage {
   id: string;
@@ -26,7 +22,7 @@ interface CreditPackage {
 }
 
 export default function BuyCreditsPage() {
-  const [user, setUser] = useState<DemoCompanyUser | null>(null);
+  const user = placeholderCompany;
 
   // 3 Steps: "packages" | "checkout" | "success"
   const [step, setStep] = useState<"packages" | "checkout" | "success">("packages");
@@ -85,31 +81,15 @@ export default function BuyCreditsPage() {
   const [expiry, setExpiry] = useState("12 / 28");
   const [cvv, setCvv] = useState("123");
 
-  useEffect(() => {
-    setUser(getCompanySession());
-
-    const handleUpdate = () => {
-      setUser(getCompanySession());
-    };
-    window.addEventListener("company_session_updated", handleUpdate);
-    return () => window.removeEventListener("company_session_updated", handleUpdate);
-  }, []);
-
   const handlePay = () => {
-    const res = buyDemoCredits(selectedPkg.credits, selectedPkg.name);
-    if (res.success) {
-      setUser(getCompanySession());
-      window.dispatchEvent(new Event("company_session_updated"));
-
-      setPaymentSuccessData({
-        pkgName: selectedPkg.name,
-        creditsAdded: selectedPkg.credits,
-        newBalance: res.newBalance,
-        txnId: "TXN-V7170AC2",
-      });
-      setStep("success");
-      toast.success(`Payment completed! Added ${selectedPkg.credits} credits to your account.`);
-    }
+    toast.info("Placeholder checkout. No payment was taken.");
+    setPaymentSuccessData({
+      pkgName: selectedPkg.name,
+      creditsAdded: 0,
+      newBalance: user.credits,
+      txnId: "TXN-PLACEHOLDER",
+    });
+    setStep("success");
   };
 
   return (

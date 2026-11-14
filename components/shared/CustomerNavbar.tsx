@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, ArrowRight, LayoutDashboard } from "lucide-react";
-import { getCompanySession, DemoCompanyUser } from "@/lib/demoAuth";
+import { Menu, X } from "lucide-react";
 
 interface CustomerNavbarProps {
   onOpenRequestModal?: () => void;
@@ -17,31 +16,6 @@ export default function CustomerNavbar({
 }: CustomerNavbarProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [companyUser, setCompanyUser] = useState<DemoCompanyUser | null>(null);
-
-  useEffect(() => {
-    const checkUserRole = () => {
-      try {
-        const role = localStorage.getItem("user_role");
-        if (role === "customer") {
-          // Customers MUST NOT have any dashboard or profile section
-          setCompanyUser(null);
-        } else {
-          setCompanyUser(getCompanySession());
-        }
-      } catch {
-        setCompanyUser(getCompanySession());
-      }
-    };
-
-    checkUserRole();
-    window.addEventListener("company_session_updated", checkUserRole);
-    window.addEventListener("storage", checkUserRole);
-    return () => {
-      window.removeEventListener("company_session_updated", checkUserRole);
-      window.removeEventListener("storage", checkUserRole);
-    };
-  }, []);
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -121,22 +95,12 @@ export default function CustomerNavbar({
 
         {/* Right Actions */}
         <div className="flex items-center gap-2.5 sm:gap-3">
-          {companyUser ? (
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#00BC7D]/10 hover:bg-[#00BC7D]/20 border border-[#00BC7D]/30 text-[#00BC7D] text-xs font-bold transition-all cursor-pointer"
-            >
-              <LayoutDashboard className="w-3.5 h-3.5" />
-              <span>Dashboard ({companyUser.credits}cr)</span>
-            </Link>
-          ) : (
-            <Link
-              href="/company"
-              className="hidden sm:inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition-colors px-2 py-1"
-            >
-              <span>For Companies</span>
-            </Link>
-          )}
+          <Link
+            href="/company"
+            className="hidden sm:inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition-colors px-2 py-1"
+          >
+            <span>For Companies</span>
+          </Link>
 
           {onSwitchRole && (
             <button
@@ -203,24 +167,13 @@ export default function CustomerNavbar({
             </Link>
 
             <div className="pt-2 border-t border-white/10 space-y-1">
-              {companyUser ? (
-                <Link
-                  href="/dashboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#00BC7D]"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  <span>Company Dashboard ({companyUser.credits} Credits)</span>
-                </Link>
-              ) : (
-                <Link
-                  href="/company"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 py-2 text-xs text-zinc-300 hover:text-white"
-                >
-                  For Companies (Find Customers)
-                </Link>
-              )}
+              <Link
+                href="/company"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3 py-2 text-xs text-zinc-300 hover:text-white"
+              >
+                For Companies (Find Customers)
+              </Link>
 
               {onSwitchRole && (
                 <button

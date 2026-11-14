@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { registerDemoCompany } from "@/lib/demoAuth";
 
 interface FormErrors {
   firstName?: string;
@@ -98,20 +97,10 @@ function RegisterContent() {
 
     setIsSubmitting(true);
     setTimeout(() => {
-      // Register demo company
-      registerDemoCompany({
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        company: formData.company.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        password: formData.password,
-      });
-
       setIsSubmitting(false);
-      toast.success("Company registered successfully! Please log in.");
+      toast.info("Registration is a placeholder. No account was created.");
       router.push("/login");
-    }, 600);
+    }, 400);
   };
 
   const clearError = (field: keyof FormErrors) => {

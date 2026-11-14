@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   AppWindow,
@@ -16,60 +16,22 @@ import {
   Coins,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  DemoLead,
-  DemoCompanyUser,
-  getCompanySession,
-  getDemoLeads,
-  unlockDemoLead,
-  buyDemoCredits,
-} from "@/lib/demoAuth";
+import { placeholderCompany, type PlaceholderLead } from "@/lib/placeholders";
 
 export default function DashboardHomePage() {
-  const [user, setUser] = useState<DemoCompanyUser | null>(null);
-  const [leads, setLeads] = useState<DemoLead[]>([]);
-  const [previewLead, setPreviewLead] = useState<DemoLead | null>(null);
-  const [unlockedSuccessModal, setUnlockedSuccessModal] = useState<DemoLead | null>(null);
+  const user = placeholderCompany;
+  const [previewLead, setPreviewLead] = useState<PlaceholderLead | null>(null);
+  const [unlockedSuccessModal] = useState<PlaceholderLead | null>(null);
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
 
-  useEffect(() => {
-    setUser(getCompanySession());
-    setLeads(getDemoLeads());
-
-    const handleUpdate = () => {
-      setUser(getCompanySession());
-      setLeads(getDemoLeads());
-    };
-    window.addEventListener("company_session_updated", handleUpdate);
-    return () => window.removeEventListener("company_session_updated", handleUpdate);
-  }, []);
-
-  const handleUnlockLead = (leadId: string) => {
-    const res = unlockDemoLead(leadId);
-    if (!res.success) {
-      toast.error(res.error || "Unable to unlock lead.");
-      return;
-    }
-
-    setUser(getCompanySession());
-    setLeads(getDemoLeads());
-    window.dispatchEvent(new Event("company_session_updated"));
-
-    if (res.lead) {
-      setPreviewLead(null);
-      setUnlockedSuccessModal(res.lead);
-      toast.success("Lead unlocked successfully! Full customer contact revealed.");
-    }
+  const handleUnlockLead = () => {
+    setPreviewLead(null);
+    toast.info("Placeholder. Lead unlock is not connected yet.");
   };
 
   const handleBuyCredits = (amount: number, packageName: string) => {
-    const res = buyDemoCredits(amount, packageName);
-    if (res.success) {
-      setUser(getCompanySession());
-      setTopUpModalOpen(false);
-      window.dispatchEvent(new Event("company_session_updated"));
-      toast.success(`Success! Added ${amount} credits. Current balance: ${res.newBalance} credits.`);
-    }
+    setTopUpModalOpen(false);
+    toast.info(`Placeholder. ${packageName} (${amount} credits) is not connected yet.`);
   };
 
   // The 6 exact Recent Leads matching the screenshot
@@ -290,7 +252,7 @@ export default function DashboardHomePage() {
               return (
                 <div
                   key={idx}
-                  onClick={() => setPreviewLead(item as unknown as DemoLead)}
+                  onClick={() => setPreviewLead(item as unknown as PlaceholderLead)}
                   className="py-3.5 flex items-center justify-between gap-3 hover:bg-slate-50/70 px-2 -mx-2 rounded-xl transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
@@ -467,7 +429,7 @@ export default function DashboardHomePage() {
               {!previewLead.isUnlocked && (
                 <button
                   type="button"
-                  onClick={() => handleUnlockLead(previewLead.id)}
+                  onClick={() => handleUnlockLead()}
                   className="flex-1 h-11 rounded-full bg-[#00BC7D] hover:bg-[#00d68f] text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Unlock className="w-3.5 h-3.5" />

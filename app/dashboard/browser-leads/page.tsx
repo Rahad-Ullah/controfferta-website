@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -19,67 +19,24 @@ import {
   Coins,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  DemoLead,
-  DemoCompanyUser,
-  getCompanySession,
-  getDemoLeads,
-  unlockDemoLead,
-} from "@/lib/demoAuth";
+import { placeholderCompany, placeholderLeads, type PlaceholderLead } from "@/lib/placeholders";
 
 export default function BrowseLeadsPage() {
-  const [user, setUser] = useState<DemoCompanyUser | null>(null);
-  const [leads, setLeads] = useState<DemoLead[]>([]);
+  const user = placeholderCompany;
+  const leads = placeholderLeads;
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [selectedRegion, setSelectedRegion] = useState<string>("All regions");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Navigation states: null = Grid view, DemoLead = Detail view (Image 2)
-  const [selectedLead, setSelectedLead] = useState<DemoLead | null>(null);
+  const [selectedLead, setSelectedLead] = useState<PlaceholderLead | null>(null);
 
-  // Modals
-  const [confirmModalLead, setConfirmModalLead] = useState<DemoLead | null>(null);
-  const [successModalLead, setSuccessModalLead] = useState<DemoLead | null>(null);
-
-  useEffect(() => {
-    setUser(getCompanySession());
-    setLeads(getDemoLeads());
-
-    const handleUpdate = () => {
-      setUser(getCompanySession());
-      const updatedLeads = getDemoLeads();
-      setLeads(updatedLeads);
-      // keep selected lead in sync if updated
-      setSelectedLead((prev) => {
-        if (!prev) return null;
-        return updatedLeads.find((l) => l.id === prev.id) || prev;
-      });
-    };
-    window.addEventListener("company_session_updated", handleUpdate);
-    return () => window.removeEventListener("company_session_updated", handleUpdate);
-  }, []);
+  const [confirmModalLead, setConfirmModalLead] = useState<PlaceholderLead | null>(null);
+  const [successModalLead] = useState<PlaceholderLead | null>(null);
 
   const handleConfirmUnlock = () => {
     if (!confirmModalLead) return;
-    const res = unlockDemoLead(confirmModalLead.id);
-    if (!res.success) {
-      toast.error(res.error || "Unable to unlock lead.");
-      setConfirmModalLead(null);
-      return;
-    }
-
-    const updatedUser = getCompanySession();
-    const updatedLeads = getDemoLeads();
-    setUser(updatedUser);
-    setLeads(updatedLeads);
-
-    const unlocked = updatedLeads.find((l) => l.id === confirmModalLead.id) || res.lead;
-    if (unlocked) {
-      setSelectedLead(unlocked);
-      setConfirmModalLead(null);
-      setSuccessModalLead(unlocked);
-    }
-    window.dispatchEvent(new Event("company_session_updated"));
+    setConfirmModalLead(null);
+    toast.info("Placeholder. Lead unlock is not connected yet.");
   };
 
   const categories = [

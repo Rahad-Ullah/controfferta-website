@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -17,12 +17,7 @@ import {
   Coins,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  DemoCompanyUser,
-  getCompanySession,
-  clearCompanySession,
-  buyDemoCredits,
-} from "@/lib/demoAuth";
+import { placeholderCompany } from "@/lib/placeholders";
 
 export default function DashboardLayout({
   children,
@@ -32,56 +27,30 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  const [user, setUser] = useState<DemoCompanyUser | null>(null);
-  const [isClientLoaded, setIsClientLoaded] = useState(false);
+  const user = placeholderCompany;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [buyCreditsModalOpen, setBuyCreditsModalOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
-
-  // Auth protection check
-  useEffect(() => {
-    const session = getCompanySession();
-    if (!session) {
-      toast.error("Please log in to access the Company Dashboard.");
-      router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-      return;
-    }
-    setUser(session);
-    setIsClientLoaded(true);
-
-    const handleStorageChange = () => {
-      setUser(getCompanySession());
-    };
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("company_session_updated", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("company_session_updated", handleStorageChange);
-    };
-  }, [pathname, router]);
 
   const handleOpenLogoutModal = () => {
     setMobileMenuOpen(false);
     setLogoutModalOpen(true);
   };
 
-  const handleConfirmLogout = () => {
+  const handleConfirmLogout = async () => {
     setLogoutModalOpen(false);
-    clearCompanySession();
-    toast.success("Logged out successfully.");
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // The page still leaves the dashboard if the request fails.
+    }
+    toast.success("Signed out.");
     router.replace("/login");
   };
 
   const handleBuyCredits = (amount: number, packageName: string) => {
-    const res = buyDemoCredits(amount, packageName);
-    if (res.success) {
-      const updated = getCompanySession();
-      if (updated) setUser(updated);
-      setBuyCreditsModalOpen(false);
-      window.dispatchEvent(new Event("company_session_updated"));
-      toast.success(`Success! Added ${amount} credits to your account. Current balance: ${res.newBalance} credits.`);
-    }
+    setBuyCreditsModalOpen(false);
+    toast.info(`Placeholder. ${packageName} (${amount} credits) is not connected yet.`);
   };
 
   const navLinks = [
@@ -130,14 +99,6 @@ export default function DashboardLayout({
       isActive: pathname.startsWith("/dashboard/profile"),
     },
   ];
-
-  if (!isClientLoaded || !user) {
-    return (
-      <div className="min-h-screen bg-[#EAEFF2] flex items-center justify-center text-[#00BC7D]">
-        <div className="animate-spin w-8 h-8 border-2 border-[#00BC7D] border-t-transparent rounded-full" />
-      </div>
-    );
-  }
 
   const getPageTitle = () => {
     if (pathname === "/dashboard") return "Dashboard";

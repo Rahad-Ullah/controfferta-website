@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Check, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
-import {
-  getCompanySession,
-  updateCompanyProfile,
-} from "@/lib/demoAuth";
 
 export default function ProfilePage() {
   const [firstName, setFirstName] = useState("Marco");
@@ -50,20 +46,6 @@ export default function ProfilePage() {
     newPassword?: string;
     confirmPassword?: string;
   }>({});
-
-  useEffect(() => {
-    const session = getCompanySession();
-    if (session) {
-      if (session.name) {
-        const parts = session.name.split(" ");
-        setFirstName(parts[0] || "Marco");
-        setLastName(parts.slice(1).join(" ") || "Ferretti");
-      }
-      if (session.companyName) setCompany(session.companyName);
-      if (session.email) setEmail(session.email);
-      if (session.phone) setPhone(session.phone);
-    }
-  }, []);
 
   const toggleCategory = (cat: string) => {
     setSelectedCategories((prev) =>
@@ -113,15 +95,7 @@ export default function ProfilePage() {
     }
 
     setProfileErrors({});
-    updateCompanyProfile({
-      name: `${firstName} ${lastName}`.trim(),
-      companyName: company,
-      email: email,
-      phone: phone,
-    });
-
-    window.dispatchEvent(new Event("company_session_updated"));
-    toast.success("Profile saved successfully!");
+    toast.info("Placeholder. Profile changes are not saved.");
   };
 
   // Security / Password Update Handler with Validation
@@ -153,7 +127,7 @@ export default function ProfilePage() {
     setSecurityErrors({});
     setNewPassword("");
     setConfirmPassword("");
-    toast.success("Password updated successfully!");
+    toast.info("Placeholder. Password changes are not saved.");
   };
 
   return (
