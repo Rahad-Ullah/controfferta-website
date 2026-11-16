@@ -1,25 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-interface HeroProps {
-  searchQuery: string;
-  onSearchChange: (value: string) => void;
-  onSearchSubmit?: () => void;
-}
-
-export default function Hero({ searchQuery, onSearchChange, onSearchSubmit }: HeroProps) {
+export default function Hero() {
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (onSearchSubmit) {
-      onSearchSubmit();
-    } else {
-      router.push("/submit-request");
-    }
+    router.push("/submit-request");
   };
 
   return (
@@ -57,7 +48,7 @@ export default function Hero({ searchQuery, onSearchChange, onSearchSubmit }: He
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="For Example: painting"
                 className="w-full text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none bg-transparent px-3 py-1.5 sm:py-2"
               />

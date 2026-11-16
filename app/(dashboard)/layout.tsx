@@ -65,13 +65,13 @@ export default function DashboardLayout({
       href: "/dashboard/browser-leads",
       icon: Search,
       badge: "12",
-      isActive: pathname.startsWith("/dashboard/browser-leads") || pathname.startsWith("/dashboard/browse-leads"),
+      isActive: pathname.startsWith("/dashboard/browser-leads"),
     },
     {
       label: "Unlocked Leads",
-      href: "/dashboard/unloack-lead",
+      href: "/dashboard/unlock-lead",
       icon: Unlock,
-      isActive: pathname.startsWith("/dashboard/unloack-lead") || pathname.startsWith("/dashboard/unlocked-leads"),
+      isActive: pathname.startsWith("/dashboard/unlock-lead"),
     },
     {
       label: "Credits",
@@ -102,8 +102,8 @@ export default function DashboardLayout({
 
   const getPageTitle = () => {
     if (pathname === "/dashboard") return "Dashboard";
-    if (pathname.includes("browser-leads") || pathname.includes("browse-leads")) return "Browse Leads";
-    if (pathname.includes("unloack-lead") || pathname.includes("unlocked-leads")) return "Unlocked Leads";
+    if (pathname.includes("browser-leads")) return "Browse Leads";
+    if (pathname.includes("unlock-lead")) return "Unlocked Leads";
     if (pathname.includes("buy-credits")) return "Buy Credits";
     if (pathname.includes("credits")) return "Credits";
     if (pathname.includes("notifications")) return "Notifications";

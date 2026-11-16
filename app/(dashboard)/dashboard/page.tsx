@@ -316,7 +316,7 @@ export default function DashboardHomePage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h2 className="text-sm font-bold text-slate-900">Recently Unlocked</h2>
               <Link
-                href="/dashboard/unloack-lead"
+                href="/dashboard/unlock-lead"
                 className="text-xs font-semibold text-[#00BC7D] hover:underline"
               >
                 View all
@@ -474,7 +474,7 @@ export default function DashboardHomePage() {
             </div>
 
             <Link
-              href="/dashboard/unloack-lead"
+              href="/dashboard/unlock-lead"
               className="w-full h-11 rounded-full bg-[#00BC7D] hover:bg-[#00d68f] text-white font-bold text-xs shadow-md transition-all flex items-center justify-center cursor-pointer"
             >
               Go to My Unlocked Leads

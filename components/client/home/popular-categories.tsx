@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import {
   Sun,
@@ -12,6 +12,7 @@ import {
   AirVent,
   PaintRoller,
 } from "lucide-react";
+import QuickRequestModal from "./quick-request-modal";
 
 export const CATEGORIES = [
   { name: "Solar Panels", icon: Sun, desc: "Renewable energy solutions" },
@@ -24,11 +25,10 @@ export const CATEGORIES = [
   { name: "Renovation", icon: PaintRoller, desc: "Interior & exterior remodeling" },
 ];
 
-interface PopularCategoriesProps {
-  onSelectCategory: (categoryName: string) => void;
-}
+export default function PopularCategories() {
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-export default function PopularCategories({ onSelectCategory }: PopularCategoriesProps) {
   return (
     <section id="services" className="py-12 sm:py-16 bg-">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,7 +56,10 @@ export default function PopularCategories({ onSelectCategory }: PopularCategorie
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => onSelectCategory(cat.name)}
+                    onClick={() => {
+                      setSelectedCategory(cat.name);
+                      setIsModalOpen(true);
+                    }}
                     className="group bg-gray-50 hover:bg-white/50 rounded-xl p-3 sm:p-3.5 flex flex-col items-center justify-center text-center border border-[#DCDCDC] hover:border-[#00BC7D] hover:shadow-sm transition-all duration-200 cursor-pointer"
                   >
                     <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#D6EFE5] group-hover:bg-[#00BC7D] text-[#00BC7D] group-hover:text-white flex items-center justify-center transition-colors">
@@ -85,6 +88,11 @@ export default function PopularCategories({ onSelectCategory }: PopularCategorie
           </div>
         </div>
       </div>
+      <QuickRequestModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialService={selectedCategory}
+      />
     </section>
   );
 }

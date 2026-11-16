@@ -4,8 +4,8 @@ Read this before adding files. Client data fetching also follows `docs/swr.md`.
 
 ## Naming
 
-- File and folder names are lowercase with hyphens: `env-config.ts`, `customer-navbar.tsx`, `customer-landing`.
-- The exported React component is the only PascalCase name: file `customer-navbar.tsx`, function `CustomerNavbar`.
+- File and folder names are lowercase with hyphens: `env-config.ts`, `client/home/hero.tsx`.
+- The exported React component is the only PascalCase name: file `navbar.tsx`, function `ClientNavbar`.
 - Next.js reserved files stay as they are: `page.tsx`, `layout.tsx`, `route.ts`, `loading.tsx`, `error.tsx`, `not-found.tsx`.
 - Do not add new source files in the repository root. Root is for tooling: `package.json`, `next.config.ts`, `tsconfig.json`, `AGENTS.md`.
 
@@ -17,9 +17,8 @@ Read this before adding files. Client data fetching also follows `docs/swr.md`.
 | `app/api/` | Route handlers this Next app owns, such as auth cookie set and clear. |
 | `components/ui/` | Shared primitives (button, input, dialog). |
 | `components/shared/` | Site chrome used by more than one role. |
-| `components/client/` | Client navbar and footer. `app/(client)/layout.tsx` renders them. |
-| `components/provider/` | Provider navbar and footer. `app/(provider)/layout.tsx` renders them. |
-| `components/landing/` | Marketing sections. Group a page's sections in a kebab-case folder. |
+| `components/client/` | Client chrome and page sections. `navbar.tsx` and `footer.tsx` stay here because the layout uses them on every client route. Sections for one route go in a folder named after that route: `home/`, `about/`, `services/`, `how-it-works/`, `reviews/`, `blog/`, `contact/`, `submit-request/`. |
+| `components/provider/` | Provider chrome and page sections. `navbar.tsx` and `footer.tsx` stay here because the layout uses them on every provider route. Sections for one route go in a folder named after that route: `home/`, `about/`, `services/`, `how-it-works/`, `reviews/`, `contact/`. |
 | `components/onboarding/` | Role-selection screen. |
 | `components/providers.tsx` | Root client providers. Already wraps the app from `app/layout.tsx`. |
 | `lib/` | Shared modules that are not React components. |
@@ -38,7 +37,7 @@ Route groups choose the layout. A group name in parentheses is not part of the U
 
 | Group | Layout | Screens |
 |---|---|---|
-| `(client)` | `app/(client)/layout.tsx` | Customer site: `/`, `/about`, `/services`, `/blog`, `/contact`, `/how-it-works`, `/reviews`, `/submit-request`, `/customer` |
+| `(client)` | `app/(client)/layout.tsx` | Customer site: `/`, `/about`, `/services`, `/blog`, `/contact`, `/how-it-works`, `/reviews`, `/submit-request` |
 | `(provider)` | `app/(provider)/layout.tsx` | Company site: `/provider`, `/provider/about`, `/provider/services`, `/provider/how-it-works`, `/provider/reviews`, `/provider/contact` |
 | `(dashboard)` | `app/(dashboard)/layout.tsx` | Company portal: `/dashboard` and its pages |
 | `(auth)` | `app/(auth)/layout.tsx` | Login, registration, and password recovery |

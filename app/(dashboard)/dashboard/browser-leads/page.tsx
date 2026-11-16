@@ -31,7 +31,7 @@ export default function BrowseLeadsPage() {
   const [selectedLead, setSelectedLead] = useState<PlaceholderLead | null>(null);
 
   const [confirmModalLead, setConfirmModalLead] = useState<PlaceholderLead | null>(null);
-  const [successModalLead] = useState<PlaceholderLead | null>(null);
+  const [successModalLead, setSuccessModalLead] = useState<PlaceholderLead | null>(null);
 
   const handleConfirmUnlock = () => {
     if (!confirmModalLead) return;

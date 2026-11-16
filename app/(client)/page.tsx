@@ -1,4 +1,11 @@
-import CustomerLandingPage from "@/components/landing/customer-landing-page";
+import BottomCta from "@/components/client/home/bottom-cta";
+import Hero from "@/components/client/home/hero";
+import HowItWorks from "@/components/client/home/how-it-works";
+import PopularCategories from "@/components/client/home/popular-categories";
+import ProviderCallout from "@/components/client/home/provider-callout";
+import StatsBar from "@/components/client/home/stats-bar";
+import Testimonials from "@/components/client/home/testimonials";
+import WhyChooseUs from "@/components/client/home/why-choose-us";
 
 export const metadata = {
   title: "Find the right professional for your project",
@@ -7,5 +14,16 @@ export const metadata = {
 };
 
 export default function HomePage() {
-  return <CustomerLandingPage />;
+  return (
+    <main className="bg-white text-slate-900">
+      <Hero />
+      <StatsBar />
+      <PopularCategories />
+      <HowItWorks />
+      <WhyChooseUs />
+      <ProviderCallout />
+      <Testimonials />
+      <BottomCta />
+    </main>
+  );
 }

@@ -21,7 +21,7 @@ export default function ClientNavbar() {
 
   const isActive = (href: string) => {
     if (href === "/") {
-      return pathname === "/" || pathname === "/customer";
+      return pathname === "/";
     }
     return pathname.startsWith(href);
   };
