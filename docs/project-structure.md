@@ -16,7 +16,9 @@ Read this before adding files. Client data fetching also follows `docs/swr.md`.
 | `app/` | Routes only. One `page.tsx` per URL. Layouts wrap a segment. |
 | `app/api/` | Route handlers this Next app owns, such as auth cookie set and clear. |
 | `components/ui/` | Shared primitives (button, input, dialog). |
-| `components/shared/` | Site chrome used by more than one page (navbar, footer). |
+| `components/shared/` | Site chrome used by more than one role. |
+| `components/client/` | Client navbar and footer. `app/(client)/layout.tsx` renders them. |
+| `components/provider/` | Provider navbar and footer. `app/(provider)/layout.tsx` renders them. |
 | `components/landing/` | Marketing sections. Group a page's sections in a kebab-case folder. |
 | `components/onboarding/` | Role-selection screen. |
 | `components/providers.tsx` | Root client providers. Already wraps the app from `app/layout.tsx`. |
@@ -37,14 +39,14 @@ Route groups choose the layout. A group name in parentheses is not part of the U
 | Group | Layout | Screens |
 |---|---|---|
 | `(client)` | `app/(client)/layout.tsx` | Customer site: `/`, `/about`, `/services`, `/blog`, `/contact`, `/how-it-works`, `/reviews`, `/submit-request`, `/customer` |
-| `(provider)` | `app/(provider)/layout.tsx` | Company marketing: `/company` |
+| `(provider)` | `app/(provider)/layout.tsx` | Company site: `/provider`, `/provider/about`, `/provider/services`, `/provider/how-it-works`, `/provider/reviews`, `/provider/contact` |
 | `(dashboard)` | `app/(dashboard)/layout.tsx` | Company portal: `/dashboard` and its pages |
 | `(auth)` | `app/(auth)/layout.tsx` | Login, registration, and password recovery |
 
 `/onboarding` stays outside these groups. It is the role chooser and uses only the root layout. Customer continues to `/`. Provider continues to `/register`.
 
 - A new customer screen goes in `app/(client)/<segment>/page.tsx`.
-- A new company marketing screen goes in `app/(provider)/<segment>/page.tsx`.
+- A new company marketing screen goes in `app/(provider)/provider/<segment>/page.tsx`.
 - A new portal screen goes in `app/(dashboard)/dashboard/<segment>/page.tsx`.
 - Do not invent a `pages/` directory.
 - Keep route files thin. Render a component from `components/`. Do not build a large UI inside `page.tsx`.

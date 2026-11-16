@@ -6,5 +6,4 @@ export { default as WhyChooseUs } from "./why-choose-us";
 export { default as ProviderCallout } from "./provider-callout";
 export { default as Testimonials } from "./testimonials";
 export { default as BottomCta } from "./bottom-cta";
-export { default as CustomerFooter } from "./customer-footer";
 export { default as QuickRequestModal } from "./quick-request-modal";

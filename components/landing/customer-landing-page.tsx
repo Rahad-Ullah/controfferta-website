@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import CustomerNavbar from "@/components/shared/customer-navbar";
 import {
   Hero,
   StatsBar,
@@ -11,15 +10,10 @@ import {
   ProviderCallout,
   Testimonials,
   BottomCta,
-  CustomerFooter,
   QuickRequestModal,
 } from "./customer-landing";
 
-interface CustomerLandingPageProps {
-  onSwitchRole?: () => void;
-}
-
-export default function CustomerLandingPage({ onSwitchRole }: CustomerLandingPageProps) {
+export default function CustomerLandingPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -37,13 +31,6 @@ export default function CustomerLandingPage({ onSwitchRole }: CustomerLandingPag
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-[#00BC7D]/20 selection:text-[#00BC7D]">
-      {/* 1. Header / Navbar */}
-      <CustomerNavbar
-        onOpenRequestModal={() => handleOpenRequestModal()}
-        onSwitchRole={onSwitchRole}
-      />
-
-      {/* 2. Hero Section */}
       <Hero
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -72,10 +59,6 @@ export default function CustomerLandingPage({ onSwitchRole }: CustomerLandingPag
       {/* 9. Bottom CTA */}
       <BottomCta />
 
-      {/* 10. Footer */}
-      <CustomerFooter />
-
-      {/* Fast Zero-Auth Customer Request Submission Modal */}
       <QuickRequestModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

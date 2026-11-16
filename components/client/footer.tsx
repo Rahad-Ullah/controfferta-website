@@ -1,12 +1,10 @@
-import React from "react";
 import Link from "next/link";
 
-export default function CustomerFooter() {
+export default function ClientFooter() {
   return (
     <footer id="footer" className="bg-[#080C12] text-white border-t border-white/10 pt-14 pb-10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {/* Col 1: Brand */}
           <div className="space-y-4">
             <Link href="/" className="inline-flex items-center gap-1 group">
               <span className="text-white font-extrabold tracking-widest text-lg">CONTR</span>
@@ -24,7 +22,6 @@ export default function CustomerFooter() {
             </p>
           </div>
 
-          {/* Col 2: Platform */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-200">Platform</h4>
             <ul className="space-y-2 text-xs text-zinc-400">
@@ -38,19 +35,17 @@ export default function CustomerFooter() {
             </ul>
           </div>
 
-          {/* Col 3: Account */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-200">Account</h4>
             <ul className="space-y-2 text-xs text-zinc-400">
-              <li><a href="#footer" className="hover:text-white transition-colors">Contact</a></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
               <li><Link href="/register" className="hover:text-white transition-colors">Sign Up</Link></li>
               <li><Link href="/login" className="hover:text-white transition-colors">Log In</Link></li>
-              <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms</a></li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition-colors">Terms</Link></li>
             </ul>
           </div>
 
-          {/* Col 4: Sector Portals */}
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-200">Sector Portals</h4>
             <ul className="space-y-2 text-xs text-zinc-400">
@@ -71,4 +66,3 @@ export default function CustomerFooter() {
     </footer>
   );
 }
-

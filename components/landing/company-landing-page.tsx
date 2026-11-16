@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -21,8 +20,6 @@ import {
 } from "lucide-react";
 
 export default function CompanyLandingPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const sampleRequests = [
     {
       category: "Windows and doors",
@@ -56,50 +53,6 @@ export default function CompanyLandingPage() {
 
   return (
     <div className="min-h-screen bg-[#070A0F] text-slate-100 flex flex-col font-sans selection:bg-[#00BC7D]/30 selection:text-[#00BC7D]">
-      {/* 1. NAVBAR FOR COMPANIES */}
-      <header className="sticky top-0 z-40 bg-[#070A0F]/90 backdrop-blur-md border-b border-slate-800/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="inline-flex items-center gap-1 group">
-            <span className="text-white font-extrabold tracking-widest text-xl">CONTR</span>
-            <span className="inline-flex items-center text-[#00BC7D] px-0.5">
-              <svg className="w-5 h-5 drop-shadow-[0_0_8px_rgba(0,188,125,0.7)]" viewBox="0 0 24 24" fill="none">
-                <path d="M8 5L3 12L8 19" stroke="#00BC7D" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M16 5L21 12L16 19" stroke="#00BC7D" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-            <span className="text-[#00BC7D] font-extrabold tracking-widest text-xl">FFERTA</span>
-            <span className="text-white font-bold text-xl">.IT</span>
-          </Link>
-
-          {/* Navigation links */}
-          <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-zinc-300">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
-            <Link href="/services" className="hover:text-white transition-colors">Services</Link>
-            <Link href="/how-it-works" className="hover:text-white transition-colors">How It Works</Link>
-            <Link href="/reviews" className="hover:text-white transition-colors">Reviews</Link>
-            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
-          </nav>
-
-          {/* Log In & Register Buttons */}
-          <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="text-xs font-bold text-zinc-200 hover:text-white px-4 py-2 rounded-full transition-colors"
-            >
-              Log In
-            </Link>
-            <Link
-              href="/register"
-              className="bg-[#00BC7D] hover:bg-[#00d68f] text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-md shadow-[#00BC7D]/20 transition-all transform hover:-translate-y-0.5"
-            >
-              Register
-            </Link>
-          </div>
-        </div>
-      </header>
-
       {/* 2. HERO SECTION */}
       <section className="relative overflow-hidden pt-12 pb-20 md:pt-16 md:pb-28">
         {/* Ambient Glows */}
@@ -556,7 +509,7 @@ export default function CompanyLandingPage() {
           </div>
 
           <div className="text-center mt-8">
-            <Link href="/reviews" className="text-xs font-semibold text-zinc-600 hover:text-slate-900 underline">
+            <Link href="/provider/reviews" className="text-xs font-semibold text-zinc-600 hover:text-slate-900 underline">
               See All Reviews
             </Link>
           </div>
@@ -580,7 +533,7 @@ export default function CompanyLandingPage() {
               Sign Up for Free
             </Link>
             <Link
-              href="/how-it-works"
+              href="/provider/how-it-works"
               className="bg-[#141A23] hover:bg-[#1E2633] text-zinc-200 border border-slate-700 font-semibold text-xs sm:text-sm px-6 py-3.5 rounded-full transition-all"
             >
               Find Out How It Works
@@ -589,50 +542,6 @@ export default function CompanyLandingPage() {
         </div>
       </section>
 
-      {/* 9. FOOTER */}
-      <footer className="bg-[#05070B] text-zinc-400 text-xs py-12 border-t border-slate-800/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <Link href="/" className="inline-flex items-center gap-1 mb-3">
-              <span className="text-white font-extrabold tracking-widest text-base">CONTR</span>
-              <span className="text-[#00BC7D] font-extrabold tracking-widest text-base">FFERTA</span>
-              <span className="text-white font-bold text-base">.IT</span>
-            </Link>
-            <p className="text-zinc-500 text-[11px] leading-relaxed">
-              The B2B marketplace for qualified customer requests. Connect businesses with new customers.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="text-white font-bold mb-3">Platform</h4>
-            <ul className="space-y-2 text-[11px]">
-              <li><Link href="/" className="hover:text-white">Home</Link></li>
-              <li><Link href="/about" className="hover:text-white">About Us</Link></li>
-              <li><Link href="/services" className="hover:text-white">Services</Link></li>
-              <li><Link href="/how-it-works" className="hover:text-white">How It Works</Link></li>
-              <li><Link href="/reviews" className="hover:text-white">Reviews</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-bold mb-3">Account</h4>
-            <ul className="space-y-2 text-[11px]">
-              <li><Link href="/login" className="hover:text-white">Log In</Link></li>
-              <li><Link href="/register" className="hover:text-white">Sign Up</Link></li>
-              <li><Link href="/dashboard" className="hover:text-white">Company Dashboard</Link></li>
-              <li><Link href="/privacy" className="hover:text-white">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="hover:text-white">Terms of Service</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-bold mb-3">Contact Support</h4>
-            <p className="text-[11px] text-zinc-400">info@controfferta.com</p>
-            <p className="text-[11px] text-zinc-400 mt-1">support@controfferta.com</p>
-            <p className="text-[11px] text-zinc-400 mt-1">Mon - Fri: 9:00 - 18:00</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
