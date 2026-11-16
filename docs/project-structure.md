@@ -32,8 +32,21 @@ Read this before adding files. Client data fetching also follows `docs/swr.md`.
 
 ## Routes
 
-- `(main)` is the public marketing site. `(auth)` is login and registration. `dashboard` is the company portal.
-- A new URL is `app/<segment>/page.tsx`. Do not invent a `pages/` directory.
+Route groups choose the layout. A group name in parentheses is not part of the URL. The root `app/layout.tsx` stays the document shell (`html`, `body`, providers). Do not pick a layout from `localStorage`.
+
+| Group | Layout | Screens |
+|---|---|---|
+| `(client)` | `app/(client)/layout.tsx` | Customer site: `/`, `/about`, `/services`, `/blog`, `/contact`, `/how-it-works`, `/reviews`, `/submit-request`, `/customer` |
+| `(provider)` | `app/(provider)/layout.tsx` | Company marketing: `/company` |
+| `(dashboard)` | `app/(dashboard)/layout.tsx` | Company portal: `/dashboard` and its pages |
+| `(auth)` | `app/(auth)/layout.tsx` | Login, registration, and password recovery |
+
+`/onboarding` stays outside these groups. It is the role chooser and uses only the root layout. Customer continues to `/`. Provider continues to `/register`.
+
+- A new customer screen goes in `app/(client)/<segment>/page.tsx`.
+- A new company marketing screen goes in `app/(provider)/<segment>/page.tsx`.
+- A new portal screen goes in `app/(dashboard)/dashboard/<segment>/page.tsx`.
+- Do not invent a `pages/` directory.
 - Keep route files thin. Render a component from `components/`. Do not build a large UI inside `page.tsx`.
 
 ## Adding a feature
