@@ -1,33 +1,33 @@
 # SWR data fetching
 
-Read this before adding or changing API calls. SWR `2.5.1` is installed. `components/swr-config.tsx` already wraps the app, and its `SWRConfig` uses `swrFetcher`.
+Read this before adding or changing API calls. SWR `2.5.1` is installed. `src/components/swr-config.tsx` already wraps the app, and its `SWRConfig` uses `swrFetcher`.
 
-Dashboard screens still render `lib/placeholders.ts` until a screen is wired to the API.
+Dashboard screens still render `src/lib/placeholders.ts` until a screen is wired to the API.
 
 ## Where things live
 
 | Piece | File |
 |---|---|
-| Cache keys | `lib/api/keys.ts` |
-| Universal fetch | `lib/api/fetcher.ts` (`nextFetch`, `swrFetcher`) |
-| SWR defaults | `components/swr-config.tsx` |
-| API origin | `NEXT_PUBLIC_API_BASE_URL`, returned as `apiBaseUrl` from `envConfig` in `lib/env-config.ts` |
+| Cache keys | `src/lib/api/keys.ts` |
+| Universal fetch | `src/lib/api/fetcher.ts` (`nextFetch`, `swrFetcher`) |
+| SWR defaults | `src/components/swr-config.tsx` |
+| API origin | `NEXT_PUBLIC_API_BASE_URL`, returned as `apiBaseUrl` from `envConfig` in `src/lib/env-config.ts` |
 
 ## Rules
 
-- Add every new endpoint path to `apiKeys` in `lib/api/keys.ts`. Do not write a raw path string inside a component.
+- Add every new endpoint path to `apiKeys` in `src/lib/api/keys.ts`. Do not write a raw path string inside a component.
 - Pass that same `apiKeys` value to both `useSWR` and `useSWRMutation`. SWR then revalidates the client query after the write.
 - Do not give `useSWR` its own fetcher. `SWRConfig` already uses `swrFetcher`, which is a GET through `nextFetch`.
 - Every other call, including writes and server fetches, goes through `nextFetch`. Do not call `fetch` directly for this API.
 - `nextFetch` always sends `credentials: "include"`. On the client, omit `token`. The `auth_token` cookie is `HttpOnly`, so client code cannot read it.
-- On the server, pass `token` from `getAuthToken()` in `lib/auth-cookie.ts` when the upstream API expects `Authorization: Bearer`.
+- On the server, pass `token` from `getAuthToken()` in `src/lib/auth-cookie.ts` when the upstream API expects `Authorization: Bearer`.
 - `cache` and `next.revalidate` / `next.tags` are Next.js fetch options for public data that rarely changes. Use them from a Server Component. See `docs/performance-and-seo.md`. They do not control the browser SWR cache.
 - Do not store API results or the access token in `localStorage`.
 
 ## 1. Register the cache key
 
 ```ts
-// lib/api/keys.ts
+// src/lib/api/keys.ts
 export const apiKeys = {
   users: "/users",
 } as const;
@@ -154,5 +154,5 @@ await nextFetch<User>({
 
 - Do not add another client cache, and do not fetch this API from `useEffect` plus `useState`.
 - Do not put the access token in `localStorage`, `sessionStorage`, or `document.cookie`.
-- Do not point new requests at `https://api.thecloudsalon.com`.
+- Do not hardcode an API origin. Paths go through `apiBaseUrl` from `envConfig()`.
 - `/users` above is the shape to copy. Do not add a users feature unless the task asks for one.

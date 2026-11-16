@@ -7,56 +7,56 @@ Read this before adding files. Client data fetching also follows `docs/swr.md`.
 - File and folder names are lowercase with hyphens: `env-config.ts`, `client/home/hero.tsx`.
 - The exported React component is the only PascalCase name: file `navbar.tsx`, function `ClientNavbar`.
 - Next.js reserved files stay as they are: `page.tsx`, `layout.tsx`, `route.ts`, `loading.tsx`, `error.tsx`, `not-found.tsx`.
-- Do not add new source files in the repository root. Root is for tooling: `package.json`, `next.config.ts`, `tsconfig.json`, `AGENTS.md`.
+- Source code lives in `src/`. Do not add new source files in the repository root. Root is for tooling: `package.json`, `next.config.ts`, `tsconfig.json`, `AGENTS.md`, `public/`.
 
 ## Where code goes
 
 | Path | Put it here |
 |---|---|
-| `app/` | Routes only. One `page.tsx` per URL. Layouts wrap a segment. |
-| `app/api/` | Route handlers this Next app owns, such as auth cookie set and clear. |
-| `components/ui/` | Shared primitives (button, input, dialog). |
-| `components/shared/` | Site chrome used by more than one role. |
-| `components/client/` | Client chrome and page sections. `navbar.tsx` and `footer.tsx` stay here because the layout uses them on every client route. Sections for one route go in a folder named after that route: `home/`, `about/`, `services/`, `how-it-works/`, `reviews/`, `blog/`, `contact/`, `submit-request/`. |
-| `components/provider/` | Provider chrome and page sections. `navbar.tsx` and `footer.tsx` stay here because the layout uses them on every provider route. Sections for one route go in a folder named after that route: `home/`, `about/`, `services/`, `how-it-works/`, `reviews/`, `contact/`. |
-| `components/onboarding/` | Role-selection screen. |
-| `components/swr-config.tsx` | Root SWR defaults. `app/layout.tsx` wraps every page with `SwrDefaults`. |
-| `lib/` | Shared modules that are not React components. |
-| `lib/api/keys.ts` | Every SWR cache key. |
-| `lib/api/fetcher.ts` | `nextFetch` and `swrFetcher`. |
-| `lib/env-config.ts` | `envConfig()`. Public and server env values. |
-| `lib/auth-cookie.ts` | HttpOnly `auth_token` helpers. Server only. |
-| `lib/placeholders.ts` | Static screen data until a screen calls the API. |
-| `utils/` | Small helpers that are not the API or auth layer. Prefer `lib/` for new shared modules. |
+| `src/app/` | Routes only. One `page.tsx` per URL. Layouts wrap a segment. |
+| `src/app/api/` | Route handlers this Next app owns, such as auth cookie set and clear. |
+| `src/components/ui/` | Shared primitives (button, input, dialog). |
+| `src/components/shared/` | Site chrome used by more than one role. |
+| `src/components/client/` | Client chrome and page sections. `navbar.tsx` and `footer.tsx` stay here because the layout uses them on every client route. Sections for one route go in a folder named after that route: `home/`, `about/`, `services/`, `how-it-works/`, `reviews/`, `blog/`, `contact/`, `submit-request/`. |
+| `src/components/provider/` | Provider chrome and page sections. `navbar.tsx` and `footer.tsx` stay here because the layout uses them on every provider route. Sections for one route go in a folder named after that route: `home/`, `about/`, `services/`, `how-it-works/`, `reviews/`, `contact/`. |
+| `src/components/onboarding/` | Role-selection screen. |
+| `src/components/swr-config.tsx` | Root SWR defaults. `src/app/layout.tsx` wraps every page with `SwrDefaults`. |
+| `src/lib/` | Shared modules that are not React components. |
+| `src/lib/api/keys.ts` | Every SWR cache key. |
+| `src/lib/api/fetcher.ts` | `nextFetch` and `swrFetcher`. |
+| `src/lib/env-config.ts` | `envConfig()`. Public and server env values. |
+| `src/lib/auth-cookie.ts` | HttpOnly `auth_token` helpers. Server only. |
+| `src/lib/placeholders.ts` | Static screen data until a screen calls the API. |
+| `src/utils/` | Small helpers that are not the API or auth layer. Prefer `src/lib/` for new shared modules. |
 | `docs/` | Instructions for agents. Update the matching doc when a rule changes. |
-| Shared types | Put a type next to the module that uses it. Add a root `types.ts` only when two features import the same type. |
+| Shared types | Put a type next to the module that uses it. Add `src/types.ts` only when two features import the same type. |
 
 ## Routes
 
-Route groups choose the layout. A group name in parentheses is not part of the URL. The root `app/layout.tsx` stays the document shell (`html`, `body`, providers). Do not pick a layout from `localStorage`.
+Route groups choose the layout. A group name in parentheses is not part of the URL. `src/app/layout.tsx` stays the document shell (`html`, `body`, providers). Do not pick a layout from `localStorage`.
 
 | Group | Layout | Screens |
 |---|---|---|
-| `(client)` | `app/(client)/layout.tsx` | Customer site: `/`, `/about`, `/services`, `/blog`, `/contact`, `/how-it-works`, `/reviews`, `/submit-request` |
-| `(provider)` | `app/(provider)/layout.tsx` | Company site: `/provider`, `/provider/about`, `/provider/services`, `/provider/how-it-works`, `/provider/reviews`, `/provider/contact` |
-| `(dashboard)` | `app/(dashboard)/layout.tsx` | Company portal: `/dashboard` and its pages |
-| `(auth)` | `app/(auth)/layout.tsx` | Login, registration, and password recovery |
+| `(client)` | `src/app/(client)/layout.tsx` | Customer site: `/`, `/about`, `/services`, `/blog`, `/contact`, `/how-it-works`, `/reviews`, `/submit-request` |
+| `(provider)` | `src/app/(provider)/layout.tsx` | Company site: `/provider`, `/provider/about`, `/provider/services`, `/provider/how-it-works`, `/provider/reviews`, `/provider/contact` |
+| `(dashboard)` | `src/app/(dashboard)/layout.tsx` | Company portal: `/dashboard` and its pages |
+| `(auth)` | `src/app/(auth)/layout.tsx` | Login, registration, and password recovery |
 
 `/onboarding` stays outside these groups. It is the role chooser and uses only the root layout. Customer continues to `/`. Provider continues to `/register`.
 
-- A new customer screen goes in `app/(client)/<segment>/page.tsx`.
-- A new company marketing screen goes in `app/(provider)/provider/<segment>/page.tsx`.
-- A new portal screen goes in `app/(dashboard)/dashboard/<segment>/page.tsx`.
+- A new customer screen goes in `src/app/(client)/<segment>/page.tsx`.
+- A new company marketing screen goes in `src/app/(provider)/provider/<segment>/page.tsx`.
+- A new portal screen goes in `src/app/(dashboard)/dashboard/<segment>/page.tsx`.
 - Do not invent a `pages/` directory.
-- Keep route files thin. Render a component from `components/`. Do not build a large UI inside `page.tsx`.
+- Keep route files thin. Render a component from `src/components/`. Do not build a large UI inside `page.tsx`.
 
 ## Adding a feature
 
-1. Add the path to `lib/api/keys.ts`.
+1. Add the path to `src/lib/api/keys.ts`.
 2. Read with `useSWR(apiKeys.someKey)` and write with `useSWRMutation(apiKeys.someKey, ...)`. See `docs/swr.md`.
 3. Call the API only through `nextFetch`.
-4. Put the screen component in `components/<feature>/<name>.tsx` and export it as PascalCase.
-5. Read configuration through `envConfig()` in `lib/env-config.ts`. Do not add another env module.
+4. Put the screen component in `src/components/<feature>/<name>.tsx` and export it as PascalCase.
+5. Read configuration through `envConfig()` in `src/lib/env-config.ts`. Do not add another env module.
 6. Do not put the access token in `localStorage`, `sessionStorage`, or `document.cookie`.
 
 ## What not to do
