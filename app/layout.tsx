@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
-import { Providers } from "@/components/providers";
+import { SwrDefaults } from "@/components/swr-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -40,7 +40,7 @@ export default function RootLayout({
       className={`h-full antialiased ${inter.variable}`}
     >
       <body className={`${inter.className} min-h-full flex flex-col bg-background text-foreground font-sans selection:bg-primary/20 selection:text-primary`}>
-        <Providers>{children}</Providers>
+        <SwrDefaults>{children}</SwrDefaults>
         <Toaster richColors position="top-center" />
       </body>
     </html>

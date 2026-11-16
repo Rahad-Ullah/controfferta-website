@@ -1,6 +1,6 @@
 # SWR data fetching
 
-Read this before adding or changing API calls. SWR `2.5.1` is installed. `components/providers.tsx` already wraps the app, and its `SWRConfig` uses `swrFetcher`.
+Read this before adding or changing API calls. SWR `2.5.1` is installed. `components/swr-config.tsx` already wraps the app, and its `SWRConfig` uses `swrFetcher`.
 
 Dashboard screens still render `lib/placeholders.ts` until a screen is wired to the API.
 
@@ -10,7 +10,7 @@ Dashboard screens still render `lib/placeholders.ts` until a screen is wired to 
 |---|---|
 | Cache keys | `lib/api/keys.ts` |
 | Universal fetch | `lib/api/fetcher.ts` (`nextFetch`, `swrFetcher`) |
-| SWR defaults | `components/providers.tsx` |
+| SWR defaults | `components/swr-config.tsx` |
 | API origin | `NEXT_PUBLIC_API_BASE_URL`, returned as `apiBaseUrl` from `envConfig` in `lib/env-config.ts` |
 
 ## Rules

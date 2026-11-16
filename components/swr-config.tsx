@@ -3,7 +3,7 @@
 import { SWRConfig } from "swr";
 import { swrFetcher } from "@/lib/api/fetcher";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function SwrDefaults({ children }: { children: React.ReactNode }) {
   return (
     <SWRConfig
       value={{

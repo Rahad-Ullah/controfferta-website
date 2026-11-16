@@ -20,7 +20,7 @@ Read this before adding files. Client data fetching also follows `docs/swr.md`.
 | `components/client/` | Client chrome and page sections. `navbar.tsx` and `footer.tsx` stay here because the layout uses them on every client route. Sections for one route go in a folder named after that route: `home/`, `about/`, `services/`, `how-it-works/`, `reviews/`, `blog/`, `contact/`, `submit-request/`. |
 | `components/provider/` | Provider chrome and page sections. `navbar.tsx` and `footer.tsx` stay here because the layout uses them on every provider route. Sections for one route go in a folder named after that route: `home/`, `about/`, `services/`, `how-it-works/`, `reviews/`, `contact/`. |
 | `components/onboarding/` | Role-selection screen. |
-| `components/providers.tsx` | Root client providers. Already wraps the app from `app/layout.tsx`. |
+| `components/swr-config.tsx` | Root SWR defaults. `app/layout.tsx` wraps every page with `SwrDefaults`. |
 | `lib/` | Shared modules that are not React components. |
 | `lib/api/keys.ts` | Every SWR cache key. |
 | `lib/api/fetcher.ts` | `nextFetch` and `swrFetcher`. |
@@ -29,7 +29,7 @@ Read this before adding files. Client data fetching also follows `docs/swr.md`.
 | `lib/placeholders.ts` | Static screen data until a screen calls the API. |
 | `utils/` | Small helpers that are not the API or auth layer. Prefer `lib/` for new shared modules. |
 | `docs/` | Instructions for agents. Update the matching doc when a rule changes. |
-| `types.ts` | Types used by more than one feature. |
+| Shared types | Put a type next to the module that uses it. Add a root `types.ts` only when two features import the same type. |
 
 ## Routes
 

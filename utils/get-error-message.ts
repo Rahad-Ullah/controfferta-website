@@ -1,4 +1,10 @@
-import { ApiError } from '@/types';
+type ApiError = {
+  data?: {
+    message?: string;
+    errorMessages?: { path?: string; message: string }[];
+  };
+  message?: string;
+};
 
 /**
  * Backend validation errors come back as `data.errorMessages[].message` (Zod),

@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Star,
@@ -152,7 +151,218 @@ export default function ReviewsPage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-[#00BC7D]/20 selection:text-[#00BC7D]">
+      
+      {/* =========================================================
+          1. HEADER / NAVBAR
+          ========================================================= */}
 
+      {/* =========================================================
+          2. HERO BANNER ("Reviews")
+          ========================================================= */}
+      <section className="relative bg-[#070D14] text-white py-20 sm:py-28 overflow-hidden border-b border-slate-800">
+        {/* Background Team Meeting with Dark Overlay */}
+        <div className="absolute inset-0 z-0 opacity-25">
+          <Image
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=2400&q=95"
+            alt="Customer reviews background"
+            fill
+            priority
+            quality={95}
+            className="object-cover filter grayscale"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#070D14]/90 via-[#070D14]/80 to-[#070D14]" />
+        </div>
+
+        {/* Ambient Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[300px] bg-[#00BC7D]/[0.10] blur-[150px] rounded-full pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
+            Reviews
+          </h1>
+          <p className="text-xs sm:text-sm md:text-base text-zinc-300 max-w-xl mx-auto leading-relaxed">
+            Hear from customers who found the right professionals through Controfferta.it.
+          </p>
+
+          {/* Stats Counters (4.8 Average rating, 6+ Verified reviews) */}
+          <div className="pt-6 flex items-center justify-center gap-12 sm:gap-16">
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#00BC7D] tracking-tight">
+                4.8
+              </div>
+              <div className="text-xs text-zinc-400 mt-1">
+                Average rating
+              </div>
+            </div>
+
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl font-extrabold text-[#00BC7D] tracking-tight">
+                6+
+              </div>
+              <div className="text-xs text-zinc-400 mt-1">
+                Verified reviews
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          3. 9 REVIEWS GRID (3 Columns x 3 Rows)
+          ========================================================= */}
+      <section className="py-16 sm:py-24 bg-[#F8FAFC]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+            {reviewsList.map((rev, index) => (
+              <div
+                key={rev.id || index}
+                className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+              >
+                {/* Quote Text */}
+                <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed italic">
+                  &quot;{rev.quote}&quot;
+                </p>
+
+                {/* Author & Rating Stars Bottom */}
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-9 h-9 rounded-full overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+                      <Image
+                        src={rev.avatar}
+                        alt={rev.author}
+                        fill
+                        quality={95}
+                        sizes="72px"
+                        className="object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
+                        {rev.author}
+                      </h4>
+                      <p className="text-[11px] text-zinc-400 leading-tight mt-0.5">
+                        {rev.role}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 5 Amber Stars */}
+                  <div className="flex items-center gap-0.5 text-amber-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-3.5 h-3.5 ${
+                          i < rev.rating ? "fill-amber-400 text-amber-400" : "text-slate-200"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* =========================================================
+              4. "Add Review for Platform" CARD
+              ========================================================= */}
+          <div className="mt-16 sm:mt-20 max-w-xl mx-auto">
+            <div className="bg-white rounded-3xl p-7 sm:p-9 border border-slate-200 shadow-xl text-center relative overflow-hidden">
+              
+              {/* Icon badge */}
+              <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center mx-auto mb-3 shadow-xs">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+
+              <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                Add Review for Platform
+              </h3>
+
+              {!reviewSubmitted ? (
+                <form onSubmit={handleReviewSubmit} className="mt-5 space-y-4">
+                  {/* Interactive Star Rating Selector */}
+                  <div className="flex items-center justify-center gap-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setRating(star)}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        className="transition-transform hover:scale-110 focus:outline-none cursor-pointer"
+                      >
+                        <Star
+                          className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${
+                            star <= (hoverRating || rating)
+                              ? "fill-amber-400 text-amber-400"
+                              : "fill-slate-200 text-slate-200"
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Message Field */}
+                  <div className="text-left">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Message *
+                    </label>
+                    <textarea
+                      required
+                      rows={4}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Describe in detail what the customer is looking for, type of work, quantity, technical specifications..."
+                      className="w-full text-xs sm:text-sm p-3.5 rounded-xl border border-slate-200 focus:border-[#00BC7D] outline-none resize-none leading-relaxed"
+                    />
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="flex items-center gap-3.5 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setMessage("")}
+                      className="flex-1 py-3 px-5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 py-3 px-5 rounded-xl bg-[#00BC7D] hover:bg-[#00d68f] text-white text-xs sm:text-sm font-semibold shadow-md transition-colors cursor-pointer"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="py-6 space-y-3">
+                  <div className="w-12 h-12 rounded-full bg-emerald-100 text-[#00BC7D] mx-auto flex items-center justify-center">
+                    <CheckCircle2 className="w-6 h-6" />
+                  </div>
+                  <h4 className="text-base font-bold text-slate-900">
+                    Thank you for your review!
+                  </h4>
+                  <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+                    Your feedback helps us continue providing the best connection between customers and professionals.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setReviewSubmitted(false)}
+                    className="text-xs text-[#00BC7D] font-semibold underline pt-2 cursor-pointer"
+                  >
+                    Write another review
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* =========================================================
+          5. FOOTER
+          ========================================================= */}
 
       {/* =========================================================
           ZERO-AUTH REQUEST MODAL
@@ -179,7 +389,7 @@ export default function ReviewsPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#00BC7D]" />
                     <span className="text-[11px] font-bold text-[#00BC7D] uppercase tracking-wider">
-                      Zero Auth • 100% Free
+                      Zero Auth â€¢ 100% Free
                     </span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-slate-900">

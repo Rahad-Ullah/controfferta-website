@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sun,
@@ -42,7 +41,7 @@ export default function ServicesPage() {
       leads: "142 leads",
       icon: Sun,
       description: "Residential and commercial solar systems, storage batteries, tax incentives.",
-      actionText: "Submit a Requests →",
+      actionText: "Submit a Requests â†’",
     },
     {
       id: "energy-saving",
@@ -50,7 +49,7 @@ export default function ServicesPage() {
       leads: "89 leads",
       icon: Zap,
       description: "Thermal insulation, heat pumps, windows, energy audits.",
-      actionText: "Submit a Requests →",
+      actionText: "Submit a Requests â†’",
     },
     {
       id: "windows-doors",
@@ -58,7 +57,7 @@ export default function ServicesPage() {
       leads: "156 leads",
       icon: AppWindow,
       description: "PVC, aluminum, wood windows, security doors, mosquito nets, shutters.",
-      actionText: "Submit a Requests →",
+      actionText: "Submit a Requests â†’",
     },
     {
       id: "construction",
@@ -66,7 +65,7 @@ export default function ServicesPage() {
       leads: "217 leads",
       icon: Hammer,
       description: "Renovations, roof resurfacing, masonry, waterproofing.",
-      actionText: "Submit a Requests →",
+      actionText: "Submit a Requests â†’",
     },
     {
       id: "moving",
@@ -74,7 +73,7 @@ export default function ServicesPage() {
       leads: "93 leads",
       icon: Truck,
       description: "Residential and corporate moves, portering, furniture storage.",
-      actionText: "Submit a Requests →",
+      actionText: "Submit a Requests â†’",
     },
     {
       id: "renovation",
@@ -82,7 +81,7 @@ export default function ServicesPage() {
       leads: "184 leads",
       icon: Wrench,
       description: "Bathrooms, kitchens, flooring, painting, general contractor.",
-      actionText: "Submit a Requests →",
+      actionText: "Submit a Requests â†’",
     },
     {
       id: "gardening",
@@ -90,7 +89,7 @@ export default function ServicesPage() {
       leads: "67 leads",
       icon: Flower2,
       description: "Garden design, lawn maintenance, pruning, irrigation.",
-      actionText: "Submit a Requests →",
+      actionText: "Submit a Requests â†’",
     },
     {
       id: "air-conditioning",
@@ -98,7 +97,7 @@ export default function ServicesPage() {
       leads: "112 leads",
       icon: Wind,
       description: "Split installation, boiler maintenance, mechanical ventilation.",
-      actionText: "Submit a Requests →",
+      actionText: "Submit a Requests â†’",
     },
     {
       id: "painting",
@@ -106,7 +105,7 @@ export default function ServicesPage() {
       leads: "112 leads",
       icon: Paintbrush,
       description: "Interior painting, exterior painting, wall finishing, decorative painting.",
-      actionText: "Browse requests →",
+      actionText: "Browse requests â†’",
     },
   ];
 
@@ -131,7 +130,115 @@ export default function ServicesPage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-[#00BC7D]/20 selection:text-[#00BC7D]">
+      
+      {/* =========================================================
+          1. HEADER / NAVBAR
+          ========================================================= */}
 
+      {/* =========================================================
+          2. HERO BANNER ("Service Categories")
+          ========================================================= */}
+      <section className="relative bg-[#0B131D] text-white py-20 sm:py-24 overflow-hidden border-b border-slate-800">
+        {/* Isometric Grid Background Artwork */}
+        <div className="absolute inset-0 z-0 opacity-25">
+          <Image
+            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2400&q=95"
+            alt="Business infrastructure background"
+            fill
+            priority
+            quality={95}
+            className="object-cover filter grayscale"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0B131D]/90 via-[#0B131D]/80 to-[#0B131D]" />
+        </div>
+
+        {/* Ambient watermark words from design */}
+        <div className="absolute top-1/2 left-8 -translate-y-1/2 hidden md:block text-xs font-semibold text-white/10 tracking-widest uppercase pointer-events-none">
+          Professional Businesses
+        </div>
+        <div className="absolute top-1/2 right-8 -translate-y-1/2 hidden md:block text-xs font-semibold text-white/10 tracking-widest uppercase pointer-events-none">
+          Logistics
+        </div>
+
+        {/* Emerald Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[300px] bg-[#00BC7D]/[0.10] blur-[150px] rounded-full pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-3">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white">
+            Service Categories
+          </h1>
+          <p className="text-xs sm:text-sm md:text-base text-zinc-300 max-w-xl mx-auto leading-relaxed">
+            Tell us what service you need and find the right professionals for your request.
+          </p>
+
+          {/* Optional Quick Filter Bar */}
+          <div className="pt-4 max-w-md mx-auto">
+            <div className="relative">
+              <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                placeholder="Filter services by keyword..."
+                className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-white/10 border border-white/15 rounded-xl text-white placeholder:text-zinc-400 outline-none focus:border-[#00BC7D] backdrop-blur-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================
+          3. 9 SERVICE CATEGORY CARDS GRID
+          ========================================================= */}
+      <section className="py-16 sm:py-24 bg-[#F8FAFC]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
+            {filteredCategories.map((service) => {
+              const IconComp = service.icon;
+              return (
+                <div
+                  key={service.id}
+                  onClick={() => handleOpenModal(service.title)}
+                  className="group bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 hover:border-[#00BC7D]/60 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between cursor-pointer"
+                >
+                  <div>
+                    {/* Top Row: Icon Badge (Left) + Lead Count Pill (Right) */}
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-full bg-emerald-50 text-[#00BC7D] flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <IconComp className="w-5 h-5 stroke-[2]" />
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#00BC7D] text-[11px] font-semibold border border-emerald-100">
+                        {service.leads}
+                      </span>
+                    </div>
+
+                    {/* Middle: Title & Description */}
+                    <h2 className="text-base sm:text-lg font-bold text-slate-900 mt-4 tracking-tight group-hover:text-[#00BC7D] transition-colors">
+                      {service.title}
+                    </h2>
+                    <p className="mt-2 text-xs sm:text-sm text-zinc-500 leading-relaxed">
+                      {service.description}
+                    </p>
+                  </div>
+
+                  {/* Bottom: Action Text Right-Aligned */}
+                  <div className="mt-6 pt-2 flex justify-end">
+                    <span className="text-xs sm:text-sm font-semibold text-[#00BC7D] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                      {service.actionText}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
+      </section>
+
+      {/* =========================================================
+          4. FOOTER
+          ========================================================= */}
 
       {/* =========================================================
           ZERO-AUTH REQUEST MODAL
@@ -158,7 +265,7 @@ export default function ServicesPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#00BC7D]" />
                     <span className="text-[11px] font-bold text-[#00BC7D] uppercase tracking-wider">
-                      Zero Auth • 100% Free
+                      Zero Auth â€¢ 100% Free
                     </span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
