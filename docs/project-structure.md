@@ -1,6 +1,6 @@
 # Project structure
 
-Read this before adding files. Client data fetching also follows `docs/swr.md`.
+Read this before adding files. The stack is `docs/tech-stack.md`. Client data fetching also follows `docs/swr.md`.
 
 ## Naming
 
