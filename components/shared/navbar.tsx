@@ -1,3 +1,3 @@
-import CustomerNavbar from "./CustomerNavbar";
+import CustomerNavbar from "./customer-navbar";
 
 export default CustomerNavbar;

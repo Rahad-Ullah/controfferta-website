@@ -1,13 +1,15 @@
-import { io } from "socket.io-client";
-import { baseURL } from "./BaseURL";
+import { io, type Socket } from "socket.io-client";
+import { envConfig } from "@/lib/env-config";
 
-let socket = null;
+let socket: Socket | null = null;
 
-export const getSocket = () => {
+export async function getSocket(): Promise<Socket | null> {
   if (typeof window === "undefined") return null;
 
+  const { apiBaseUrl } = await envConfig();
+
   if (!socket) {
-    socket = io(baseURL, {
+    socket = io(apiBaseUrl, {
       withCredentials: true,
       transports: ["websocket", "polling"],
       autoConnect: true,
@@ -17,27 +19,26 @@ export const getSocket = () => {
     });
 
     socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
+      console.log("Socket connected:", socket?.id);
     });
 
-    socket.on("connect_error", (err) => {
+    socket.on("connect_error", (err: Error) => {
       console.error("Socket connection error:", err);
     });
 
-    socket.on("disconnect", (reason) => {
+    socket.on("disconnect", (reason: string) => {
       console.log("Socket disconnected:", reason);
     });
-  } else if (!socket.connected && !socket.connecting) {
+  } else if (!socket.connected) {
     socket.connect();
   }
 
   return socket;
-};
+}
 
-export const disconnectSocket = () => {
+export function disconnectSocket() {
   if (socket) {
     socket.disconnect();
     socket = null;
   }
-};
-
+}

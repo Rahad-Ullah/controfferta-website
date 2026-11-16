@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import CustomerNavbar from "@/components/shared/CustomerNavbar";
+import CustomerNavbar from "@/components/shared/customer-navbar";
 import {
   Hero,
   StatsBar,
@@ -13,7 +13,7 @@ import {
   BottomCta,
   CustomerFooter,
   QuickRequestModal,
-} from "./customerLanding";
+} from "./customer-landing";
 
 interface CustomerLandingPageProps {
   onSwitchRole?: () => void;

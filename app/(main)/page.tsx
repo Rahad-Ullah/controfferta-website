@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import OnboardingScreen from "@/components/onboarding/OnboardingScreen";
-import CustomerLandingPage from "@/components/landing/CustomerLandingPage";
+import OnboardingScreen from "@/components/onboarding/onboarding-screen";
+import CustomerLandingPage from "@/components/landing/customer-landing-page";
 
 export default function HomePage() {
   const [currentRole, setCurrentRole] = useState<"customer" | "provider" | null>(null);

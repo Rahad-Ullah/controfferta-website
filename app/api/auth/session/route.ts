@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { clearAuthToken, setAuthToken } from "@/lib/authCookie";
+import { clearAuthToken, setAuthToken } from "@/lib/auth-cookie";
 
 const MAX_TOKEN_LENGTH = 4096;
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import { Providers } from "@/components/providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -10,8 +11,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "The Cloud Salon | Find & Book Top Beauty Professionals & Salons",
-  description: "Discover trusted beauty professionals and salons, and book your next appointment with confidence.",
+  metadataBase: new URL("https://controfferta.it"),
+  title: {
+    default: "Controfferta | Find the right professional for your project",
+    template: "%s | Controfferta",
+  },
+  description:
+    "Tell us what you need and connect with qualified service providers in your area. Fast, free and easy.",
+  openGraph: {
+    type: "website",
+    url: "https://controfferta.it",
+    siteName: "Controfferta",
+    title: "Controfferta | Find the right professional for your project",
+    description:
+      "Tell us what you need and connect with qualified service providers in your area. Fast, free and easy.",
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +40,7 @@ export default function RootLayout({
       className={`h-full antialiased ${inter.variable}`}
     >
       <body className={`${inter.className} min-h-full flex flex-col bg-background text-foreground font-sans selection:bg-primary/20 selection:text-primary`}>
-        {children}
+        <Providers>{children}</Providers>
         <Toaster richColors position="top-center" />
       </body>
     </html>

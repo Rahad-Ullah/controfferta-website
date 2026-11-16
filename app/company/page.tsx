@@ -1,4 +1,4 @@
-import CompanyLandingPage from "@/components/landing/CompanyLandingPage";
+import CompanyLandingPage from "@/components/landing/company-landing-page";
 
 export const metadata = {
   title: "For Companies & Professionals | CONTROFFERTA.IT",

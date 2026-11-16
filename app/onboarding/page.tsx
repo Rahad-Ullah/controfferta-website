@@ -1,4 +1,4 @@
-import OnboardingScreen from "@/components/onboarding/OnboardingScreen";
+import OnboardingScreen from "@/components/onboarding/onboarding-screen";
 
 export const metadata = {
   title: "Onboarding | CONTROFFERTA.IT",

@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { importLibrary, setOptions } from '@googlemaps/js-api-loader';
 import { MapPin, Loader2, Navigation } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { envConfig } from '../../envConfig';
+import { envConfig } from '@/lib/env-config';
 
 export interface GooglePlaceResult {
   address: string;

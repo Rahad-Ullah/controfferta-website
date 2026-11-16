@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import CustomerNavbar from "@/components/shared/CustomerNavbar";
+import CustomerNavbar from "@/components/shared/customer-navbar";
 import {
   Search,
   MapPin,
@@ -22,6 +22,7 @@ export default function SubmitRequestPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [requestRef, setRequestRef] = useState<string>("");
 
   // Form State
   const [category, setCategory] = useState<string>("Solar Panels");
@@ -78,6 +79,7 @@ export default function SubmitRequestPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setRequestRef(String(Math.floor(10000 + Math.random() * 90000)));
     setIsSuccess(true);
 
     try {
@@ -551,7 +553,7 @@ export default function SubmitRequestPage() {
             <div className="bg-slate-50 rounded-xl p-4 text-xs text-zinc-600 text-left space-y-1.5 border border-slate-200/70">
               <div className="flex justify-between">
                 <span className="text-zinc-400">Request Ref:</span>
-                <span className="font-mono font-bold text-slate-800">#IT-{Math.floor(10000 + Math.random() * 90000)}</span>
+                <span className="font-mono font-bold text-slate-800">#IT-{requestRef}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-400">Contact:</span>
@@ -575,6 +577,7 @@ export default function SubmitRequestPage() {
                 onClick={() => {
                   setIsSuccess(false);
                   setCurrentStep(1);
+                  setRequestRef("");
                 }}
                 className="flex-1 py-3 px-5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold transition-colors"
               >

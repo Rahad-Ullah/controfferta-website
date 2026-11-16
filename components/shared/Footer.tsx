@@ -16,7 +16,7 @@ export default function Footer() {
             <Link href="/" className="inline-block group">
               <Image
                 src="/icons/Dark_Mode.png"
-                alt="The Cloud Salon"
+                alt="Controfferta"
                 width={300}
                 height={80}
                 className="h-14 sm:h-16 w-auto object-contain transition-transform group-hover:scale-[1.02]"
@@ -25,7 +25,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-sm text-zinc-400 font-normal leading-relaxed max-w-sm">
-              Discover trusted beauty professionals, explore luxury salon workspaces, and book appointments seamlessly — all in one modern marketplace.
+              Tell us what you need and connect with qualified service providers in your area. Fast, free and easy.
             </p>
 
             <div className="pt-1 space-y-1.5 text-xs text-zinc-400">
@@ -33,11 +33,11 @@ export default function Footer() {
                 Support &amp; Inquiries
               </span>
               <a
-                href="mailto:support@thecloudsalon.com"
+                href="mailto:support@controfferta.it"
                 className="inline-flex items-center gap-1.5 text-[#00BC7D] hover:underline transition-colors"
               >
                 <Mail className="w-3.5 h-3.5 shrink-0" />
-                <span>support@thecloudsalon.com</span>
+                <span>support@controfferta.it</span>
               </a>
             </div>
 
@@ -99,13 +99,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/salons" className="text-zinc-400 hover:text-[#00BC7D] transition-colors">
-                  Partner Salons
+                <Link href="/company" className="text-zinc-400 hover:text-[#00BC7D] transition-colors">
+                  For Companies
                 </Link>
               </li>
               <li>
-                <Link href="/salon-owners" className="text-zinc-400 hover:text-[#00BC7D] transition-colors">
-                  Salon Owners &amp; Workspaces
+                <Link href="/how-it-works" className="text-zinc-400 hover:text-[#00BC7D] transition-colors">
+                  How It Works
                 </Link>
               </li>
               <li>
@@ -123,13 +123,13 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link href="/for-professionals" className="text-zinc-400 hover:text-[#00BC7D] transition-colors">
-                  For Freelance Stylists
+                <Link href="/company" className="text-zinc-400 hover:text-[#00BC7D] transition-colors">
+                  For Companies
                 </Link>
               </li>
               <li>
-                <Link href="/for-businesses" className="text-zinc-400 hover:text-[#00BC7D] transition-colors">
-                  For Salon Businesses
+                <Link href="/company" className="text-zinc-400 hover:text-[#00BC7D] transition-colors">
+                  For Service Providers
                 </Link>
               </li>
               <li>
@@ -183,9 +183,9 @@ export default function Footer() {
 
         {/* Bottom Bar: Clean & Minimal (Zero Duplicate Links) */}
         <div className="border-t border-white/10 mt-12 sm:mt-16 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-400 text-center sm:text-left">
-          <p>© {new Date().getFullYear()} The Cloud Salon Ltd. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Controfferta. All rights reserved.</p>
           <p className="text-zinc-500">
-            Elevating beauty and salon workspace experiences.
+            Find the right professional for your project.
           </p>
         </div>
       </div>

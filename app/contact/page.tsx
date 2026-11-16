@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import CustomerNavbar from "@/components/shared/CustomerNavbar";
+import CustomerNavbar from "@/components/shared/customer-navbar";
 import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare, Clock } from "lucide-react";
 
 export default function ContactPage() {

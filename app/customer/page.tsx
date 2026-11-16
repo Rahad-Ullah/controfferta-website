@@ -1,4 +1,4 @@
-import CustomerLandingPage from "@/components/landing/CustomerLandingPage";
+import CustomerLandingPage from "@/components/landing/customer-landing-page";
 
 export const metadata = {
   title: "Controfferta.it | Find the Right Professional for Your Project",
