@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  Search,
+  Wrench,
+  CalendarClock,
   MapPin,
-  ChevronDown,
   AlertTriangle,
   User,
   Mail,
@@ -14,6 +14,75 @@ import {
   FileText,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
+import { fieldErrors, requestFields, stepFields } from "@/schemas/submit-request";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+
+const fieldClassName =
+  "h-auto w-full rounded-xl border-slate-300/80 bg-[#E5E9EC] px-4 py-3 text-xs text-slate-800 shadow-none placeholder:text-zinc-400 hover:bg-[#dfe4e8] focus-visible:border-[#00BC7D] focus-visible:ring-0 data-[size=default]:h-auto sm:text-sm";
+
+const contactFieldClassName =
+  "h-auto w-full rounded-xl border-slate-300/80 bg-[#ECEFF2] py-2.5 pl-11 text-xs text-slate-800 shadow-none placeholder:text-zinc-400 focus-visible:border-[#00BC7D] focus-visible:ring-0 sm:text-sm";
+
+function StepActions({
+  onBack,
+  onContinue,
+}: {
+  onBack: () => void;
+  onContinue: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-center gap-4 border-t border-slate-300/60 pt-8">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onBack}
+        className="h-auto rounded-full border-slate-300 bg-[#D9DFE4] px-9 py-2.5 text-xs font-semibold text-slate-700 hover:bg-[#cfd6dc] sm:text-sm"
+      >
+        Back
+      </Button>
+      <Button
+        type="button"
+        onClick={onContinue}
+        className="h-auto rounded-full bg-[#00BC7D] px-9 py-2.5 text-xs font-semibold text-white shadow-md hover:bg-[#00d68f] sm:text-sm"
+      >
+        Continue
+      </Button>
+    </div>
+  );
+}
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className="mt-1.5 text-xs text-red-600">{message}</p>;
+}
+
+function formatBudget(min: string, max: string) {
+  const low = min.trim();
+  const high = max.trim();
+  if (low && high) return `€${low} – €${high}`;
+  if (low) return `From €${low}`;
+  if (high) return `Up to €${high}`;
+  return "";
+}
+
+function regionForLocation(value: string) {
+  const normalized = value.toLowerCase();
+  if (normalized.includes("brescia") || normalized.includes("milan")) return "Lombardy";
+  if (normalized.includes("rome")) return "Lazio";
+  return "";
+}
 
 export default function SubmitRequestPage() {
   const router = useRouter();
@@ -23,22 +92,22 @@ export default function SubmitRequestPage() {
   const [requestRef, setRequestRef] = useState<string>("");
 
   // Form State
-  const [category, setCategory] = useState<string>("Solar Panels");
-  const [serviceName, setServiceName] = useState<string>("Solar panel installation");
-  const [location, setLocation] = useState<string>("Brescia, Italy");
-  const [region, setRegion] = useState<string>("Lombardy");
+  const [category, setCategory] = useState<string>("");
+  const [serviceName, setServiceName] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
+  const [region, setRegion] = useState<string>("");
 
-  const [timeline, setTimeline] = useState<string>("As soon as possible");
-  const [description, setDescription] = useState<string>(
-    "Interested in installing a high-efficiency rooftop solar system for our family home. Need advice on hybrid storage inverter options."
-  );
-  const [budget, setBudget] = useState<string>("€5,000 – €10,000");
+  const [timeline, setTimeline] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [budgetMin, setBudgetMin] = useState<string>("");
+  const [budgetMax, setBudgetMax] = useState<string>("");
 
-  const [fullName, setFullName] = useState<string>("Marco Rossi");
-  const [email, setEmail] = useState<string>("m.rossi@residenzabrescia.it");
+  const [fullName, setFullName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [countryCode, setCountryCode] = useState<string>("+39");
-  const [phoneNumber, setPhoneNumber] = useState<string>("335 128 9942");
-  const [agreedToTerms, setAgreedToTerms] = useState<boolean>(true);
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const requestedCategory = searchParams.get("category");
@@ -66,11 +135,43 @@ export default function SubmitRequestPage() {
     "Flexible / Just exploring",
   ];
 
+  const clearFieldError = (field: string) => {
+    setErrors((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  };
+
   const handleNext = () => {
-    if (currentStep < 3) {
-      setCurrentStep((prev) => prev + 1);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    const fields = stepFields[currentStep as 1 | 2];
+    if (!fields) return;
+
+    const result = requestFields.safeParse({
+      category,
+      serviceName,
+      timeline,
+      location,
+      budgetMin,
+      budgetMax,
+      fullName,
+      email,
+      phoneNumber,
+      agreedToTerms,
+    });
+
+    if (!result.success) {
+      const nextErrors = fieldErrors(result.error, fields);
+      if (Object.keys(nextErrors).length > 0) {
+        setErrors(nextErrors);
+        return;
+      }
     }
+
+    setErrors({});
+    setCurrentStep((prev) => prev + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleBack = () => {
@@ -84,6 +185,29 @@ export default function SubmitRequestPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const result = requestFields.safeParse({
+      category,
+      serviceName,
+      timeline,
+      location,
+      budgetMin,
+      budgetMax,
+      fullName,
+      email,
+      phoneNumber,
+      agreedToTerms,
+    });
+
+    if (!result.success) {
+      const nextErrors = fieldErrors(result.error, stepFields[3]);
+      if (Object.keys(nextErrors).length > 0) {
+        setErrors(nextErrors);
+        return;
+      }
+    }
+
+    setErrors({});
     setRequestRef(String(Math.floor(10000 + Math.random() * 90000)));
     setIsSuccess(true);
 
@@ -97,7 +221,7 @@ export default function SubmitRequestPage() {
           title: `${serviceName} in ${location}`,
           description: description,
           location: location,
-          budget: budget,
+          budget: formatBudget(budgetMin, budgetMax),
           timeline: timeline,
           creditsRequired: 15,
           createdAt: "Just now",
@@ -154,7 +278,7 @@ export default function SubmitRequestPage() {
               />
             </div>
 
-            {/* STEP 1: Service Category, Service Name, Location */}
+            {/* STEP 1: Service Category, Service Name, Description */}
             {currentStep === 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -164,87 +288,84 @@ export default function SubmitRequestPage() {
               >
                 {/* Field 1: Category */}
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-slate-800 mb-2">
-                    Which service category are you interested in?
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-[#E5E9EC] hover:bg-[#dfe4e8] border border-slate-300/80 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-800 appearance-none outline-none focus:border-[#00BC7D] transition-colors cursor-pointer"
+                  <Label className="mb-2 block text-xs font-semibold text-slate-800 sm:text-sm">
+                    Which service category are you interested in? <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    value={category || null}
+                    onValueChange={(value) => {
+                      if (!value) return;
+                      setCategory(value);
+                      clearFieldError("category");
+                    }}
+                  >
+                    <SelectTrigger className={fieldClassName}>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent
+                      align="start"
+                      alignItemWithTrigger={false}
+                      className="p-1"
+                      style={{ width: "14rem" }}
                     >
-                      {(categories.includes(category) ? categories : [category, ...categories]).map((cat) => (
-                        <option key={cat} value={cat}>
+                      {(category && !categories.includes(category) ? [category, ...categories] : categories).map((cat) => (
+                        <SelectItem key={cat} value={cat}>
                           {cat}
-                        </option>
+                        </SelectItem>
                       ))}
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-zinc-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  </div>
+                    </SelectContent>
+                  </Select>
+                  <FieldError message={errors.category} />
                 </div>
 
                 {/* Field 2: Specific Service */}
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-slate-800 mb-2">
-                    What service do you need?
-                  </label>
+                  <Label className="mb-2 block text-xs font-semibold text-slate-800 sm:text-sm">
+                    What service do you need? <span className="text-red-500">*</span>
+                  </Label>
                   <div className="relative">
-                    <Search className="w-4 h-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                    <input
+                    <Wrench className="pointer-events-none absolute top-1/2 left-4 z-10 size-4 -translate-y-1/2 text-zinc-400" />
+                    <Input
                       type="text"
+                      required
+                      aria-invalid={Boolean(errors.serviceName)}
                       value={serviceName}
-                      onChange={(e) => setServiceName(e.target.value)}
-                      placeholder="e.g. Solar panel installation"
-                      className="w-full bg-[#E5E9EC] hover:bg-[#dfe4e8] border border-slate-300/80 rounded-xl pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none focus:border-[#00BC7D] transition-colors"
-                    />
-                  </div>
-                </div>
-
-                {/* Field 3: Location */}
-                <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-slate-800 mb-2">
-                    Where is it needed?
-                  </label>
-                  <div className="relative">
-                    <MapPin className="w-4 h-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      value={location}
                       onChange={(e) => {
-                        setLocation(e.target.value);
-                        if (e.target.value.toLowerCase().includes("brescia") || e.target.value.toLowerCase().includes("milan")) {
-                          setRegion("Lombardy");
-                        } else if (e.target.value.toLowerCase().includes("rome")) {
-                          setRegion("Lazio");
-                        }
+                        setServiceName(e.target.value);
+                        clearFieldError("serviceName");
                       }}
-                      placeholder="e.g. Brescia, Italy"
-                      className="w-full bg-[#E5E9EC] hover:bg-[#dfe4e8] border border-slate-300/80 rounded-xl pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none focus:border-[#00BC7D] transition-colors"
+                      placeholder="e.g. Solar panel installation"
+                      className={`${fieldClassName} pl-11`}
                     />
                   </div>
+                  <FieldError message={errors.serviceName} />
                 </div>
 
-                {/* Navigation Buttons */}
-                <div className="pt-8 border-t border-slate-300/60 flex items-center justify-center gap-4">
-                  <button
-                    type="button"
-                    onClick={handleBack}
-                    className="px-9 py-2.5 rounded-full border border-slate-300 bg-[#D9DFE4] hover:bg-[#cfd6dc] text-slate-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    className="px-9 py-2.5 rounded-full bg-[#00BC7D] hover:bg-[#00d68f] text-white text-xs sm:text-sm font-semibold shadow-md transition-all cursor-pointer transform hover:-translate-y-0.5"
-                  >
-                    Continue
-                  </button>
+                {/* Field 3: Description */}
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <Label className="text-xs font-semibold text-slate-800 sm:text-sm">
+                      Briefly describe what you need
+                    </Label>
+                    <span className="text-[11px] font-medium text-zinc-400">
+                      {description.length} / 500 characters
+                    </span>
+                  </div>
+                  <Textarea
+                    rows={4}
+                    maxLength={500}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Tell us about your project or requirements... (e.g. 6kW rooftop system with hybrid inverter, pitched clay tile roof, need site inspection)"
+                    className={`${fieldClassName} min-h-28 resize-none leading-relaxed`}
+                  />
                 </div>
+
+                <StepActions onBack={handleBack} onContinue={handleNext} />
               </motion.div>
             )}
 
-            {/* STEP 2: Timeline, Description, Estimated Budget */}
+            {/* STEP 2: Timeline, Location, Estimated Budget */}
             {currentStep === 2 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -254,81 +375,125 @@ export default function SubmitRequestPage() {
               >
                 {/* Field 1: Timeline */}
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-slate-800 mb-2">
-                    When do you need the service?
-                  </label>
+                  <Label className="mb-2 block text-xs font-semibold text-slate-800 sm:text-sm">
+                    When do you need the service? <span className="text-red-500">*</span>
+                  </Label>
                   <div className="relative">
-                    <select
-                      value={timeline}
-                      onChange={(e) => setTimeline(e.target.value)}
-                      className="w-full bg-[#E5E9EC] hover:bg-[#dfe4e8] border border-slate-300/80 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-800 appearance-none outline-none focus:border-[#00BC7D] transition-colors cursor-pointer"
+                    <CalendarClock className="pointer-events-none absolute top-1/2 left-4 z-10 size-4 -translate-y-1/2 text-zinc-400" />
+                    <Select
+                      value={timeline || null}
+                      onValueChange={(value) => {
+                        if (!value) return;
+                        setTimeline(value);
+                        clearFieldError("timeline");
+                      }}
                     >
-                      {timelines.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
+                      <SelectTrigger className={`${fieldClassName} pl-11`}>
+                        <SelectValue placeholder="Choose a timeline" />
+                      </SelectTrigger>
+                    <SelectContent
+                      align="start"
+                      alignItemWithTrigger={false}
+                      className="p-1"
+                      style={{ width: "14rem" }}
+                    >
+                      {timelines.map((item) => (
+                        <SelectItem key={item} value={item}>
+                          {item}
+                        </SelectItem>
                       ))}
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-zinc-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </SelectContent>
+                  </Select>
                   </div>
+                  <FieldError message={errors.timeline} />
                 </div>
 
-                {/* Field 2: Description */}
+                {/* Field 2: Location */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs sm:text-sm font-semibold text-slate-800">
-                      Briefly describe what you need
-                    </label>
-                    <span className="text-[11px] text-zinc-400 font-medium">
-                      {description.length} / 500 characters
-                    </span>
+                  <Label className="mb-2 block text-xs font-semibold text-slate-800 sm:text-sm">
+                    Where is it needed? <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <MapPin className="pointer-events-none absolute top-1/2 left-4 z-10 size-4 -translate-y-1/2 text-zinc-400" />
+                    <Input
+                      type="text"
+                      required
+                      aria-invalid={Boolean(errors.location)}
+                      value={location}
+                      onChange={(e) => {
+                        const nextLocation = e.target.value;
+                        setLocation(nextLocation);
+                        clearFieldError("location");
+                        const nextRegion = regionForLocation(nextLocation);
+                        if (nextRegion) setRegion(nextRegion);
+                      }}
+                      placeholder="e.g. Brescia, Italy"
+                      className={`${fieldClassName} pl-11`}
+                    />
                   </div>
-                  <textarea
-                    rows={4}
-                    maxLength={500}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Tell us about your project or requirements... (e.g. 6kW rooftop system with hybrid inverter, pitched clay tile roof, need site inspection)"
-                    className="w-full bg-[#E5E9EC] hover:bg-[#dfe4e8] border border-slate-300/80 rounded-xl p-4 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none focus:border-[#00BC7D] transition-colors resize-none leading-relaxed"
-                  />
+                  <FieldError message={errors.location} />
                 </div>
 
                 {/* Field 3: Estimated Budget */}
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-slate-800 mb-2">
+                  <Label className="mb-2 block text-xs font-semibold text-slate-800 sm:text-sm">
                     Estimated Budget
-                  </label>
-                  <div className="relative">
-                    <span className="text-sm font-bold text-slate-500 absolute left-4 top-1/2 -translate-y-1/2">
-                      €
-                    </span>
-                    <input
-                      type="text"
-                      value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
-                      placeholder="e.g. €5,000 – €10,000"
-                      className="w-full bg-[#E5E9EC] hover:bg-[#dfe4e8] border border-slate-300/80 rounded-xl pl-9 pr-4 py-3 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none focus:border-[#00BC7D] transition-colors"
-                    />
+                  </Label>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div>
+                      <Label className="mb-1.5 block text-[11px] font-medium text-zinc-500">
+                        Min <span className="text-red-500">*</span>
+                      </Label>
+                      <div className="relative">
+                        <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm font-bold text-slate-500">
+                          €
+                        </span>
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          required
+                          aria-invalid={Boolean(errors.budgetMin)}
+                          value={budgetMin}
+                          onChange={(e) => {
+                            setBudgetMin(e.target.value);
+                            clearFieldError("budgetMin");
+                            clearFieldError("budgetMax");
+                          }}
+                          placeholder="5,000"
+                          className={`${fieldClassName} pl-9`}
+                        />
+                      </div>
+                      <FieldError message={errors.budgetMin} />
+                    </div>
+                    <div>
+                      <Label className="mb-1.5 block text-[11px] font-medium text-zinc-500">
+                        Max <span className="text-red-500">*</span>
+                      </Label>
+                      <div className="relative">
+                        <span className="absolute top-1/2 left-4 -translate-y-1/2 text-sm font-bold text-slate-500">
+                          €
+                        </span>
+                        <Input
+                          type="text"
+                          inputMode="decimal"
+                          required
+                          aria-invalid={Boolean(errors.budgetMax)}
+                          value={budgetMax}
+                          onChange={(e) => {
+                            setBudgetMax(e.target.value);
+                            clearFieldError("budgetMin");
+                            clearFieldError("budgetMax");
+                          }}
+                          placeholder="10,000"
+                          className={`${fieldClassName} pl-9`}
+                        />
+                      </div>
+                      <FieldError message={errors.budgetMax} />
+                    </div>
                   </div>
                 </div>
 
-                {/* Navigation Buttons */}
-                <div className="pt-8 border-t border-slate-300/60 flex items-center justify-center gap-4">
-                  <button
-                    type="button"
-                    onClick={handleBack}
-                    className="px-9 py-2.5 rounded-full border border-slate-300 bg-[#D9DFE4] hover:bg-[#cfd6dc] text-slate-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    className="px-9 py-2.5 rounded-full bg-[#00BC7D] hover:bg-[#00d68f] text-white text-xs sm:text-sm font-semibold shadow-md transition-all cursor-pointer transform hover:-translate-y-0.5"
-                  >
-                    Continue
-                  </button>
-                </div>
+                <StepActions onBack={handleBack} onContinue={handleNext} />
               </motion.div>
             )}
 
@@ -347,13 +512,14 @@ export default function SubmitRequestPage() {
                       <FileText className="w-4 h-4 text-[#00BC7D]" />
                       <span>Request Summary</span>
                     </div>
-                    <button
+                    <Button
                       type="button"
+                      variant="link"
                       onClick={() => setCurrentStep(1)}
-                      className="text-xs font-semibold text-[#00BC7D] hover:underline cursor-pointer"
+                      className="h-auto p-0 text-xs font-semibold text-[#00BC7D]"
                     >
                       ← Edit Request
-                    </button>
+                    </Button>
                   </div>
 
                   {/* Service */}
@@ -389,18 +555,18 @@ export default function SubmitRequestPage() {
                       Estimated Budget
                     </span>
                     <span className="text-xs sm:text-sm font-bold text-[#00BC7D] block mt-0.5">
-                      {budget}
+                      {formatBudget(budgetMin, budgetMax)}
                     </span>
                   </div>
 
                   {/* Pills row (Category & Urgency) */}
                   <div className="flex items-center gap-2 pt-1">
-                    <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
+                    <Badge className="h-auto rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold text-amber-800">
                       {category}
-                    </span>
-                    <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                    </Badge>
+                    <Badge className="h-auto rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-bold text-emerald-800">
                       {timeline}
-                    </span>
+                    </Badge>
                   </div>
 
                   {/* Project Scope & Requirements */}
@@ -424,91 +590,108 @@ export default function SubmitRequestPage() {
                     </span>
                   </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Full Name */}
+                  <form noValidate onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <label className="text-xs font-semibold text-slate-800">
+                      <div className="mb-1.5 flex items-center justify-between">
+                        <Label className="text-xs font-semibold text-slate-800">
                           Full Name <span className="text-red-500">*</span>
-                        </label>
+                        </Label>
                         <span className="text-[11px] text-zinc-400">
                           Legal or contact person
                         </span>
                       </div>
                       <div className="relative">
-                        <User className="w-4 h-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                        <input
+                        <User className="pointer-events-none absolute top-1/2 left-4 z-10 size-4 -translate-y-1/2 text-zinc-400" />
+                        <Input
                           type="text"
-                          required
+                          aria-invalid={Boolean(errors.fullName)}
                           value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
+                          onChange={(e) => {
+                            setFullName(e.target.value);
+                            clearFieldError("fullName");
+                          }}
                           placeholder="Marco Rossi"
-                          className="w-full bg-[#ECEFF2] border border-slate-300/80 rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#00BC7D] transition-colors"
+                          className={contactFieldClassName}
                         />
                       </div>
+                      <FieldError message={errors.fullName} />
                     </div>
 
-                    {/* Email Address */}
                     <div>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <label className="text-xs font-semibold text-slate-800">
+                      <div className="mb-1.5 flex items-center justify-between">
+                        <Label className="text-xs font-semibold text-slate-800">
                           Email Address <span className="text-red-500">*</span>
-                        </label>
+                        </Label>
                         <span className="text-[11px] text-zinc-400">
                           Detailed quotes sent here
                         </span>
                       </div>
                       <div className="relative">
-                        <Mail className="w-4 h-4 text-zinc-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                        <input
+                        <Mail className="pointer-events-none absolute top-1/2 left-4 z-10 size-4 -translate-y-1/2 text-zinc-400" />
+                        <Input
                           type="email"
-                          required
+                          aria-invalid={Boolean(errors.email)}
                           value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            clearFieldError("email");
+                          }}
                           placeholder="m.rossi@residenzabrescia.it"
-                          className="w-full bg-[#ECEFF2] border border-slate-300/80 rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#00BC7D] transition-colors"
+                          className={contactFieldClassName}
                         />
                       </div>
+                      <FieldError message={errors.email} />
                     </div>
 
-                    {/* Phone Number with Country Code */}
                     <div>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <label className="text-xs font-semibold text-slate-800">
+                      <div className="mb-1.5 flex items-center justify-between">
+                        <Label className="text-xs font-semibold text-slate-800">
                           Phone Number <span className="text-red-500">*</span>
-                        </label>
+                        </Label>
                         <span className="text-[11px] text-zinc-400">
                           For quote dispatch SMS
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1.5 bg-[#ECEFF2] border border-slate-300/80 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-800 shrink-0">
-                          <span className="text-sm">🇮🇹</span>
-                          <span>+39</span>
-                          <ChevronDown className="w-3 h-3 text-zinc-400" />
-                        </div>
-                        <input
+                        <Select
+                          value={countryCode}
+                          items={[{ value: "+39", label: "🇮🇹 +39" }]}
+                          onValueChange={(value) => value && setCountryCode(value)}
+                        >
+                          <SelectTrigger className="h-auto w-28 shrink-0 rounded-xl border-slate-300/80 bg-[#ECEFF2] px-3 py-2.5 text-xs font-semibold text-slate-800 shadow-none focus-visible:border-[#00BC7D] focus-visible:ring-0 data-[size=default]:h-auto">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="+39">🇮🇹 +39</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Input
                           type="tel"
-                          required
+                          aria-invalid={Boolean(errors.phoneNumber)}
                           value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          onChange={(e) => {
+                            setPhoneNumber(e.target.value);
+                            clearFieldError("phoneNumber");
+                          }}
                           placeholder="335 128 9942"
-                          className="w-full bg-[#ECEFF2] border border-slate-300/80 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-[#00BC7D] transition-colors"
+                          className="h-auto rounded-xl border-slate-300/80 bg-[#ECEFF2] px-4 py-2.5 text-xs text-slate-800 shadow-none focus-visible:border-[#00BC7D] focus-visible:ring-0 sm:text-sm"
                         />
                       </div>
+                      <FieldError message={errors.phoneNumber} />
                     </div>
 
-                    {/* Terms Checkbox */}
                     <div className="flex items-start gap-2.5 pt-2">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         id="terms"
                         required
                         checked={agreedToTerms}
-                        onChange={(e) => setAgreedToTerms(e.target.checked)}
-                        className="w-4 h-4 rounded text-[#00BC7D] focus:ring-[#00BC7D] border-slate-300 mt-0.5 cursor-pointer"
+                        onCheckedChange={(checked) => {
+                          setAgreedToTerms(checked);
+                          clearFieldError("agreedToTerms");
+                        }}
+                        className="mt-0.5 border-slate-400 bg-white data-checked:border-[#00BC7D] data-checked:bg-[#00BC7D] data-checked:text-white"
                       />
-                      <label htmlFor="terms" className="text-xs text-zinc-600 cursor-pointer leading-snug">
+                      <Label htmlFor="terms" className="cursor-pointer text-xs leading-snug font-normal text-zinc-600">
                         I agree to the{" "}
                         <span className="font-semibold text-slate-800 underline">
                           Terms &amp; Conditions
@@ -518,17 +701,17 @@ export default function SubmitRequestPage() {
                           Privacy Policy
                         </span>
                         .
-                      </label>
+                      </Label>
                     </div>
+                    <FieldError message={errors.agreedToTerms} />
 
-                    {/* Final Submit Button */}
                     <div className="pt-3">
-                      <button
+                      <Button
                         type="submit"
-                        className="w-full bg-[#00BC7D] hover:bg-[#00d68f] text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition-all text-xs sm:text-sm cursor-pointer transform hover:-translate-y-0.5"
+                        className="h-auto w-full rounded-xl bg-[#00BC7D] py-3.5 text-xs font-bold text-white shadow-lg hover:bg-[#00d68f] sm:text-sm"
                       >
                         Submit Request
-                      </button>
+                      </Button>
                     </div>
                   </form>
                 </div>
@@ -569,24 +752,39 @@ export default function SubmitRequestPage() {
               </div>
             </div>
 
-            <div className="pt-4 flex flex-col sm:flex-row gap-3">
-              <Link
-                href="/"
-                className="flex-1 py-3 px-5 rounded-xl bg-[#00BC7D] hover:bg-[#00d68f] text-white text-xs sm:text-sm font-semibold shadow-md transition-all text-center"
+            <div className="flex flex-col gap-3 pt-4 sm:flex-row">
+              <Button
+                nativeButton={false}
+                render={<Link href="/" />}
+                className="h-auto flex-1 rounded-xl bg-[#00BC7D] px-5 py-3 text-xs font-semibold text-white shadow-md hover:bg-[#00d68f] sm:text-sm"
               >
                 Back to Homepage
-              </Link>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => {
+                  setCategory("");
+                  setServiceName("");
+                  setLocation("");
+                  setRegion("");
+                  setTimeline("");
+                  setDescription("");
+                  setBudgetMin("");
+                  setBudgetMax("");
+                  setFullName("");
+                  setEmail("");
+                  setPhoneNumber("");
+                  setAgreedToTerms(false);
+                  setErrors({});
                   setIsSuccess(false);
                   setCurrentStep(1);
                   setRequestRef("");
                 }}
-                className="flex-1 py-3 px-5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold transition-colors"
+                className="h-auto flex-1 rounded-xl border-slate-200 px-5 py-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 sm:text-sm"
               >
                 Submit Another Request
-              </button>
+              </Button>
             </div>
           </motion.div>
         )}

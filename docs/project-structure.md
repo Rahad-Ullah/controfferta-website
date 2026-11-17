@@ -23,6 +23,7 @@ Read this before adding files. The stack is `docs/tech-stack.md`. Client data fe
 | `src/components/swr-config.tsx` | Root SWR defaults. `src/app/layout.tsx` wraps every page with `SwrDefaults`. |
 | `src/actions/` | Server actions. One file per entity, named for that entity (`category.ts`). A file can export more than one action. |
 | `src/hooks/` | Shared React hooks. One hook per file, named for the hook (`use-search-param.ts`). |
+| `src/schemas/` | Zod validation schemas. One file per form or entity (`submit-request.ts`). A file can export more than one schema. |
 | `src/lib/` | Shared modules that are not React components. |
 | `src/lib/api/keys.ts` | Every SWR cache key. |
 | `src/lib/api/fetcher.ts` | `nextFetch` and `swrFetcher`. |
