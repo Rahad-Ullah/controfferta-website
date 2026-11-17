@@ -24,7 +24,7 @@ Read this before adding files. The stack is `docs/tech-stack.md`. Client data fe
 | `src/actions/` | Server actions. One file per entity, named for that entity (`category.ts`). A file can export more than one action. |
 | `src/hooks/` | Shared React hooks. One hook per file, named for the hook (`use-search-param.ts`). |
 | `src/schemas/` | Zod validation schemas. One file per form or entity (`submit-request.ts`). A file can export more than one schema. |
-| `src/types/` | Shared API types. One file per entity (`category.interface.ts`, `lead.interface.ts`). |
+| `src/types/` | Shared API types. One file per entity (`category.interface.ts`, `lead.interface.ts`, `support.interface.ts`). |
 | `src/lib/` | Shared modules that are not React components. |
 | `src/lib/api/keys.ts` | Every SWR cache key. |
 | `src/lib/api/fetcher.ts` | `nextFetch` and `swrFetcher`. |
@@ -55,8 +55,8 @@ Route groups choose the layout. A group name in parentheses is not part of the U
 
 ## Adding a feature
 
-1. Add the path to `src/lib/api/keys.ts`.
-2. Read with `useSWR(apiKeys.someKey)` and write with `useSWRMutation(apiKeys.someKey, ...)`. See `docs/swr.md`.
+1. Add each GET path to `src/lib/api/keys.ts`.
+2. Read with `useSWR(apiKeys.someKey)`. A write passes its URL in `nextFetch`. See `docs/swr.md`.
 3. Call the API only through `nextFetch`.
 4. Put the screen component in `src/components/<feature>/<name>.tsx` and export it as PascalCase.
 5. Read configuration through `envConfig()` in `src/lib/env-config.ts`. Do not add another env module.

@@ -43,7 +43,7 @@ Success JSON is `{ success, message, data, pagination? }`. `pagination` is `{ pa
 
 Change only this website.
 
-1. Add the path to `apiKeys` in `src/lib/api/keys.ts`. Copy the path from the route file. Do not put a raw path in a component.
+1. Add each GET path to `apiKeys` in `src/lib/api/keys.ts`. A POST, PATCH, or DELETE path stays in the `nextFetch` call that uses it.
 2. Call it through `nextFetch`. Client reads use `useSWR(apiKeys.someKey)`. Client writes use `useSWRMutation`. See `docs/swr.md`.
 3. Public pages stay Server Components and pass `next: { revalidate, tags }` into `nextFetch`. Portal pages use SWR.
 4. Send `credentials: "include"`. The API already does this inside `nextFetch`. Login sets HttpOnly `accessToken` and `refreshToken` cookies for browsers (`src/app/modules/auth/auth.cookies.ts` in the backend). Do not copy those tokens into `localStorage`.

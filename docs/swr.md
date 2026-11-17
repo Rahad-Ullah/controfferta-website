@@ -15,8 +15,8 @@ Dashboard screens still render `src/lib/placeholders.ts` until a screen is wired
 
 ## Rules
 
-- Add every new endpoint path to `apiKeys` in `src/lib/api/keys.ts`. Do not write a raw path string inside a component.
-- Pass that same `apiKeys` value to both `useSWR` and `useSWRMutation`. SWR then revalidates the client query after the write.
+- `apiKeys` holds GET routes used as SWR cache keys. Do not add a POST, PATCH, or DELETE path there.
+- A write passes its URL in the `nextFetch` call where the mutation is defined. Pass a GET `apiKeys` value as the `useSWRMutation` key when that write should refresh a cached list.
 - Do not give `useSWR` its own fetcher. `SWRConfig` already uses `swrFetcher`, which is a GET through `nextFetch`.
 - Every other call, including writes and server fetches, goes through `nextFetch`. Do not call `fetch` directly for this API.
 - `nextFetch` always sends `credentials: "include"`. On the client, omit `token`. The `auth_token` cookie is `HttpOnly`, so client code cannot read it.
@@ -75,7 +75,7 @@ export function UsersList() {
 
 ## 3. Write with useSWRMutation
 
-Use the same `apiKeys` value. The mutation fetcher receives that key as `url`, and `trigger(payload)` places the payload on `{ arg }`.
+When the write uses the same path as the cached GET, the mutation key is that `apiKeys` value and `nextFetch` receives it as `url`. When the write has its own path, pass that path in `nextFetch` at the call. `trigger(payload)` places the payload on `{ arg }`.
 
 `populateCache: false` keeps a list cache from being replaced by a single created record. `revalidate: true` refetches every `useSWR(apiKeys.users)` after the write succeeds.
 
