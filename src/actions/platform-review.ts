@@ -4,7 +4,7 @@ import { revalidateTag } from "next/cache";
 import { nextFetch } from "@/lib/api/fetcher";
 import { apiKeys } from "@/lib/api/keys";
 import type {
-  PlatformReview,
+  PlatformReviewList,
   PlatformReviewPagination,
   PlatformReviewQuery,
 } from "@/types/platform-review.interface";
@@ -22,19 +22,32 @@ function platformReviewListUrl(query: PlatformReviewQuery = {}) {
 }
 
 export async function getPlatformReviews(query?: PlatformReviewQuery): Promise<{
-  data: PlatformReview[];
+  data: PlatformReviewList;
   pagination: PlatformReviewPagination | null;
 } | null> {
   try {
     const body = await nextFetch<{
-      data?: PlatformReview[];
+      data?: Partial<PlatformReviewList>;
       pagination?: PlatformReviewPagination;
     }>({
       url: platformReviewListUrl(query),
       next: { revalidate: 3600, tags: [apiKeys.platformReviews] },
     });
-    if (!Array.isArray(body.data)) return { data: [], pagination: null };
-    return { data: body.data, pagination: body.pagination ?? null };
+    const reviews = body.data?.reviews;
+    if (!Array.isArray(reviews)) {
+      return {
+        data: { totalReviews: 0, averageRating: 0, reviews: [] },
+        pagination: null,
+      };
+    }
+    return {
+      data: {
+        totalReviews: body.data?.totalReviews ?? 0,
+        averageRating: body.data?.averageRating ?? 0,
+        reviews,
+      },
+      pagination: body.pagination ?? null,
+    };
   } catch {
     return null;
   }

@@ -30,3 +30,9 @@ export interface PlatformReviewPagination {
   total: number;
   totalPage: number;
 }
+
+export interface PlatformReviewList {
+  totalReviews: number;
+  averageRating: number;
+  reviews: PlatformReview[];
+}
