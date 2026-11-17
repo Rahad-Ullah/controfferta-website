@@ -55,11 +55,11 @@ export default function ClientNavbar() {
             width={1290}
             height={112}
             priority
-            className="h-4 w-auto md:h-5 xl:h-8"
+            className="h-4 w-auto md:h-5 xl:h-6"
           />
         </Link>
 
-        <nav className="hidden xl:flex items-center gap-5 text-[13px] font-medium">
+        <nav className="hidden xl:flex items-center gap-4 text-sm font-medium">
           {navLinks.map((link) => {
             const active = isActive(link.href);
             return (
@@ -81,14 +81,14 @@ export default function ClientNavbar() {
         <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
           <Link
             href="/provider"
-            className="hidden xl:inline-flex items-center gap-1 whitespace-nowrap text-xs text-zinc-400 hover:text-white transition-colors px-2 py-1"
+            className="hidden xl:inline-flex items-center gap-1 whitespace-nowrap text-sm text-zinc-400 hover:text-white transition-colors px-2 py-1"
           >
             <span>For Companies</span>
           </Link>
 
           <Link
             href="/submit-request"
-            className="hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap px-4 sm:px-5 py-2.5 rounded-full border border-[#00BC7D] text-[#00BC7D] hover:bg-[#00BC7D] hover:text-white text-xs sm:text-sm font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(0,188,125,0.15)] hover:shadow-[0_0_20px_rgba(0,188,125,0.4)] cursor-pointer"
+            className="hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap px-4 sm:px-5 py-2.5 rounded-full border border-[#00BC7D] text-[#00BC7D] hover:bg-[#00BC7D] hover:text-white text-sm font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(0,188,125,0.15)] hover:shadow-[0_0_20px_rgba(0,188,125,0.4)] cursor-pointer"
           >
             <span>Submit a Request</span>
           </Link>
@@ -176,7 +176,7 @@ export default function ClientNavbar() {
                 <Link
                   href="/provider"
                   onClick={closeMenu}
-                  className="block px-3 py-2 text-center text-xs text-zinc-300 hover:text-white"
+                  className="block px-3 py-2 text-center text-sm text-zinc-300 hover:text-white"
                 >
                   For Companies
                 </Link>
