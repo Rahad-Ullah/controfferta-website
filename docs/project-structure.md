@@ -40,7 +40,7 @@ Route groups choose the layout. A group name in parentheses is not part of the U
 
 | Group | Layout | Screens |
 |---|---|---|
-| `(client)` | `src/app/(client)/layout.tsx` | Customer site: `/`, `/about`, `/services`, `/blog`, `/contact`, `/how-it-works`, `/reviews`, `/submit-request` |
+| `(client)` | `src/app/(client)/layout.tsx` | Customer site: `/`, `/about`, `/services`, `/blog`, `/blog/[slug]`, `/contact`, `/how-it-works`, `/reviews`, `/submit-request` |
 | `(provider)` | `src/app/(provider)/layout.tsx` | Company site: `/provider`, `/provider/about`, `/provider/services`, `/provider/how-it-works`, `/provider/reviews`, `/provider/contact` |
 | `(dashboard)` | `src/app/(dashboard)/layout.tsx` | Company portal: `/dashboard` and its pages |
 | `(auth)` | `src/app/(auth)/layout.tsx` | Login, registration, and password recovery |

@@ -6,6 +6,7 @@
 export const apiKeys = {
   categories: "/categories",
   leads: "/leads",
-  settings: "/settings",
+  blogs: "/blogs",
   supports: "/supports",
+  settings: "/settings",
 } as const;
