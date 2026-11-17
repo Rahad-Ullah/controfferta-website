@@ -10,7 +10,13 @@ export default function Hero() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/submit-request");
+    const searchTerm = searchQuery.trim();
+    if (!searchTerm) {
+      router.push("/services");
+      return;
+    }
+    const params = new URLSearchParams({ searchTerm });
+    router.push(`/services?${params.toString()}`);
   };
 
   return (
