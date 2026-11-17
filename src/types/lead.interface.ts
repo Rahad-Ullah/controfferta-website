@@ -44,6 +44,16 @@ export interface Lead {
   updatedAt: string;
 }
 
+export interface LeadCreate {
+  category: string;
+  title: string;
+  description: string;
+  address: string;
+  budgetRange: LeadBudgetRange;
+  timeline: string;
+  client: LeadClient;
+}
+
 export interface LeadQuery {
   searchTerm?: string;
   category?: string;

@@ -1,6 +1,13 @@
 import { z } from "zod";
 
-function parseBudget(value: string) {
+const phoneMinDigits = 6;
+const phoneMaxDigits = 11;
+
+function phoneDigits(value: string) {
+  return value.replace(/\D/g, "");
+}
+
+export function parseBudget(value: string) {
   const normalized = value.replace(/[€\s]/g, "").replace(/,/g, "");
   if (!/^\d+(\.\d+)?$/.test(normalized)) return Number.NaN;
   return Number(normalized);
@@ -9,6 +16,7 @@ function parseBudget(value: string) {
 export const requestFields = z.object({
   category: z.string().trim().min(1, "Choose a service category."),
   serviceName: z.string().trim().min(1, "Tell us what service you need."),
+  description: z.string().trim().min(1, "Tell us a bit about what you need."),
   timeline: z.string().trim().min(1, "Choose when you need the service."),
   location: z.string().trim().min(1, "Tell us where the service is needed."),
   budgetMin: z.string().trim().min(1, "Enter a minimum budget."),
@@ -23,7 +31,11 @@ export const requestFields = z.object({
     .string()
     .trim()
     .min(1, "Enter your phone number.")
-    .refine((value) => value.replace(/\D/g, "").length >= 6, "Enter a phone number we can reach you on."),
+    .refine((value) => /^[\d\s().-]+$/.test(value), "Use digits only for the phone number.")
+    .refine((value) => {
+      const length = phoneDigits(value).length;
+      return length >= phoneMinDigits && length <= phoneMaxDigits;
+    }, `Enter ${phoneMinDigits} to ${phoneMaxDigits} digits, without the country code.`),
   agreedToTerms: z.boolean().refine((value) => value, "Please agree to the terms to continue."),
 }).superRefine((value, ctx) => {
   if (!value.budgetMin.trim() || !value.budgetMax.trim()) return;
@@ -60,7 +72,7 @@ export const requestFields = z.object({
 });
 
 export const stepFields = {
-  1: ["category", "serviceName"],
+  1: ["category", "serviceName", "description"],
   2: ["timeline", "location", "budgetMin", "budgetMax"],
   3: ["fullName", "email", "phoneNumber", "agreedToTerms"],
 } as const;

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 import {
   Wrench,
   CalendarClock,
@@ -16,7 +17,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { fieldErrors, requestFields, stepFields } from "@/schemas/submit-request";
+import { fieldErrors, parseBudget, requestFields, stepFields } from "@/schemas/submit-request";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -29,8 +30,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { nextFetch } from "@/lib/api/fetcher";
 import { apiKeys } from "@/lib/api/keys";
 import type { Category, CategoryPagination } from "@/types/category.interface";
+import type { Lead, LeadCreate } from "@/types/lead.interface";
 
 const fieldClassName =
   "h-auto w-full rounded-xl border-slate-300/80 bg-[#E5E9EC] px-4 py-3 text-xs text-slate-800 shadow-none placeholder:text-zinc-400 hover:bg-[#dfe4e8] focus-visible:border-[#00BC7D] focus-visible:ring-0 data-[size=default]:h-auto sm:text-sm";
@@ -111,6 +114,13 @@ export default function SubmitRequestPage() {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string>("");
+
+  const { trigger, isMutating } = useSWRMutation(
+    apiKeys.leads,
+    (_: string, { arg }: { arg: LeadCreate }) =>
+      nextFetch<{ data: Lead }>({ url: '/leads/create', method: "POST", payload: arg })
+  );
 
   useEffect(() => {
     const requestedCategory = searchParams.get("category");
@@ -152,6 +162,7 @@ export default function SubmitRequestPage() {
     const result = requestFields.safeParse({
       category,
       serviceName,
+      description,
       timeline,
       location,
       budgetMin,
@@ -184,12 +195,14 @@ export default function SubmitRequestPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError("");
 
     const result = requestFields.safeParse({
       category,
       serviceName,
+      description,
       timeline,
       location,
       budgetMin,
@@ -201,45 +214,58 @@ export default function SubmitRequestPage() {
     });
 
     if (!result.success) {
-      const nextErrors = fieldErrors(result.error, stepFields[3]);
-      if (Object.keys(nextErrors).length > 0) {
-        setErrors(nextErrors);
+      const step3Errors = fieldErrors(result.error, stepFields[3]);
+      if (Object.keys(step3Errors).length > 0) {
+        setErrors(step3Errors);
         return;
       }
+
+      const earlierStep = ([1, 2] as const).find((step) => {
+        return Object.keys(fieldErrors(result.error, stepFields[step])).length > 0;
+      });
+      if (earlierStep) {
+        setErrors(fieldErrors(result.error, stepFields[earlierStep]));
+        setCurrentStep(earlierStep);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      return;
     }
 
-    setErrors({});
-    setRequestRef(String(Math.floor(10000 + Math.random() * 90000)));
-    setIsSuccess(true);
+    const selectedCategory = categories.find((item) => item.name === category);
+    const minimum = parseBudget(budgetMin);
+    const maximum = parseBudget(budgetMax);
+    if (!selectedCategory || Number.isNaN(minimum) || Number.isNaN(maximum)) {
+      setSubmitError("Choose a service category and enter a budget range.");
+      return;
+    }
+
+    const payload: LeadCreate = {
+      category: selectedCategory._id,
+      title: serviceName.trim(),
+      description: description.trim(),
+      address: location.trim(),
+      budgetRange: { minimum, maximum },
+      timeline: timeline.trim(),
+      client: {
+        name: fullName.trim(),
+        email: email.trim(),
+        phone: {
+          countryCode,
+          number: phoneNumber.trim(),
+        },
+        address: location.trim(),
+      },
+    };
 
     try {
-      if (typeof window !== "undefined") {
-        const raw = localStorage.getItem("demo_company_leads");
-        const existing = raw ? JSON.parse(raw) : [];
-        const newLead = {
-          id: `lead-${Date.now()}`,
-          category: category,
-          title: `${serviceName} in ${location}`,
-          description: description,
-          location: location,
-          budget: formatBudget(budgetMin, budgetMax),
-          timeline: timeline,
-          creditsRequired: 15,
-          createdAt: "Just now",
-          customerName: fullName,
-          customerPhone: `${countryCode} ${phoneNumber}`,
-          customerEmail: email,
-          customerAddress: `${location}`,
-          isUnlocked: false,
-        };
-        existing.unshift(newLead);
-        localStorage.setItem("demo_company_leads", JSON.stringify(existing));
-      }
-    } catch {
-      // ignore
+      const body = await trigger(payload, { throwOnError: true });
+      setErrors({});
+      setRequestRef(body?.data?.uid ?? "");
+      setIsSuccess(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Could not submit your request.");
     }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -273,8 +299,8 @@ export default function SubmitRequestPage() {
                     currentStep === 1
                       ? "33%"
                       : currentStep === 2
-                      ? "66%"
-                      : "100%",
+                        ? "66%"
+                        : "100%",
                 }}
               />
             </div>
@@ -354,7 +380,7 @@ export default function SubmitRequestPage() {
                 <div>
                   <div className="mb-2 flex items-center justify-between">
                     <Label className="text-xs font-semibold text-slate-800 sm:text-sm">
-                      Briefly describe what you need
+                      Briefly describe what you need <span className="text-red-500">*</span>
                     </Label>
                     <span className="text-[11px] font-medium text-zinc-400">
                       {description.length} / 500 characters
@@ -362,12 +388,18 @@ export default function SubmitRequestPage() {
                   </div>
                   <Textarea
                     rows={4}
+                    required
                     maxLength={500}
+                    aria-invalid={Boolean(errors.description)}
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                      clearFieldError("description");
+                    }}
                     placeholder="Tell us about your project or requirements... (e.g. 6kW rooftop system with hybrid inverter, pitched clay tile roof, need site inspection)"
                     className={`${fieldClassName} min-h-28 resize-none leading-relaxed`}
                   />
+                  <FieldError message={errors.description} />
                 </div>
 
                 <StepActions onBack={handleBack} onContinue={handleNext} />
@@ -400,19 +432,19 @@ export default function SubmitRequestPage() {
                       <SelectTrigger className={`${fieldClassName} pl-11`}>
                         <SelectValue placeholder="Choose a timeline" />
                       </SelectTrigger>
-                    <SelectContent
-                      align="start"
-                      alignItemWithTrigger={false}
-                      className="p-1"
-                      style={{ width: "14rem" }}
-                    >
-                      {timelines.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      <SelectContent
+                        align="start"
+                        alignItemWithTrigger={false}
+                        className="p-1"
+                        style={{ width: "14rem" }}
+                      >
+                        {timelines.map((item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <FieldError message={errors.timeline} />
                 </div>
@@ -714,12 +746,17 @@ export default function SubmitRequestPage() {
                     </div>
                     <FieldError message={errors.agreedToTerms} />
 
+                    {submitError ? (
+                      <p className="text-xs text-red-600">{submitError}</p>
+                    ) : null}
+
                     <div className="pt-3">
                       <Button
                         type="submit"
+                        disabled={isMutating}
                         className="h-auto w-full rounded-xl bg-[#00BC7D] py-3.5 text-xs font-bold text-white shadow-lg hover:bg-[#00d68f] sm:text-sm"
                       >
-                        Submit Request
+                        {isMutating ? "Submitting..." : "Submit Request"}
                       </Button>
                     </div>
                   </form>
@@ -749,7 +786,7 @@ export default function SubmitRequestPage() {
             <div className="bg-slate-50 rounded-xl p-4 text-xs text-zinc-600 text-left space-y-1.5 border border-slate-200/70">
               <div className="flex justify-between">
                 <span className="text-zinc-400">Request Ref:</span>
-                <span className="font-mono font-bold text-slate-800">#IT-{requestRef}</span>
+                <span className="font-mono font-bold text-slate-800">{requestRef}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-400">Contact:</span>
@@ -757,7 +794,7 @@ export default function SubmitRequestPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-400">Status:</span>
-                <span className="font-bold text-[#00BC7D]">Active • Matching Pros</span>
+                <span className="font-bold text-[#00BC7D]">Pending</span>
               </div>
             </div>
 
@@ -786,6 +823,7 @@ export default function SubmitRequestPage() {
                   setPhoneNumber("");
                   setAgreedToTerms(false);
                   setErrors({});
+                  setSubmitError("");
                   setIsSuccess(false);
                   setCurrentStep(1);
                   setRequestRef("");
