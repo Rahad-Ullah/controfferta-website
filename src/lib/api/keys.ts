@@ -7,6 +7,7 @@ export const apiKeys = {
   categories: "/categories",
   leads: "/leads",
   blogs: "/blogs",
+  platformReviews: "/platform-reviews",
   supports: "/supports",
   settings: "/settings",
 } as const;

@@ -24,7 +24,7 @@ Read this before adding files. The stack is `docs/tech-stack.md`. Client data fe
 | `src/actions/` | Server actions. One file per entity, named for that entity (`category.ts`). A file can export more than one action. |
 | `src/hooks/` | Shared React hooks. One hook per file, named for the hook (`use-search-param.ts`). |
 | `src/schemas/` | Zod validation schemas. One file per form or entity (`submit-request.ts`). A file can export more than one schema. |
-| `src/types/` | Shared API types. One file per entity (`category.interface.ts`, `lead.interface.ts`, `support.interface.ts`). |
+| `src/types/` | Shared API types. One file per entity (`category.interface.ts`, `lead.interface.ts`, `support.interface.ts`, `platform-review.interface.ts`). |
 | `src/lib/` | Shared modules that are not React components. |
 | `src/lib/api/keys.ts` | Every SWR cache key. |
 | `src/lib/api/fetcher.ts` | `nextFetch` and `swrFetcher`. |
