@@ -50,7 +50,7 @@ export default async function BlogPage({
   const latest = blogs?.slice(1) ?? [];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-[#00BC7D]/20 selection:text-[#00BC7D]">
+    <div className="min-h-screen text-slate-900 font-sans selection:bg-[#00BC7D]/20 selection:text-[#00BC7D]">
       <BlogHero
         searchTerm={searchTerm ?? ""}
         categories={categories?.data ?? []}

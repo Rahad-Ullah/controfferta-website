@@ -21,7 +21,7 @@ export function BlogHero({
   activeCategory?: string;
 }) {
   return (
-    <section className="bg-white border-b border-slate-100 pt-14 pb-12 sm:pt-18 sm:pb-16 text-center">
+    <section className="bg-white pt-14 pb-12 sm:pt-18 sm:pb-16 text-center">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
           Insights &amp; <span className="text-[#00BC7D]">Inspiration</span>
