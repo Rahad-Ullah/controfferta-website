@@ -1,6 +1,6 @@
 # SWR data fetching
 
-Read this before adding or changing API calls. SWR `2.5.1` is installed. `src/components/swr-config.tsx` already wraps the app, and its `SWRConfig` uses `swrFetcher`.
+Read this before adding or changing API calls. Which endpoint to call is `docs/api-integration.md`. The backend repo is read-only. SWR `2.5.1` is installed. `src/components/swr-config.tsx` already wraps the app, and its `SWRConfig` uses `swrFetcher`.
 
 Dashboard screens still render `src/lib/placeholders.ts` until a screen is wired to the API.
 

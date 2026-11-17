@@ -32,4 +32,5 @@ The URL picks the layout. A folder in parentheses is a route group and is not pa
 |---|---|
 | Where does a file go? | `docs/project-structure.md` |
 | How do we call the API? | `docs/swr.md` |
+| Which backend route do we call? | `docs/api-integration.md` |
 | What must stay fast and indexable? | `docs/performance-and-seo.md` |

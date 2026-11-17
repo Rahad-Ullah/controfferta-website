@@ -6,6 +6,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 For the stack and the four surfaces, read `docs/tech-stack.md`.
 
+For a backend endpoint, read `docs/api-integration.md`. The backend repo is read-only.
+
 For client data fetching, follow `docs/swr.md`. Use the root SWR fetcher. Do not add a second client cache.
 
 For where files go and how they are named, follow `docs/project-structure.md`. File and folder names are lowercase with hyphens. Only the exported React component uses PascalCase.
