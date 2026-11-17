@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import useSWR from "swr";
 import {
   Wrench,
   CalendarClock,
@@ -28,6 +29,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { apiKeys } from "@/lib/api/keys";
+import type { Category, CategoryPagination } from "@/types/category.interface";
 
 const fieldClassName =
   "h-auto w-full rounded-xl border-slate-300/80 bg-[#E5E9EC] px-4 py-3 text-xs text-slate-800 shadow-none placeholder:text-zinc-400 hover:bg-[#dfe4e8] focus-visible:border-[#00BC7D] focus-visible:ring-0 data-[size=default]:h-auto sm:text-sm";
@@ -116,17 +119,15 @@ export default function SubmitRequestPage() {
     setServiceName("");
   }, [searchParams]);
 
-  const categories = [
-    "Solar Panels",
-    "Energy Saving",
-    "Windows & Doors",
-    "Construction",
-    "Moving",
-    "Renovation",
-    "Gardening",
-    "Air Conditioning",
-    "Painting",
-  ];
+  const { data: categoryList, error: categoryError, isLoading: categoriesLoading } =
+    useSWR<{ data?: Category[]; pagination?: CategoryPagination }>(
+      apiKeys.categories
+    );
+  const categories = Array.isArray(categoryList?.data) ? categoryList.data : [];
+  const categoryOptions =
+    category && !categories.some((item) => item.name === category)
+      ? [{ _id: category, name: category }, ...categories]
+      : categories;
 
   const timelines = [
     "As soon as possible",
@@ -293,6 +294,7 @@ export default function SubmitRequestPage() {
                   </Label>
                   <Select
                     value={category || null}
+                    disabled={categoriesLoading}
                     onValueChange={(value) => {
                       if (!value) return;
                       setCategory(value);
@@ -300,7 +302,9 @@ export default function SubmitRequestPage() {
                     }}
                   >
                     <SelectTrigger className={fieldClassName}>
-                      <SelectValue placeholder="Select a category" />
+                      <SelectValue
+                        placeholder={categoriesLoading ? "Loading categories..." : "Select a category"}
+                      />
                     </SelectTrigger>
                     <SelectContent
                       align="start"
@@ -308,14 +312,19 @@ export default function SubmitRequestPage() {
                       className="p-1"
                       style={{ width: "14rem" }}
                     >
-                      {(category && !categories.includes(category) ? [category, ...categories] : categories).map((cat) => (
-                        <SelectItem key={cat} value={cat}>
-                          {cat}
+                      {categoryOptions.map((item) => (
+                        <SelectItem key={item._id} value={item.name}>
+                          {item.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   <FieldError message={errors.category} />
+                  {categoryError ? (
+                    <p className="mt-1.5 text-xs text-red-600">Could not load categories.</p>
+                  ) : !categoriesLoading && categories.length === 0 ? (
+                    <p className="mt-1.5 text-xs text-zinc-500">No categories yet.</p>
+                  ) : null}
                 </div>
 
                 {/* Field 2: Specific Service */}
