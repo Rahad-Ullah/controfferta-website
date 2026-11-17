@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -75,7 +76,9 @@ export default async function ServicesPage({
           <p className="text-xs sm:text-sm md:text-base text-zinc-300 max-w-xl mx-auto leading-relaxed">
             Tell us what service you need and find the right professionals for your request.
           </p>
-          <ServiceSearch searchTerm={searchTerm ?? ""} />
+          <Suspense fallback={<div className="pt-4 mx-auto h-9 max-w-md" />}>
+            <ServiceSearch searchTerm={searchTerm ?? ""} />
+          </Suspense>
         </div>
       </section>
 
