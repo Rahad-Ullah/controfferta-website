@@ -7,6 +7,7 @@ import StatsBar from "@/components/client/home/stats-bar";
 import Testimonials from "@/components/client/home/testimonials";
 import WhyChooseUs from "@/components/client/home/why-choose-us";
 import { getCategories } from "@/actions/category";
+import { getPlatformReviews } from "@/actions/platform-review";
 
 export const metadata = {
   title: "Find the right professional for your project",
@@ -15,7 +16,10 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const categories = await getCategories({ limit: 8 });
+  const [categories, reviews] = await Promise.all([
+    getCategories({ limit: 8 }),
+    getPlatformReviews({ limit: "12", sort: "-createdAt" }),
+  ]);
   const categoryList = categories ? categories.data : null;
 
   return (
@@ -26,7 +30,7 @@ export default async function HomePage() {
       <HowItWorks />
       <WhyChooseUs />
       <ProviderCallout />
-      <Testimonials />
+      <Testimonials reviews={reviews ? reviews.data.reviews : null} />
       <BottomCta />
     </main>
   );
