@@ -1,8 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 export default function ClientNavbar() {
@@ -26,49 +29,44 @@ export default function ClientNavbar() {
     return pathname.startsWith(href);
   };
 
+  const closeMenu = () => setMobileMenuOpen(false);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") closeMenu();
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
   return (
+    <>
     <header className="sticky top-0 z-50 bg-[#070A0F]/95 backdrop-blur-md border-b border-white/[0.08] transition-all">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-        <Link href="/" className="inline-flex items-center gap-1 group">
-          <span className="text-white font-extrabold tracking-widest text-lg sm:text-xl">
-            CONTR
-          </span>
-          <span className="inline-flex items-center text-[#00BC7D] px-0.5">
-            <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 drop-shadow-[0_0_8px_rgba(0,188,125,0.7)]"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <path
-                d="M8 5L3 12L8 19"
-                stroke="#00BC7D"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M16 5L21 12L16 19"
-                stroke="#00BC7D"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
-          <span className="text-[#00BC7D] font-extrabold tracking-widest text-lg sm:text-xl">
-            FFERTA
-          </span>
-          <span className="text-white font-bold text-lg sm:text-xl">.IT</span>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3">
+        <Link href="/" className="inline-flex shrink-0 items-center">
+          <Image
+            src="/logo/logo.png"
+            alt="Controfferta.it"
+            width={1290}
+            height={112}
+            priority
+            className="h-4 w-auto md:h-5 xl:h-8"
+          />
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-7 text-[13.5px] font-medium">
+        <nav className="hidden xl:flex items-center gap-5 text-[13px] font-medium">
           {navLinks.map((link) => {
             const active = isActive(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`transition-colors ${
+                className={`whitespace-nowrap transition-colors ${
                   active
                     ? "text-[#00BC7D] font-semibold"
                     : "text-zinc-300 hover:text-white"
@@ -80,17 +78,17 @@ export default function ClientNavbar() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
           <Link
             href="/provider"
-            className="hidden sm:inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition-colors px-2 py-1"
+            className="hidden xl:inline-flex items-center gap-1 whitespace-nowrap text-xs text-zinc-400 hover:text-white transition-colors px-2 py-1"
           >
             <span>For Companies</span>
           </Link>
 
           <Link
             href="/submit-request"
-            className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2.5 rounded-full border border-[#00BC7D] text-[#00BC7D] hover:bg-[#00BC7D] hover:text-white text-xs sm:text-sm font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(0,188,125,0.15)] hover:shadow-[0_0_20px_rgba(0,188,125,0.4)] cursor-pointer"
+            className="hidden sm:inline-flex items-center gap-1.5 whitespace-nowrap px-4 sm:px-5 py-2.5 rounded-full border border-[#00BC7D] text-[#00BC7D] hover:bg-[#00BC7D] hover:text-white text-xs sm:text-sm font-semibold transition-all duration-300 shadow-[0_0_15px_rgba(0,188,125,0.15)] hover:shadow-[0_0_20px_rgba(0,188,125,0.4)] cursor-pointer"
           >
             <span>Submit a Request</span>
           </Link>
@@ -98,7 +96,7 @@ export default function ClientNavbar() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+            className="xl:hidden p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -106,47 +104,89 @@ export default function ClientNavbar() {
         </div>
       </div>
 
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#070A0F] border-b border-white/10 px-4 pt-3 pb-6 space-y-3">
-          <nav className="flex flex-col space-y-2">
-            {navLinks.map((link) => {
-              const active = isActive(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    active
-                      ? "bg-[#00BC7D]/10 text-[#00BC7D] font-semibold"
-                      : "text-zinc-300 hover:bg-white/5 hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-
-            <Link
-              href="/submit-request"
-              onClick={() => setMobileMenuOpen(false)}
-              className="mt-2 block text-center py-2.5 px-4 rounded-xl bg-[#00BC7D] text-white text-xs font-semibold shadow-md"
-            >
-              Submit a Request
-            </Link>
-
-            <div className="pt-2 border-t border-white/10">
-              <Link
-                href="/provider"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 text-xs text-zinc-300 hover:text-white"
-              >
-                For Companies (Find Customers)
-              </Link>
-            </div>
-          </nav>
-        </div>
-      )}
     </header>
+    {typeof document !== "undefined" &&
+      createPortal(
+        <AnimatePresence>
+          {mobileMenuOpen && (
+          <div key="mobile-nav" className="xl:hidden fixed inset-0 z-[60]">
+            <motion.button
+              type="button"
+              aria-label="Close navigation menu"
+              className="absolute inset-0 bg-black/60"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeMenu}
+            />
+            <motion.aside
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation"
+              className="absolute left-0 top-0 flex h-full w-[min(20rem,85vw)] flex-col bg-[#070A0F] border-r border-white/10 shadow-2xl"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "tween", duration: 0.25 }}
+            >
+              <div className="flex h-20 items-center justify-between px-5 border-b border-white/10">
+                <Image
+                  src="/logo/logo.png"
+                  alt="Controfferta.it"
+                  width={1290}
+                  height={112}
+                  className="h-4 w-auto"
+                />
+                <button
+                  type="button"
+                  onClick={closeMenu}
+                  className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 cursor-pointer"
+                  aria-label="Close navigation menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
+                {navLinks.map((link) => {
+                  const active = isActive(link.href);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={closeMenu}
+                      className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                        active
+                          ? "bg-[#00BC7D]/10 text-[#00BC7D] font-semibold"
+                          : "text-zinc-300 hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+              <div className="space-y-2 border-t border-white/10 p-4">
+                <Link
+                  href="/submit-request"
+                  onClick={closeMenu}
+                  className="block text-center py-2.5 px-4 rounded-xl bg-[#00BC7D] text-white text-sm font-semibold"
+                >
+                  Submit a Request
+                </Link>
+                <Link
+                  href="/provider"
+                  onClick={closeMenu}
+                  className="block px-3 py-2 text-center text-xs text-zinc-300 hover:text-white"
+                >
+                  For Companies
+                </Link>
+              </div>
+            </motion.aside>
+          </div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
+    </>
   );
 }

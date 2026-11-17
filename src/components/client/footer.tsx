@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function ClientFooter() {
@@ -6,16 +7,14 @@ export default function ClientFooter() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div className="space-y-4">
-            <Link href="/" className="inline-flex items-center gap-1 group">
-              <span className="text-white font-extrabold tracking-widest text-lg">CONTR</span>
-              <span className="inline-flex items-center text-[#00BC7D] px-0.5">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                  <path d="M8 5L3 12L8 19" stroke="#00BC7D" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M16 5L21 12L16 19" stroke="#00BC7D" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <span className="text-[#00BC7D] font-extrabold tracking-widest text-lg">FFERTA</span>
-              <span className="text-zinc-400 font-bold tracking-wider text-lg">.IT</span>
+            <Link href="/" className="inline-flex items-center">
+              <Image
+                src="/logo/logo.png"
+                alt="Controfferta.it"
+                width={1290}
+                height={112}
+                className="h-5 w-auto"
+              />
             </Link>
             <p className="text-xs text-zinc-400 leading-relaxed">
               The B2B marketplace for qualified lead generation. Connect businesses with real customers.

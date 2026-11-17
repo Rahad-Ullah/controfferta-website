@@ -18,7 +18,7 @@ export default function Hero() {
       {/* =========================================================
           1. DARK UPPER HALF (with ambient emerald glow)
           ========================================================= */}
-      <div className="relative bg-[#07131D] text-white pt-10 sm:pt-14 pb-24 sm:pb-32 overflow-hidden h-[654px]">
+      <div className="relative bg-[#07131D] text-white pt-10 sm:pt-14 pb-28 sm:pb-32 overflow-hidden sm:h-[654px]">
         {/* Ambient emerald radial glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[320px] bg-[#00BC7D]/[0.18] blur-[130px] rounded-full pointer-events-none" />
 
@@ -70,44 +70,44 @@ export default function Hero() {
           2. LIGHT LOWER HALF (#E5E5E5) WITH OVERLAPPING 3 IMAGES
           ========================================================= */}
       <div className="bg-[#E5E5E5] pt-0 pb-10">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 -mt-20 sm:-mt-44 relative z-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-44 relative z-20">
           <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-12 gap-3 sm:gap-6 items-center">
+            <div className="grid grid-cols-12 gap-2 sm:gap-6 items-center">
             {/* Left Image: Painter (Square) */}
-            <div className="col-span-12 sm:col-span-4 aspect-square relative shadow-md overflow-hidden bg-zinc-800 rounded-lg">
+            <div className="col-span-4 aspect-square relative shadow-md overflow-hidden bg-zinc-800 rounded-lg">
               <Image
                 src="/images/hero-painter.png"
                 alt="Professional Painter"
                 fill
                 priority
                 quality={95}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 400px"
+                sizes="(max-width: 640px) 30vw, (max-width: 1024px) 33vw, 400px"
                 className="object-cover"
               />
             </div>
 
             {/* Center Image: Movers (Taller Portrait) */}
-            <div className="col-span-12 sm:col-span-4 aspect-[283/375] relative shadow-lg overflow-hidden bg-zinc-800 z-10 rounded-lg">
+            <div className="col-span-4 aspect-[283/375] relative shadow-lg overflow-hidden bg-zinc-800 z-10 rounded-lg">
               <Image
                 src="/images/hero-movers.png"
                 alt="Moving and Transport"
                 fill
                 priority
                 quality={95}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 36vw, 450px"
+                sizes="(max-width: 640px) 30vw, (max-width: 1024px) 36vw, 450px"
                 className="object-cover"
               />
             </div>
 
             {/* Right Image: Construction Workers (Square) */}
-            <div className="col-span-12 sm:col-span-4 aspect-square relative shadow-md overflow-hidden bg-zinc-800 rounded-lg">
+            <div className="col-span-4 aspect-square relative shadow-md overflow-hidden bg-zinc-800 rounded-lg">
               <Image
                 src="/images/hero-workers.png"
                 alt="Construction & Builders"
                 fill
                 priority
                 quality={95}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 400px"
+                sizes="(max-width: 640px) 30vw, (max-width: 1024px) 33vw, 400px"
                 className="object-cover"
               />
             </div>
