@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Search,
   MapPin,
@@ -12,13 +12,12 @@ import {
   Mail,
   CheckCircle2,
   FileText,
-  ArrowRight,
-  Check,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function SubmitRequestPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [requestRef, setRequestRef] = useState<string>("");
@@ -40,6 +39,13 @@ export default function SubmitRequestPage() {
   const [countryCode, setCountryCode] = useState<string>("+39");
   const [phoneNumber, setPhoneNumber] = useState<string>("335 128 9942");
   const [agreedToTerms, setAgreedToTerms] = useState<boolean>(true);
+
+  useEffect(() => {
+    const requestedCategory = searchParams.get("category");
+    if (!requestedCategory) return;
+    setCategory(requestedCategory);
+    setServiceName("");
+  }, [searchParams]);
 
   const categories = [
     "Solar Panels",
@@ -167,7 +173,7 @@ export default function SubmitRequestPage() {
                       onChange={(e) => setCategory(e.target.value)}
                       className="w-full bg-[#E5E9EC] hover:bg-[#dfe4e8] border border-slate-300/80 rounded-xl px-4 py-3 text-xs sm:text-sm text-slate-800 appearance-none outline-none focus:border-[#00BC7D] transition-colors cursor-pointer"
                     >
-                      {categories.map((cat) => (
+                      {(categories.includes(category) ? categories : [category, ...categories]).map((cat) => (
                         <option key={cat} value={cat}>
                           {cat}
                         </option>

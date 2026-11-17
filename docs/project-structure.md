@@ -21,6 +21,7 @@ Read this before adding files. The stack is `docs/tech-stack.md`. Client data fe
 | `src/components/provider/` | Provider chrome and page sections. `navbar.tsx` and `footer.tsx` stay here because the layout uses them on every provider route. Sections for one route go in a folder named after that route: `home/`, `about/`, `services/`, `how-it-works/`, `reviews/`, `contact/`. |
 | `src/components/onboarding/` | Role-selection screen. |
 | `src/components/swr-config.tsx` | Root SWR defaults. `src/app/layout.tsx` wraps every page with `SwrDefaults`. |
+| `src/actions/` | Server actions. One file per entity, named for that entity (`category.ts`). A file can export more than one action. |
 | `src/lib/` | Shared modules that are not React components. |
 | `src/lib/api/keys.ts` | Every SWR cache key. |
 | `src/lib/api/fetcher.ts` | `nextFetch` and `swrFetcher`. |

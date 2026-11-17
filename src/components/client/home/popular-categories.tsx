@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import type { HomeCategory } from "@/types/category";
+import type { Category } from "@/types/category.interface";
 import QuickRequestModal from "./quick-request-modal";
 
 export default function PopularCategories({
   categories,
 }: {
-  categories: HomeCategory[] | null;
+  categories: Category[] | null;
 }) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,7 +45,7 @@ export default function PopularCategories({
             ) : (
               visibleCategories.map((category) => (
                 <button
-                  key={category.id}
+                  key={category._id}
                   type="button"
                   onClick={() => {
                     setSelectedCategory(category.name);
