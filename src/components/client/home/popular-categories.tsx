@@ -2,13 +2,8 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import type { HomeCategory } from "@/types/category";
 import QuickRequestModal from "./quick-request-modal";
-
-export type HomeCategory = {
-  id: string;
-  name: string;
-  iconUrl: string;
-};
 
 export default function PopularCategories({
   categories,

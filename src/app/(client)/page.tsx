@@ -1,23 +1,14 @@
 import BottomCta from "@/components/client/home/bottom-cta";
 import Hero from "@/components/client/home/hero";
 import HowItWorks from "@/components/client/home/how-it-works";
-import PopularCategories, {
-  type HomeCategory,
-} from "@/components/client/home/popular-categories";
+import PopularCategories from "@/components/client/home/popular-categories";
 import ProviderCallout from "@/components/client/home/provider-callout";
 import StatsBar from "@/components/client/home/stats-bar";
 import Testimonials from "@/components/client/home/testimonials";
 import WhyChooseUs from "@/components/client/home/why-choose-us";
 import { apiKeys } from "@/lib/api/keys";
 import { nextFetch } from "@/lib/api/fetcher";
-
-type CategoryListResponse = {
-  data?: {
-    _id: string;
-    name: string;
-    iconUrl?: string;
-  }[];
-};
+import type { CategoryListResponse, HomeCategory } from "@/types/category";
 
 async function loadCategories(): Promise<HomeCategory[] | null> {
   try {
