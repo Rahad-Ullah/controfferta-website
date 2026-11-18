@@ -7,6 +7,33 @@ import type { Lead, LeadPagination } from "@/types/lead.interface";
 
 const latestLeadLimit = 4;
 
+export async function getCategoryLeads(categoryId: string): Promise<{
+  leads: Lead[];
+  total: number;
+} | null> {
+  const token = await getAuthToken();
+  if (!token) return null;
+
+  const params = new URLSearchParams({
+    category: categoryId,
+    page: "1",
+    limit: "60",
+    sort: "-createdAt",
+  });
+
+  try {
+    const body = await nextFetch<{ data?: Lead[]; pagination?: LeadPagination }>({
+      url: `${apiKeys.leads}?${params.toString()}`,
+      token,
+      cache: "no-store",
+    });
+    const leads = Array.isArray(body.data) ? body.data : [];
+    return { leads, total: body.pagination?.total ?? leads.length };
+  } catch {
+    return { leads: [], total: 0 };
+  }
+}
+
 export async function getLatestLeads(): Promise<Lead[]> {
   const token = await getAuthToken();
   if (!token) return [];

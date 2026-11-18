@@ -3,6 +3,7 @@ export interface Category {
   name: string;
   description?: string;
   iconUrl?: string;
+  creditCost?: number;
 }
 
 export interface CategoryQuery {
