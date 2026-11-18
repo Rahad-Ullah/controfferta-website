@@ -1,411 +1,272 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, Loader2 } from "lucide-react";
+import useSWRMutation from "swr/mutation";
+import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { nextFetch } from "@/lib/api/fetcher";
+import { registerFieldErrors, registerFields } from "@/schemas/register";
 
-interface FormErrors {
-  firstName?: string;
-  lastName?: string;
-  company?: string;
-  email?: string;
-  phone?: string;
-  password?: string;
-  confirmPassword?: string;
-  termsAccepted?: string;
+const emptyForm = {
+  firstName: "",
+  lastName: "",
+  company: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  termsAccepted: false,
+};
+
+type FormState = typeof emptyForm;
+
+function fieldClass(invalid: boolean, withToggle = false) {
+  const padding = withToggle ? "pl-4 pr-11" : "px-4";
+  return invalid
+    ? `h-11 rounded-full border-red-400 bg-white ${padding} text-sm text-slate-800 shadow-none placeholder:text-slate-400 focus-visible:border-red-500 focus-visible:ring-0`
+    : `h-11 rounded-full border-slate-200 bg-white ${padding} text-sm text-slate-800 shadow-none placeholder:text-slate-400 focus-visible:border-[#00BC7D] focus-visible:ring-0`;
 }
 
-function RegisterContent() {
-  const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [formData, setFormData] = useState({
-    firstName: "Marco",
-    lastName: "Ferretti",
-    company: "Ferretti Serramenti Srl",
-    email: "company@gmail.com",
-    phone: "+39 333 123 4567",
-    password: "",
-    confirmPassword: "",
-    termsAccepted: true,
-  });
-
-  const [errors, setErrors] = useState<FormErrors>({});
-
-  const validate = () => {
-    const newErrors: FormErrors = {};
-
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    } else if (formData.firstName.trim().length < 2) {
-      newErrors.firstName = "First name must be at least 2 characters";
-    }
-
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    } else if (formData.lastName.trim().length < 2) {
-      newErrors.lastName = "Last name must be at least 2 characters";
-    }
-
-    if (!formData.company.trim()) {
-      newErrors.company = "Company name is required";
-    } else if (formData.company.trim().length < 2) {
-      newErrors.company = "Company name must be at least 2 characters";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^[+0-9\s-]{8,20}$/.test(formData.phone.trim())) {
-      newErrors.phone = "Please enter a valid phone number (min 8 digits)";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Confirm password is required";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    if (!formData.termsAccepted) {
-      newErrors.termsAccepted = "You must accept the Terms and Privacy Policy to continue";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validate()) {
-      toast.error("Please fill in all required fields properly.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      toast.info("Registration is a placeholder. No account was created.");
-      router.push("/login");
-    }, 400);
-  };
-
-  const clearError = (field: keyof FormErrors) => {
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
-  };
-
-  return (
-    <div className="bg-[#ECEFF2] text-slate-900 rounded-3xl p-7 sm:p-9 max-w-lg w-full shadow-2xl border border-slate-300/40">
-      {/* Header with Back Arrow */}
-      <div className="flex items-center gap-2 mb-6">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="text-slate-700 hover:text-slate-900 transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <h1 className="text-lg sm:text-xl font-bold text-slate-900">
-          Register your company
-        </h1>
-      </div>
-
-      {/* Form */}
-      <form onSubmit={handleSubmit} noValidate className="space-y-3.5">
-        {/* Row 1: First Name & Last Name */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              First Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.firstName}
-              onChange={(e) => {
-                setFormData({ ...formData, firstName: e.target.value });
-                clearError("firstName");
-              }}
-              placeholder="Marco"
-              className={`w-full h-[46px] bg-[#E5E9EC] hover:bg-[#dfe4e8] border rounded-xl px-4 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none transition-colors ${
-                errors.firstName
-                  ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                  : "border-slate-300/80 focus:border-[#00BC7D] focus:bg-white"
-              }`}
-            />
-            {errors.firstName && (
-              <p className="text-red-500 text-[11px] mt-1 font-medium flex items-center gap-1">
-                <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-                {errors.firstName}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Last Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.lastName}
-              onChange={(e) => {
-                setFormData({ ...formData, lastName: e.target.value });
-                clearError("lastName");
-              }}
-              placeholder="Ferretti"
-              className={`w-full h-[46px] bg-[#E5E9EC] hover:bg-[#dfe4e8] border rounded-xl px-4 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none transition-colors ${
-                errors.lastName
-                  ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                  : "border-slate-300/80 focus:border-[#00BC7D] focus:bg-white"
-              }`}
-            />
-            {errors.lastName && (
-              <p className="text-red-500 text-[11px] mt-1 font-medium flex items-center gap-1">
-                <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-                {errors.lastName}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Company */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
-            Company <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={formData.company}
-            onChange={(e) => {
-              setFormData({ ...formData, company: e.target.value });
-              clearError("company");
-            }}
-            placeholder="Ferretti Serramenti Srl"
-            className={`w-full h-[46px] bg-[#E5E9EC] hover:bg-[#dfe4e8] border rounded-xl px-4 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none transition-colors ${
-              errors.company
-                ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                : "border-slate-300/80 focus:border-[#00BC7D] focus:bg-white"
-            }`}
-          />
-          {errors.company && (
-            <p className="text-red-500 text-[11px] mt-1 font-medium flex items-center gap-1">
-              <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-              {errors.company}
-            </p>
-          )}
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
-            Email <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="email"
-            value={formData.email}
-            onChange={(e) => {
-              setFormData({ ...formData, email: e.target.value });
-              clearError("email");
-            }}
-            placeholder="company@gmail.com"
-            className={`w-full h-[46px] bg-[#E5E9EC] hover:bg-[#dfe4e8] border rounded-xl px-4 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none transition-colors ${
-              errors.email
-                ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                : "border-slate-300/80 focus:border-[#00BC7D] focus:bg-white"
-            }`}
-          />
-          {errors.email && (
-            <p className="text-red-500 text-[11px] mt-1 font-medium flex items-center gap-1">
-              <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-              {errors.email}
-            </p>
-          )}
-        </div>
-
-        {/* Phone */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
-            Phone <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="tel"
-            value={formData.phone}
-            onChange={(e) => {
-              setFormData({ ...formData, phone: e.target.value });
-              clearError("phone");
-            }}
-            placeholder="+39 333 123 4567"
-            className={`w-full h-[46px] bg-[#E5E9EC] hover:bg-[#dfe4e8] border rounded-xl px-4 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none transition-colors ${
-              errors.phone
-                ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                : "border-slate-300/80 focus:border-[#00BC7D] focus:bg-white"
-            }`}
-          />
-          {errors.phone && (
-            <p className="text-red-500 text-[11px] mt-1 font-medium flex items-center gap-1">
-              <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-              {errors.phone}
-            </p>
-          )}
-        </div>
-
-        {/* Row 2: Password & Confirm Password */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Password <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) => {
-                setFormData({ ...formData, password: e.target.value });
-                clearError("password");
-              }}
-              placeholder="Minimum 6 characters"
-              className={`w-full h-[46px] bg-[#E5E9EC] hover:bg-[#dfe4e8] border rounded-xl px-4 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none transition-colors ${
-                errors.password
-                  ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                  : "border-slate-300/80 focus:border-[#00BC7D] focus:bg-white"
-              }`}
-            />
-            {errors.password && (
-              <p className="text-red-500 text-[11px] mt-1 font-medium flex items-center gap-1">
-                <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-                {errors.password}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Confirm Password <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) => {
-                setFormData({ ...formData, confirmPassword: e.target.value });
-                clearError("confirmPassword");
-              }}
-              placeholder="Minimum 6 characters"
-              className={`w-full h-[46px] bg-[#E5E9EC] hover:bg-[#dfe4e8] border rounded-xl px-4 text-xs sm:text-sm text-slate-800 placeholder:text-zinc-400 outline-none transition-colors ${
-                errors.confirmPassword
-                  ? "border-red-400 bg-red-50/20 focus:border-red-500"
-                  : "border-slate-300/80 focus:border-[#00BC7D] focus:bg-white"
-              }`}
-            />
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-[11px] mt-1 font-medium flex items-center gap-1">
-                <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-                {errors.confirmPassword}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Redesigned Modern Checkbox */}
-        <div className="pt-1">
-          <label className="flex items-start gap-2.5 text-xs text-zinc-600 cursor-pointer select-none group">
-            <div className="relative flex items-center justify-center mt-0.5 shrink-0">
-              <input
-                type="checkbox"
-                checked={formData.termsAccepted}
-                onChange={(e) => {
-                  setFormData({ ...formData, termsAccepted: e.target.checked });
-                  clearError("termsAccepted");
-                }}
-                className="sr-only peer"
-              />
-              <div
-                className={`w-4.5 h-4.5 rounded-md border flex items-center justify-center transition-all duration-200 ${
-                  formData.termsAccepted
-                    ? "bg-[#00BC7D] border-[#00BC7D] shadow-sm shadow-[#00BC7D]/30"
-                    : errors.termsAccepted
-                    ? "bg-[#E5E9EC] border-red-400 group-hover:border-red-500"
-                    : "bg-[#E5E9EC] border-slate-300/90 group-hover:border-[#00BC7D]"
-                }`}
-              >
-                <Check
-                  className={`w-3.5 h-3.5 text-white stroke-[3] transition-transform duration-200 ${
-                    formData.termsAccepted ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                  }`}
-                />
-              </div>
-            </div>
-            <span className="leading-tight">
-              I accept the{" "}
-              <Link href="/terms" className="text-[#00BC7D] font-medium hover:underline">
-                Terms of Service
-              </Link>{" "}
-              and the{" "}
-              <Link href="/privacy" className="text-[#00BC7D] font-medium hover:underline">
-                Privacy Policy
-              </Link>
-            </span>
-          </label>
-          {errors.termsAccepted && (
-            <p className="text-red-500 text-[11px] mt-1.5 font-medium flex items-center gap-1">
-              <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-              {errors.termsAccepted}
-            </p>
-          )}
-        </div>
-
-        {/* Submit Button */}
-        <div className="pt-2">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full h-[46px] bg-[#00BC7D] hover:bg-[#00d68f] text-white rounded-full font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:-translate-y-0.5 disabled:opacity-50"
-          >
-            {isSubmitting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <span>Create Account</span>
-            )}
-          </button>
-        </div>
-      </form>
-
-      {/* Footer link: Sign In */}
-      <div className="mt-5 text-center text-xs text-zinc-500">
-        Already registered?{" "}
-        <Link
-          href="/login"
-          className="text-[#00BC7D] font-bold hover:underline"
-        >
-          Sign In
-        </Link>
-      </div>
-    </div>
-  );
+function FieldError({ message }: { message?: string }) {
+  if (!message) return null;
+  return <p className="mt-1.5 px-2 text-xs text-red-600">{message}</p>;
 }
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState<FormState>(emptyForm);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { trigger, isMutating } = useSWRMutation(
+    "register-company",
+    (_key: string, { arg }: { arg: Record<string, unknown> }) =>
+      nextFetch<{ message?: string }>({ url: "/users/register", method: "POST", payload: arg }),
+  );
+
+  const updateField = (field: keyof FormState, value: string | boolean) => {
+    setFormData((current) => ({ ...current, [field]: value }));
+    setErrors((current) => {
+      if (!current[field]) return current;
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setSubmitError("");
+
+    const result = registerFields.safeParse(formData);
+    if (!result.success) {
+      setErrors(registerFieldErrors(result.error));
+      return;
+    }
+
+    try {
+      const response = await trigger(
+        {
+          role: "provider",
+          firstName: result.data.firstName,
+          lastName: result.data.lastName,
+          email: result.data.email,
+          password: result.data.password,
+          businessName: result.data.company,
+        },
+        { throwOnError: true },
+      );
+      toast.success(response?.message || "Account created. Check your email to verify it.");
+      router.push(`/verify-otp?email=${encodeURIComponent(result.data.email)}`);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Could not create your account.");
+    }
+  };
+
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center p-12 text-[#00BC7D]">
-          <Loader2 className="w-8 h-8 animate-spin" />
+    <Card className="w-full max-w-[440px] gap-0 rounded-[28px] bg-white px-6 py-7 text-slate-900 shadow-2xl ring-0 sm:px-8 sm:py-8">
+      <div className="mb-6 flex items-center gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={() => router.back()}
+          className="size-8 text-slate-700 hover:bg-transparent hover:text-slate-900"
+          aria-label="Go back"
+        >
+          <ArrowLeft className="size-5" />
+        </Button>
+        <h1 className="text-lg font-bold">Register your company</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label htmlFor="firstName" className="mb-1.5 px-1 font-normal text-slate-600">
+              First Name
+            </Label>
+            <Input
+              id="firstName"
+              value={formData.firstName}
+              onChange={(event) => updateField("firstName", event.target.value)}
+              placeholder="Marco"
+              autoComplete="given-name"
+              aria-invalid={Boolean(errors.firstName)}
+              className={fieldClass(Boolean(errors.firstName))}
+            />
+            <FieldError message={errors.firstName} />
+          </div>
+          <div>
+            <Label htmlFor="lastName" className="mb-1.5 px-1 font-normal text-slate-600">
+              Last Name
+            </Label>
+            <Input
+              id="lastName"
+              value={formData.lastName}
+              onChange={(event) => updateField("lastName", event.target.value)}
+              placeholder="Ferretti"
+              autoComplete="family-name"
+              aria-invalid={Boolean(errors.lastName)}
+              className={fieldClass(Boolean(errors.lastName))}
+            />
+            <FieldError message={errors.lastName} />
+          </div>
         </div>
-      }
-    >
-      <RegisterContent />
-    </Suspense>
+
+        <div>
+          <Label htmlFor="company" className="mb-1.5 px-1 font-normal text-slate-600">
+            Company
+          </Label>
+          <Input
+            id="company"
+            value={formData.company}
+            onChange={(event) => updateField("company", event.target.value)}
+            placeholder="Ferretti Serramenti Srl"
+            autoComplete="organization"
+            aria-invalid={Boolean(errors.company)}
+            className={fieldClass(Boolean(errors.company))}
+          />
+          <FieldError message={errors.company} />
+        </div>
+
+        <div>
+          <Label htmlFor="email" className="mb-1.5 px-1 font-normal text-slate-600">
+            Email
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            value={formData.email}
+            onChange={(event) => updateField("email", event.target.value)}
+            placeholder="marco@ferretti.it"
+            autoComplete="email"
+            aria-invalid={Boolean(errors.email)}
+            className={fieldClass(Boolean(errors.email))}
+          />
+          <FieldError message={errors.email} />
+        </div>
+
+        <div>
+          <Label htmlFor="password" className="mb-1.5 px-1 font-normal text-slate-600">
+            Password
+          </Label>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={formData.password}
+              onChange={(event) => updateField("password", event.target.value)}
+              placeholder="Minimum 8 characters"
+              autoComplete="new-password"
+              aria-invalid={Boolean(errors.password)}
+              className={fieldClass(Boolean(errors.password), true)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              className="absolute top-1/2 right-3.5 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-600"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            </button>
+          </div>
+          <FieldError message={errors.password} />
+        </div>
+
+        <div>
+          <Label htmlFor="confirmPassword" className="mb-1.5 px-1 font-normal text-slate-600">
+            Confirm Password
+          </Label>
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              value={formData.confirmPassword}
+              onChange={(event) => updateField("confirmPassword", event.target.value)}
+              placeholder="Minimum 8 characters"
+              autoComplete="new-password"
+              aria-invalid={Boolean(errors.confirmPassword)}
+              className={fieldClass(Boolean(errors.confirmPassword), true)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((current) => !current)}
+              className="absolute top-1/2 right-3.5 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-600"
+              aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+            >
+              {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+            </button>
+          </div>
+          <FieldError message={errors.confirmPassword} />
+        </div>
+
+        <div>
+          <Label className="items-start gap-2.5 px-1 font-normal text-slate-600">
+            <Checkbox
+              checked={formData.termsAccepted}
+              onCheckedChange={(checked) => updateField("termsAccepted", checked === true)}
+              aria-invalid={Boolean(errors.termsAccepted)}
+              className="mt-0.5 border-slate-300 bg-white data-checked:border-[#00BC7D] data-checked:bg-[#00BC7D] data-checked:text-white"
+            />
+            <span>
+              I accept the{" "}
+              <Link href="/terms" className="font-medium text-[#00BC7D] hover:underline">
+                Terms of Service
+              </Link>{" "}
+              and the{" "}
+              <Link href="/privacy" className="font-medium text-[#00BC7D] hover:underline">
+                Privacy Policy
+              </Link>
+            </span>
+          </Label>
+          <FieldError message={errors.termsAccepted} />
+        </div>
+
+        {submitError ? <p className="px-2 text-sm text-red-600">{submitError}</p> : null}
+
+        <button
+          type="submit"
+          disabled={isMutating}
+          className="flex h-11 w-full items-center justify-center rounded-full bg-[#00D492] text-sm font-semibold text-white transition-colors hover:bg-[#00BC7D] disabled:opacity-60"
+        >
+          {isMutating ? <Loader2 className="size-4 animate-spin" /> : "Create Account"}
+        </button>
+      </form>
+
+      <p className="mt-5 text-center text-sm text-slate-500">
+        Already registered?{" "}
+        <Link href="/login" className="font-semibold text-[#00BC7D] hover:underline">
+          Sign In
+        </Link>
+      </p>
+    </Card>
   );
 }
