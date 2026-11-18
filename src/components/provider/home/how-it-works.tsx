@@ -5,55 +5,55 @@ const steps = [
     number: "01",
     title: "Browse Requests",
     description: "Find customer requests in your category and area of interest.",
-    image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=600&q=80",
-    alt: "Team reviewing customer requests",
+    image: "/images/provider/home/how-it-works-01.png",
   },
   {
     number: "02",
     title: "Evaluate the Lead",
     description: "Preview the request without unlocking it yet.",
-    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=600&q=80",
-    alt: "People evaluating a lead",
+    image: "/images/provider/home/how-it-works-02.png",
   },
   {
     number: "03",
     title: "Buy Credits",
     description: "Top up your balance with the package that best fits your volume.",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
-    alt: "Professional managing credits",
+    image: "/images/provider/home/how-it-works-03.png",
   },
   {
     number: "04",
     title: "Unlock and Contact",
     description: "Use credits to reveal the customer's information and contact them.",
-    image: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=600&q=80",
-    alt: "Handshake after contacting a customer",
+    image: "/images/provider/home/how-it-works-04.png",
   },
 ];
 
 export default function ProviderHowItWorks() {
   return (
-    <section className="bg-[#ECEFF2] text-slate-900 py-16 border-t border-slate-300/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">How It Works</h2>
-          <p className="text-xs sm:text-sm text-zinc-600 mt-1">A simple and transparent process to attract new qualified clients.</p>
+    <section className="bg-[#F8FAFC] py-16 text-slate-900 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-12 max-w-xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">How It Works</h2>
+          <p className="mt-2 text-sm text-slate-500">A simple and transparent process to attract new qualified clients.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step) => (
-            <div key={step.number} className="bg-[#E5E9EC] rounded-2xl overflow-hidden border border-slate-300/60 flex flex-col justify-between">
-              <div className="p-5 text-center">
-                <span className="w-8 h-8 rounded-full bg-[#00BC7D] text-white font-black text-xs inline-flex items-center justify-center mb-2">
-                  {step.number}
-                </span>
-                <h3 className="text-sm font-bold text-slate-900 mb-1">{step.title}</h3>
-                <p className="text-[11px] text-zinc-600 leading-relaxed">{step.description}</p>
+            <article key={step.number} className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm transition-colors hover:border-[#00D492]">
+              <span className="mx-auto inline-flex size-10 items-center justify-center rounded-full bg-[#00BC7D] text-sm font-bold text-white">
+                {step.number}
+              </span>
+              <h3 className="mt-4 text-base font-bold text-slate-900">{step.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-500">{step.description}</p>
+              <div className="mt-auto pt-5">
+                <Image
+                  src={step.image}
+                  alt=""
+                  width={250}
+                  height={169}
+                  className="h-auto w-full"
+                />
               </div>
-              <div className="h-36 bg-slate-300 relative overflow-hidden">
-                <Image src={step.image} alt={step.alt} fill className="object-cover" sizes="(max-width: 640px) 100vw, 25vw" />
-              </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>

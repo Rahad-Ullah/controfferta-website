@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const stats = [
   { value: "12,400+", label: "Quotes Every Year" },
@@ -32,13 +33,15 @@ export default function ProviderHero() {
               leads, reach out to those who have already shown interest in your industry.
             </p>
 
-            <Link
-              href="/register"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#00D492] to-[#00b87a] px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,212,146,0.35)] transition-transform hover:-translate-y-0.5"
+            <Button
+              variant="primary"
+              className="mt-8"
+              nativeButton={false}
+              render={<Link href="/register" />}
             >
               <Search className="size-4" />
               Find New Customers
-            </Link>
+            </Button>
           </div>
 
           <div className="relative flex justify-center lg:justify-end">

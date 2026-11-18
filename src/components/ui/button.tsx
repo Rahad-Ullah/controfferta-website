@@ -13,6 +13,8 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+        primary:
+          "rounded-xl border-0 bg-gradient-to-r from-[#00D492] via-[#06785a] to-[#10283a] font-semibold text-white shadow-[0_8px_14px_-4px_#0d9a86] hover:brightness-110 focus-visible:border-0",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:
@@ -35,6 +37,12 @@ const buttonVariants = cva(
         "icon-lg": "size-9",
       },
     },
+    compoundVariants: [
+      {
+        variant: "primary",
+        class: "h-12 gap-2.5 rounded-xl border-0 px-8 text-sm",
+      },
+    ],
     defaultVariants: {
       variant: "default",
       size: "default",

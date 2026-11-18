@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 const requests = [
   {
@@ -34,48 +34,46 @@ const requests = [
 
 export default function ProviderLatestRequests() {
   return (
-    <section className="bg-[#ECEFF2] text-slate-900 pb-16 sm:pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-xl mx-auto mb-10">
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Latest Requests</h2>
-          <p className="text-xs sm:text-sm text-zinc-600 mt-1">The most recent customer requests on the platform.</p>
+    <section className="bg-white py-16 text-slate-900 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-10 max-w-xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Latest Requests</h2>
+          <p className="mt-2 text-sm text-slate-500">The most recent customer requests on the platform.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {requests.map((request) => (
-            <div
+            <article
               key={request.title}
-              className="bg-[#E5E9EC] hover:bg-[#dfe4e8] border border-slate-300/80 rounded-2xl p-5 flex flex-col justify-between transition-all"
+              className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_8px_24px_-10px_#0f172a2e] transition-colors hover:border-[#00D492]"
             >
               <div>
-                <div className="flex items-center justify-between gap-1 mb-2">
-                  <span className="text-[11px] text-zinc-500 font-medium">{request.category}</span>
-                  <span className="text-[10px] font-bold text-[#00BC7D] bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium text-slate-500">
+                    {request.category}
+                  </span>
+                  <span className="rounded-full bg-[#E7F8F1] px-2.5 py-0.5 text-[11px] font-semibold text-[#12a37a]">
                     Available
                   </span>
                 </div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 mb-2">{request.title}</h3>
-                <p className="text-[11px] text-zinc-500 flex items-center gap-1 mb-4">
-                  <MapPin className="w-3 h-3 text-zinc-400 shrink-0" />
+                <h3 className="mb-3 text-sm font-bold text-slate-900">{request.title}</h3>
+                <p className="mb-5 flex items-center gap-1.5 text-xs text-slate-400">
+                  <MapPin className="size-3.5 shrink-0" />
                   {request.location}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-300/70 text-xs">
-                <span className="text-[11px] text-zinc-500">{request.date}</span>
-                <span className="font-extrabold text-[#00BC7D]">{request.credits}</span>
+              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
+                <span className="text-slate-400">{request.date}</span>
+                <span className="font-bold text-[#00D492]">{request.credits}</span>
               </div>
-            </div>
+            </article>
           ))}
         </div>
 
-        <div className="text-center mt-8">
-          <Link
-            href="/register"
-            className="inline-flex items-center gap-1 text-xs font-bold text-[#00BC7D] hover:underline"
-          >
-            <span>View All Services</span>
-            <ChevronRight className="w-3.5 h-3.5" />
+        <div className="mt-8 text-center">
+          <Link href="/provider/services" className="text-sm font-semibold text-[#00D492] underline underline-offset-4">
+            View All Services
           </Link>
         </div>
       </div>

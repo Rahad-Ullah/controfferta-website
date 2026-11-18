@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 
@@ -5,48 +6,64 @@ const reviews = [
   {
     quote: "In three months we gained 27 new clients through this platform. The credit system is transparent and convenient.",
     name: "Marco Ferretti",
+    company: "Ferretti Windows Ltd",
     trade: "Windows and doors",
+    image: "/images/testimonial-1.png",
   },
   {
     quote: "The quality of the leads is way higher compared to other services. The clients are really interested and the conversion rate is high.",
     name: "Giulia Romano",
+    company: "Romano Solar",
     trade: "Photovoltaic",
+    image: "/images/testimonial-2.png",
   },
   {
     quote: "Professional and intuitive platform. Customer support is excellent. I recommend it to all companies in the construction industry.",
     name: "Alessandro Conti",
+    company: "Conti Constructions",
     trade: "Construction",
+    image: "/images/testimonial-3.png",
   },
 ];
 
 export default function ProviderReviews() {
   return (
-    <section className="bg-[#ECEFF2] text-slate-900 py-16 border-t border-slate-300/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">What Companies Say</h2>
-        </div>
+    <section className="bg-white py-16 text-slate-900 sm:py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">What Companies Say</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {reviews.map((review) => (
-            <div key={review.name} className="bg-[#E5E9EC] rounded-2xl p-6 border border-slate-300/60 space-y-3">
-              <div className="flex items-center gap-1 text-amber-500">
+            <article key={review.name} className="flex h-full flex-col rounded-2xl border border-slate-200 bg-[#F9FAFC] p-6">
+              <div className="flex items-center gap-1 text-[#E8A121]">
                 {Array.from({ length: 5 }, (_, index) => (
-                  <Star key={index} className="w-4 h-4 fill-amber-400 stroke-none" />
+                  <Star key={index} className="size-4 fill-current stroke-none" />
                 ))}
               </div>
-              <p className="text-xs text-zinc-700 italic leading-relaxed">&ldquo;{review.quote}&rdquo;</p>
-              <div className="pt-2 border-t border-slate-300/70 flex items-center justify-between text-xs">
-                <span className="font-bold text-slate-900">{review.name}</span>
-                <span className="text-[11px] text-zinc-500">{review.trade}</span>
+              <p className="mt-4 flex-1 text-sm leading-relaxed text-slate-500">&ldquo;{review.quote}&rdquo;</p>
+              <div className="mt-6 flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <Image
+                    src={review.image}
+                    alt=""
+                    width={30}
+                    height={30}
+                    className="size-10 shrink-0 rounded-full object-cover"
+                  />
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-900">{review.name}</p>
+                    <p className="text-xs leading-snug text-slate-400">{review.company}</p>
+                  </div>
+                </div>
+                <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] text-slate-500">{review.trade}</span>
               </div>
-            </div>
+            </article>
           ))}
         </div>
 
-        <div className="text-center mt-8">
-          <Link href="/provider/reviews" className="text-xs font-semibold text-zinc-600 hover:text-slate-900 underline">
-            See All Reviews
+        <div className="mt-10 text-center">
+          <Link href="/provider/reviews" className="text-sm text-slate-500 hover:text-slate-900">
+            See All Review
           </Link>
         </div>
       </div>
