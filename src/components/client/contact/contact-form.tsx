@@ -2,30 +2,33 @@
 
 import { useState } from "react";
 import useSWRMutation from "swr/mutation";
-import { CheckCircle2, Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { CheckCircle2, ChevronDown } from "lucide-react";
 import { nextFetch } from "@/lib/api/fetcher";
+import { apiKeys } from "@/lib/api/keys";
 import { contactFieldErrors, contactFields } from "@/schemas/contact";
 import type { Support, SupportCreate } from "@/types/support.interface";
-import { apiKeys } from "@/lib/api/keys";
+
+const subjects = [
+  "General information",
+  "Submitting a request",
+  "Quotes",
+  "Becoming a company",
+];
 
 const emptyForm = {
   firstName: "",
   lastName: "",
   email: "",
-  subject: "",
+  subject: subjects[0],
   message: "",
 };
 
 const fieldClassName =
-  "h-auto w-full rounded-xl border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-800 shadow-none placeholder:text-zinc-400 focus-visible:border-[#00BC7D] focus-visible:ring-0 sm:text-sm";
+  "w-full rounded-full border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#00BC7D]";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
-  return <p className="mt-1.5 text-xs text-red-600">{message}</p>;
+  return <p className="mt-1.5 px-2 text-xs text-red-600">{message}</p>;
 }
 
 export function ContactForm() {
@@ -33,13 +36,13 @@ export function ContactForm() {
   const [senderName, setSenderName] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState("");
+  const [formData, setFormData] = useState(emptyForm);
 
   const { trigger, isMutating } = useSWRMutation(
     apiKeys.supports,
-    (_: string, { arg }: { arg: SupportCreate }) =>
-      nextFetch<{ data: Support }>({ url: "/supports/create", method: "POST", payload: arg })
+    (_url: string, { arg }: { arg: SupportCreate }) =>
+      nextFetch<{ data: Support }>({ url: "/supports/create", method: "POST", payload: arg }),
   );
-  const [formData, setFormData] = useState(emptyForm);
 
   const updateField = (field: keyof typeof formData, value: string) => {
     setFormData((current) => ({ ...current, [field]: value }));
@@ -51,8 +54,8 @@ export function ContactForm() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setSubmitError("");
 
     const result = contactFields.safeParse(formData);
@@ -74,65 +77,55 @@ export function ContactForm() {
 
   if (submitted) {
     return (
-      <div className="text-center py-10 space-y-4">
-        <div className="w-14 h-14 rounded-full bg-emerald-100 text-[#00BC7D] mx-auto flex items-center justify-center">
-          <CheckCircle2 className="w-7 h-7" />
+      <div className="py-10 text-center">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-100 text-[#00BC7D]">
+          <CheckCircle2 className="size-7" />
         </div>
-        <h3 className="text-2xl font-bold text-slate-900">
-          Message Sent Successfully!
-        </h3>
-        <p className="text-xs sm:text-sm text-zinc-500 max-w-sm mx-auto">
-          Thank you for reaching out, <span className="font-semibold text-slate-800">{senderName}</span>. A member of our support team will reply to you shortly.
+        <h2 className="mt-4 text-2xl font-bold text-slate-900">Message sent</h2>
+        <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500">
+          Thank you, {senderName}. A member of our support team will reply to you shortly.
         </p>
-        <Button
+        <button
           type="button"
-          onClick={() => {
-            setSubmitError("");
-            setSubmitted(false);
-          }}
-          className="h-auto rounded-xl bg-[#00BC7D] px-6 py-2.5 text-xs font-semibold text-white shadow-md hover:bg-[#00d68f] sm:text-sm"
+          onClick={() => setSubmitted(false)}
+          className="mt-6 rounded-full bg-[#00BC7D] px-6 py-3 text-sm font-semibold text-white hover:bg-[#00a36d]"
         >
-          Send Another Message
-        </Button>
+          Send another message
+        </button>
       </div>
     );
   }
 
   return (
     <div>
-      <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
-        Send Us a Message
-      </h3>
-      <p className="text-xs sm:text-sm text-zinc-500 mt-1">
-        Fill out the form below and we will get back to you within 24 hours.
-      </p>
+      <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">Write to us</h2>
 
-      <form noValidate onSubmit={handleSubmit} className="mt-6 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <form noValidate onSubmit={handleSubmit} className="mt-8 space-y-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div>
-            <Label className="mb-1 block text-xs font-semibold text-slate-700">
-              First Name <span className="text-red-500">*</span>
-            </Label>
-            <Input
+            <label htmlFor="client-first-name" className="mb-2 block text-sm text-slate-600">
+              First Name *
+            </label>
+            <input
+              id="client-first-name"
               type="text"
-              aria-invalid={Boolean(errors.firstName)}
               value={formData.firstName}
-              onChange={(e) => updateField("firstName", e.target.value)}
-              placeholder="Marco"
+              aria-invalid={Boolean(errors.firstName)}
+              onChange={(event) => updateField("firstName", event.target.value)}
               className={fieldClassName}
             />
             <FieldError message={errors.firstName} />
           </div>
           <div>
-            <Label className="mb-1 block text-xs font-semibold text-slate-700">
-              Last Name <span className="text-red-500">*</span>
-            </Label>
-            <Input
+            <label htmlFor="client-last-name" className="mb-2 block text-sm text-slate-600">
+              Last Name *
+            </label>
+            <input
+              id="client-last-name"
               type="text"
-              aria-invalid={Boolean(errors.lastName)}
               value={formData.lastName}
-              onChange={(e) => updateField("lastName", e.target.value)}
-              placeholder="Rossi"
+              aria-invalid={Boolean(errors.lastName)}
+              onChange={(event) => updateField("lastName", event.target.value)}
               className={fieldClassName}
             />
             <FieldError message={errors.lastName} />
@@ -140,60 +133,68 @@ export function ContactForm() {
         </div>
 
         <div>
-          <Label className="mb-1 block text-xs font-semibold text-slate-700">
-            Email Address <span className="text-red-500">*</span>
-          </Label>
-          <Input
+          <label htmlFor="client-email" className="mb-2 block text-sm text-slate-600">
+            Email *
+          </label>
+          <input
+            id="client-email"
             type="email"
-            aria-invalid={Boolean(errors.email)}
             value={formData.email}
-            onChange={(e) => updateField("email", e.target.value)}
-            placeholder="marco@example.com"
+            aria-invalid={Boolean(errors.email)}
+            onChange={(event) => updateField("email", event.target.value)}
             className={fieldClassName}
           />
           <FieldError message={errors.email} />
         </div>
 
         <div>
-          <Label className="mb-1 block text-xs font-semibold text-slate-700">
-            Subject <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            type="text"
-            aria-invalid={Boolean(errors.subject)}
-            value={formData.subject}
-            onChange={(e) => updateField("subject", e.target.value)}
-            placeholder="Inquiry about lead generation / requests..."
-            className={fieldClassName}
-          />
+          <label htmlFor="client-subject" className="mb-2 block text-sm text-slate-600">
+            Subject
+          </label>
+          <div className="relative">
+            <select
+              id="client-subject"
+              value={formData.subject}
+              aria-invalid={Boolean(errors.subject)}
+              onChange={(event) => updateField("subject", event.target.value)}
+              className={`${fieldClassName} appearance-none pr-10`}
+            >
+              {subjects.map((subject) => (
+                <option key={subject} value={subject}>
+                  {subject}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-slate-400" />
+          </div>
           <FieldError message={errors.subject} />
         </div>
 
         <div>
-          <Label className="mb-1 block text-xs font-semibold text-slate-700">
-            Message <span className="text-red-500">*</span>
-          </Label>
-          <Textarea
+          <label htmlFor="client-message" className="mb-2 block text-sm text-slate-600">
+            Message *
+          </label>
+          <textarea
+            id="client-message"
             rows={5}
-            aria-invalid={Boolean(errors.message)}
             value={formData.message}
-            onChange={(e) => updateField("message", e.target.value)}
-            placeholder="How can we help you today?"
-            className={`${fieldClassName} min-h-28 resize-none`}
+            aria-invalid={Boolean(errors.message)}
+            onChange={(event) => updateField("message", event.target.value)}
+            placeholder="Describe your request..."
+            className="w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#00BC7D]"
           />
           <FieldError message={errors.message} />
         </div>
 
-        {submitError ? <p className="text-xs text-red-600">{submitError}</p> : null}
+        {submitError ? <p className="text-sm text-red-600">{submitError}</p> : null}
 
-        <Button
+        <button
           type="submit"
           disabled={isMutating}
-          className="mt-2 h-auto w-full rounded-xl bg-[#00BC7D] py-3.5 text-xs font-semibold text-white shadow-md hover:bg-[#00d68f] sm:text-sm cursor-pointer"
+          className="w-full rounded-full bg-[#00BC7D] py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#00a36d] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <Send className="size-4" />
           {isMutating ? "Sending..." : "Send Message"}
-        </Button>
+        </button>
       </form>
     </div>
   );
