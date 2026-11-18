@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import useSWRMutation from "swr/mutation";
 import { CheckCircle2, MessageSquare, Star } from "lucide-react";
+import AuthRequiredDialog from "@/components/shared/auth-required-dialog";
 import { ApiError, nextFetch } from "@/lib/api/fetcher";
 import { apiKeys } from "@/lib/api/keys";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { reviewFieldErrors, reviewFields } from "@/schemas/review";
 import type { Review, ReviewCreate } from "@/types/review.interface";
-import { revalidateTag } from "next/cache";
 
 type ReviewCreateResponse = {
   success: boolean;
@@ -22,6 +23,9 @@ function FieldError({ message }: { message?: string }) {
 }
 
 export function ReviewForm() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user, isLoading, refresh } = useCurrentUser();
   const [rating, setRating] = useState(4);
   const [hoverRating, setHoverRating] = useState(0);
   const [message, setMessage] = useState("");
@@ -29,7 +33,9 @@ export function ReviewForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState("");
-  const router = useRouter();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+
+  const redirectTo = pathname || "/reviews";
 
   const { trigger, isMutating } = useSWRMutation(
     apiKeys.platformReviews,
@@ -52,14 +58,23 @@ export function ReviewForm() {
       return;
     }
 
+    // Don't gate on the SWR profile cache — it can be empty/stale while API cookies
+    // are already valid. Attempt create; only open auth UI on a real 401.
     try {
+      if (!user && !isLoading) {
+        try {
+          await refresh();
+        } catch {
+          // Profile refresh failed; still try the review create with cookies.
+        }
+      }
+
       const response = await trigger(result.data, { throwOnError: true });
       if (!response?.success || !response.data?._id) {
         setSubmitError(response?.message || "Could not send your review.");
         return;
       }
 
-      revalidateTag(apiKeys.platformReviews);
       router.refresh();
       setMessage("");
       setRating(4);
@@ -68,7 +83,7 @@ export function ReviewForm() {
       setSubmitted(true);
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
-        setSubmitError("Sign in as a customer or company to leave a review.");
+        setAuthDialogOpen(true);
         return;
       }
       if (error instanceof ApiError && error.status === 403) {
@@ -80,13 +95,13 @@ export function ReviewForm() {
   };
 
   return (
-    <div className="mt-16 sm:mt-20 max-w-xl mx-auto">
-      <div className="bg-white rounded-3xl p-7 sm:p-9 border border-slate-200 shadow-xl text-center relative overflow-hidden">
-        <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center mx-auto mb-3 shadow-xs">
-          <MessageSquare className="w-5 h-5" />
+    <div className="mx-auto mt-16 max-w-xl sm:mt-20">
+      <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-7 text-center shadow-xl sm:p-9">
+        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-xl bg-amber-50 text-amber-500 shadow-xs">
+          <MessageSquare className="size-5" />
         </div>
 
-        <h2 className="text-lg sm:text-xl font-bold text-slate-900">Add Review for Platform</h2>
+        <h2 className="text-lg font-bold text-slate-900 sm:text-xl">Add Review for Platform</h2>
 
         {!submitted ? (
           <form noValidate onSubmit={handleSubmit} className="mt-5 space-y-4">
@@ -110,13 +125,14 @@ export function ReviewForm() {
                     disabled={isMutating}
                     aria-pressed={star === rating}
                     aria-label={`${star} star${star === 1 ? "" : "s"}`}
-                    className="transition-transform hover:scale-110 focus:outline-none cursor-pointer disabled:cursor-not-allowed"
+                    className="cursor-pointer transition-transform hover:scale-110 focus:outline-none disabled:cursor-not-allowed"
                   >
                     <Star
-                      className={`w-7 h-7 sm:w-8 sm:h-8 transition-colors ${star <= (hoverRating || rating)
-                        ? "fill-amber-400 text-amber-400"
-                        : "fill-slate-200 text-slate-200"
-                        }`}
+                      className={`size-7 transition-colors sm:size-8 ${
+                        star <= (hoverRating || rating)
+                          ? "fill-amber-400 text-amber-400"
+                          : "fill-slate-200 text-slate-200"
+                      }`}
                     />
                   </button>
                 ))}
@@ -125,7 +141,7 @@ export function ReviewForm() {
             </div>
 
             <div className="text-left">
-              <label htmlFor="review-message" className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="review-message" className="mb-1 block text-xs font-semibold text-slate-700">
                 Message *
               </label>
               <textarea
@@ -144,7 +160,7 @@ export function ReviewForm() {
                 }}
                 disabled={isMutating}
                 placeholder="Describe in detail what the customer is looking for, type of work, quantity, technical specifications..."
-                className="w-full text-xs sm:text-sm p-3.5 rounded-xl border border-slate-200 focus:border-[#00BC7D] outline-none resize-none leading-relaxed disabled:opacity-60"
+                className="w-full resize-none rounded-xl border border-slate-200 p-3.5 text-xs leading-relaxed outline-none focus:border-[#00BC7D] disabled:opacity-60 sm:text-sm"
               />
               <FieldError message={errors.message} />
             </div>
@@ -160,26 +176,26 @@ export function ReviewForm() {
                   setSubmitError("");
                 }}
                 disabled={isMutating}
-                className="flex-1 py-3 px-5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 cursor-pointer rounded-xl border border-slate-200 px-5 py-3 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                disabled={isMutating}
-                className="flex-1 py-3 px-5 rounded-xl bg-[#00BC7D] hover:bg-[#00d68f] text-white text-xs sm:text-sm font-semibold shadow-md transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isMutating || isLoading}
+                className="flex-1 cursor-pointer rounded-xl bg-[#00BC7D] px-5 py-3 text-xs font-semibold text-white shadow-md transition-colors hover:bg-[#00d68f] disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
               >
                 {isMutating ? "Submitting..." : "Submit"}
               </button>
             </div>
           </form>
         ) : (
-          <div className="py-6 space-y-3">
-            <div className="w-12 h-12 rounded-full bg-emerald-100 text-[#00BC7D] mx-auto flex items-center justify-center">
-              <CheckCircle2 className="w-6 h-6" />
+          <div className="space-y-3 py-6">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-emerald-100 text-[#00BC7D]">
+              <CheckCircle2 className="size-6" />
             </div>
             <h3 className="text-base font-bold text-slate-900">Thank you for your review!</h3>
-            <p className="text-xs text-zinc-500 max-w-sm mx-auto">
+            <p className="mx-auto max-w-sm text-xs text-zinc-500">
               {successMessage ||
                 "Your feedback helps us continue providing the best connection between customers and professionals."}
             </p>
@@ -190,13 +206,22 @@ export function ReviewForm() {
                 setSuccessMessage("");
                 setSubmitted(false);
               }}
-              className="text-xs text-[#00BC7D] font-semibold underline pt-2 cursor-pointer"
+              className="cursor-pointer pt-2 text-xs font-semibold text-[#00BC7D] underline"
             >
               Write another review
             </button>
           </div>
         )}
       </div>
+
+      <AuthRequiredDialog
+        open={authDialogOpen}
+        onClose={() => setAuthDialogOpen(false)}
+        redirectTo={redirectTo}
+        title="Sign in to leave a review"
+        description="Create an account or sign in as a customer or company to submit your platform review."
+        primaryLabel="Sign Up to Review"
+      />
     </div>
   );
 }
