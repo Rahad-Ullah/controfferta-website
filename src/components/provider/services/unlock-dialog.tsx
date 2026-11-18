@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { CircleCheck, Lock } from "lucide-react";
 
 const benefits = [
@@ -11,9 +10,17 @@ const benefits = [
   "Manage your unlocked leads",
 ];
 
-export default function UnlockLeadDialog() {
-  const router = useRouter();
-  const [open, setOpen] = useState(true);
+export default function UnlockLeadDialog({
+  open,
+  onClose,
+  redirectTo = "/dashboard/browser-leads",
+}: {
+  open: boolean;
+  onClose: () => void;
+  /** Where to send the user after login / signup completes. */
+  redirectTo?: string;
+}) {
+  const redirectQuery = `redirect=${encodeURIComponent(redirectTo)}`;
 
   useEffect(() => {
     if (!open) return;
@@ -22,9 +29,7 @@ export default function UnlockLeadDialog() {
     document.body.style.overflow = "hidden";
 
     function onKey(event: KeyboardEvent) {
-      if (event.key !== "Escape") return;
-      setOpen(false);
-      router.push("/provider/services");
+      if (event.key === "Escape") onClose();
     }
 
     window.addEventListener("keydown", onKey);
@@ -32,20 +37,15 @@ export default function UnlockLeadDialog() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKey);
     };
-  }, [open, router]);
+  }, [open, onClose]);
 
   if (!open) return null;
-
-  function close() {
-    setOpen(false);
-    router.push("/provider/services");
-  }
 
   return (
     <div
       className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 px-4"
       role="presentation"
-      onClick={close}
+      onClick={onClose}
     >
       <div
         role="dialog"
@@ -77,14 +77,20 @@ export default function UnlockLeadDialog() {
         </div>
 
         <Link
-          href="/register"
+          href={`/register?${redirectQuery}`}
           className="mt-6 flex h-11 w-full items-center justify-center rounded-full bg-[#00D492] text-sm font-semibold text-white hover:bg-[#00BC7D]"
         >
           Sign Up to Unlock
         </Link>
+        <p className="mt-3 text-xs text-slate-500">
+          Already have an account?{" "}
+          <Link href={`/login?${redirectQuery}`} className="font-semibold text-[#00BC7D] hover:underline">
+            Sign In
+          </Link>
+        </p>
         <button
           type="button"
-          onClick={close}
+          onClick={onClose}
           className="mt-3 flex h-11 w-full items-center justify-center rounded-full border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50"
         >
           Cancel

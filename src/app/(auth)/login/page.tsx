@@ -8,6 +8,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError, nextFetch } from "@/lib/api/fetcher";
 import { refreshCurrentUser } from "@/hooks/use-current-user";
+import { safeRedirectPath } from "@/utils/safe-redirect";
 
 type LoginResponse = {
   message?: string;
@@ -21,7 +22,7 @@ type LoginResponse = {
 function LoginFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectParam = searchParams.get("redirect");
+  const redirectTo = safeRedirectPath(searchParams.get("redirect"));
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,11 +67,13 @@ function LoginFormContent() {
       );
       toast.success(response?.message || "Logged in successfully.");
       await refreshCurrentUser();
-      router.push(redirectParam || "/dashboard");
+      router.push(redirectTo);
     } catch (error) {
       if (error instanceof ApiError && error.status === 407) {
         toast.info(error.message || "Please verify your account, then try to login again.");
-        router.push(`/verify-otp?email=${encodeURIComponent(trimmedEmail)}`);
+        const verifyQuery = new URLSearchParams({ email: trimmedEmail });
+        if (redirectTo !== "/dashboard") verifyQuery.set("redirect", redirectTo);
+        router.push(`/verify-otp?${verifyQuery.toString()}`);
         return;
       }
 

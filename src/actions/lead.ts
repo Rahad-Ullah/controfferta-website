@@ -1,19 +1,16 @@
 "use server";
 
-import { getAuthToken } from "@/lib/auth-cookie";
 import { nextFetch } from "@/lib/api/fetcher";
 import { apiKeys } from "@/lib/api/keys";
 import type { Lead, LeadPagination } from "@/types/lead.interface";
 
 const latestLeadLimit = 4;
 
+/** Public lead feed (`GET /leads`). Contact details stay hidden until unlock. */
 export async function getCategoryLeads(categoryId: string): Promise<{
   leads: Lead[];
   total: number;
 } | null> {
-  const token = await getAuthToken();
-  if (!token) return null;
-
   const params = new URLSearchParams({
     category: categoryId,
     page: "1",
@@ -24,20 +21,17 @@ export async function getCategoryLeads(categoryId: string): Promise<{
   try {
     const body = await nextFetch<{ data?: Lead[]; pagination?: LeadPagination }>({
       url: `${apiKeys.leads}?${params.toString()}`,
-      token,
-      cache: "no-store",
+      next: { revalidate: 60, tags: [apiKeys.leads] },
     });
     const leads = Array.isArray(body.data) ? body.data : [];
     return { leads, total: body.pagination?.total ?? leads.length };
   } catch {
-    return { leads: [], total: 0 };
+    return null;
   }
 }
 
+/** Public latest accepted leads for the provider marketing home. */
 export async function getLatestLeads(): Promise<Lead[]> {
-  const token = await getAuthToken();
-  if (!token) return [];
-
   const params = new URLSearchParams({
     page: "1",
     limit: String(latestLeadLimit),
@@ -47,8 +41,7 @@ export async function getLatestLeads(): Promise<Lead[]> {
   try {
     const body = await nextFetch<{ data?: Lead[]; pagination?: LeadPagination }>({
       url: `${apiKeys.leads}?${params.toString()}`,
-      token,
-      cache: "no-store",
+      next: { revalidate: 60, tags: [apiKeys.leads] },
     });
     if (!Array.isArray(body.data)) return [];
     return body.data.slice(0, latestLeadLimit);

@@ -28,6 +28,7 @@ export function useCurrentUser(options: UseCurrentUserOptions = {}) {
 
   const { data, error, isLoading, isValidating, mutate: mutateUser } = useSWR<CurrentUserResponse>(
     enabled ? apiKeys.me : null,
+    { shouldRetryOnError: false },
   );
 
   const user: CurrentUser | null = data?.data ?? null;

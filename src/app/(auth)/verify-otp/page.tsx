@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError, nextFetch } from "@/lib/api/fetcher";
 import { refreshCurrentUser } from "@/hooks/use-current-user";
+import { safeRedirectPath } from "@/utils/safe-redirect";
 
 const OTP_LENGTH = 6;
 /** Matches backend `OTP_TTL_MS` */
@@ -75,6 +76,7 @@ function VerifyOtpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email")?.trim() || "";
+  const redirectTo = safeRedirectPath(searchParams.get("redirect"));
 
   const [digits, setDigits] = useState<string[]>(() => Array(OTP_LENGTH).fill(""));
   const [error, setError] = useState<string | undefined>(undefined);
@@ -244,7 +246,7 @@ function VerifyOtpContent() {
       }
 
       await refreshCurrentUser();
-      router.push("/dashboard");
+      router.push(redirectTo);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Could not verify the code.";
 

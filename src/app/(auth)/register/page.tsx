@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import useSWRMutation from "swr/mutation";
 import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { nextFetch } from "@/lib/api/fetcher";
 import { registerFieldErrors, registerFields } from "@/schemas/register";
+import { safeRedirectPath } from "@/utils/safe-redirect";
 
 const emptyForm = {
   firstName: "",
@@ -38,8 +39,10 @@ function FieldError({ message }: { message?: string }) {
   return <p className="mt-1.5 px-2 text-xs text-red-600">{message}</p>;
 }
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = safeRedirectPath(searchParams.get("redirect"));
   const [formData, setFormData] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState("");
@@ -85,11 +88,16 @@ export default function RegisterPage() {
         { throwOnError: true },
       );
       toast.success(response?.message || "Account created. Check your email to verify it.");
-      router.push(`/verify-otp?email=${encodeURIComponent(result.data.email)}`);
+      const verifyQuery = new URLSearchParams({ email: result.data.email });
+      if (redirectTo !== "/dashboard") verifyQuery.set("redirect", redirectTo);
+      router.push(`/verify-otp?${verifyQuery.toString()}`);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Could not create your account.");
     }
   };
+
+  const loginHref =
+    redirectTo === "/dashboard" ? "/login" : `/login?redirect=${encodeURIComponent(redirectTo)}`;
 
   return (
     <Card className="w-full max-w-[440px] gap-0 rounded-[28px] bg-white px-6 py-7 text-slate-900 shadow-2xl ring-0 sm:px-8 sm:py-8">
@@ -263,10 +271,24 @@ export default function RegisterPage() {
 
       <p className="mt-5 text-center text-sm text-slate-500">
         Already registered?{" "}
-        <Link href="/login" className="font-semibold text-[#00BC7D] hover:underline">
+        <Link href={loginHref} className="font-semibold text-[#00BC7D] hover:underline">
           Sign In
         </Link>
       </p>
     </Card>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <Card className="flex w-full max-w-[440px] items-center justify-center rounded-[28px] bg-white px-6 py-16 text-[#00BC7D] shadow-2xl ring-0">
+          <Loader2 className="size-8 animate-spin" />
+        </Card>
+      }
+    >
+      <RegisterForm />
+    </Suspense>
   );
 }
