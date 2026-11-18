@@ -30,7 +30,7 @@ const steps = [
 
 export default function ProviderHowItWorksSteps() {
   return (
-    <section className="bg-black py-16 text-white sm:py-20">
+    <section className="bg-white py-16 text-slate-900 sm:py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-16 gap-y-10 md:grid-cols-2 md:gap-y-12">
           {steps.map((step) => (
@@ -39,8 +39,8 @@ export default function ProviderHowItWorksSteps() {
                 {step.number}
               </span>
               <div>
-                <h2 className="text-sm font-bold text-white sm:text-base">{step.title}</h2>
-                <p className="mt-1 text-xs leading-relaxed text-slate-400 sm:text-sm">{step.description}</p>
+                <h2 className="text-sm font-bold text-slate-900 sm:text-base">{step.title}</h2>
+                <p className="mt-1 text-xs leading-relaxed text-slate-500 sm:text-sm">{step.description}</p>
               </div>
             </article>
           ))}
