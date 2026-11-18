@@ -1,15 +1,21 @@
+import ProviderAboutGetStarted from "@/components/provider/about/get-started";
+import ProviderAboutHero from "@/components/provider/about/hero";
+import ProviderAboutLeadQuality from "@/components/provider/about/lead-quality";
+import ProviderAboutMission from "@/components/provider/about/mission";
+
 export const metadata = {
-  title: "About for companies",
+  title: "About Us",
   description:
-    "How Controfferta helps Italian companies receive verified customer requests and choose which leads to contact.",
+    "Controfferta is the Italian B2B marketplace for qualified lead generation. Companies connect with customers who already want their services.",
 };
 
 export default function ProviderAboutPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
-      <h1 className="text-3xl font-bold tracking-tight text-white">
-        About Controfferta for companies
-      </h1>
+    <main>
+      <ProviderAboutHero />
+      <ProviderAboutMission />
+      <ProviderAboutLeadQuality />
+      <ProviderAboutGetStarted />
     </main>
   );
 }
