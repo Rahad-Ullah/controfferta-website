@@ -6,6 +6,7 @@ import useSWRMutation from "swr/mutation";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError, nextFetch } from "@/lib/api/fetcher";
+import { refreshCurrentUser } from "@/hooks/use-current-user";
 
 const OTP_LENGTH = 6;
 /** Matches backend `OTP_TTL_MS` */
@@ -242,6 +243,7 @@ function VerifyOtpContent() {
         return;
       }
 
+      await refreshCurrentUser();
       router.push("/dashboard");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Could not verify the code.";

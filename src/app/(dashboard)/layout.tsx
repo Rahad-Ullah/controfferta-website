@@ -17,6 +17,7 @@ import {
   Coins,
 } from "lucide-react";
 import { toast } from "sonner";
+import { clearCurrentUser, useCurrentUser } from "@/hooks/use-current-user";
 import { placeholderCompany } from "@/lib/placeholders";
 
 export default function DashboardLayout({
@@ -26,8 +27,11 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { user: currentUser } = useCurrentUser();
 
-  const user = placeholderCompany;
+  const displayName = currentUser
+    ? `${currentUser.firstName} ${currentUser.lastName}`.trim()
+    : placeholderCompany.name;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [buyCreditsModalOpen, setBuyCreditsModalOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
@@ -44,6 +48,7 @@ export default function DashboardLayout({
     } catch {
       // The page still leaves the dashboard if the request fails.
     }
+    await clearCurrentUser();
     toast.success("Signed out.");
     router.replace("/login");
   };
@@ -202,12 +207,12 @@ export default function DashboardLayout({
               className="flex items-center gap-1.5 border border-amber-300/80 bg-[#FFFDF5] text-amber-800 hover:bg-amber-100/60 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold transition-colors cursor-pointer shadow-xs"
             >
               <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span>{user?.credits ?? 285} Credits</span>
+              <span>{placeholderCompany.credits} Credits</span>
             </button>
 
             {/* Avatar circle */}
             <div className="w-8 h-8 rounded-full bg-slate-300 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
-              {user.name ? user.name.charAt(0).toUpperCase() : "M"}
+              {displayName ? displayName.charAt(0).toUpperCase() : "M"}
             </div>
           </div>
         </header>

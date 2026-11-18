@@ -4,6 +4,7 @@
  * Values are API paths. `nextFetch` prefixes `envConfig().apiBaseUrl`.
  */
 export const apiKeys = {
+  me: "/users/me",
   categories: "/categories",
   leads: "/leads",
   blogs: "/blogs",

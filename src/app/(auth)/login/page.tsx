@@ -7,6 +7,7 @@ import useSWRMutation from "swr/mutation";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError, nextFetch } from "@/lib/api/fetcher";
+import { refreshCurrentUser } from "@/hooks/use-current-user";
 
 type LoginResponse = {
   message?: string;
@@ -64,6 +65,7 @@ function LoginFormContent() {
         { throwOnError: true },
       );
       toast.success(response?.message || "Logged in successfully.");
+      await refreshCurrentUser();
       router.push(redirectParam || "/dashboard");
     } catch (error) {
       if (error instanceof ApiError && error.status === 407) {
