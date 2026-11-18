@@ -1,3 +1,5 @@
+import { getLatestLeads } from "@/actions/lead";
+import { getPlatformReviews } from "@/actions/platform-review";
 import ProviderClosingCta from "@/components/provider/home/closing-cta";
 import ProviderHero from "@/components/provider/home/hero";
 import ProviderHowItWorks from "@/components/provider/home/how-it-works";
@@ -12,15 +14,20 @@ export const metadata = {
     "Find verified customer requests in your trade and area. Companies on Controfferta buy leads and contact people who already asked for the service.",
 };
 
-export default function ProviderHomePage() {
+export default async function ProviderHomePage() {
+  const [leads, reviews] = await Promise.all([
+    getLatestLeads(),
+    getPlatformReviews({ limit: "3", sort: "-createdAt" }),
+  ]);
+
   return (
     <main>
       <ProviderHero />
       <ProviderLeadBenefits />
-      <ProviderLatestRequests />
+      <ProviderLatestRequests leads={leads} />
       <ProviderWhyChoose />
       <ProviderHowItWorks />
-      <ProviderReviews />
+      <ProviderReviews reviews={reviews ? reviews.data.reviews.slice(0, 3) : null} />
       <ProviderClosingCta />
     </main>
   );
