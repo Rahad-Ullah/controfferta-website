@@ -24,7 +24,7 @@ export default function ProviderNavbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#070A0F]/90 backdrop-blur-md border-b border-slate-800/80">
+    <header className="sticky top-0 z-40 bg-[#0F172A] border-b border-slate-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         <Link href="/provider" className="inline-flex items-center gap-1 group">
           <span className="text-white font-extrabold tracking-widest text-xl">CONTR</span>
@@ -75,7 +75,7 @@ export default function ProviderNavbar() {
       </div>
 
       {mobileMenuOpen && (
-        <nav className="md:hidden border-t border-slate-800 bg-[#070A0F] px-4 py-3 flex flex-col gap-1">
+        <nav className="md:hidden border-t border-slate-800 bg-[#0F172A] px-4 py-3 flex flex-col gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.href}
