@@ -13,7 +13,7 @@ const benefits = [
 export default function UnlockLeadDialog({
   open,
   onClose,
-  redirectTo = "/dashboard/browser-leads",
+  redirectTo = "/dashboard/leads",
 }: {
   open: boolean;
   onClose: () => void;

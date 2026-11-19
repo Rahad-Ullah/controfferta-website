@@ -238,7 +238,7 @@ export default function DashboardHomePage() {
           <div className="flex items-center justify-between pb-4 border-b border-slate-100">
             <h2 className="text-base font-bold text-slate-900">Recent Leads</h2>
             <Link
-              href="/dashboard/browser-leads"
+              href="/dashboard/leads"
               className="text-xs font-semibold text-[#00BC7D] hover:underline flex items-center gap-1"
             >
               <span>View all</span>

@@ -363,13 +363,12 @@ export default function BuyCreditsPage() {
             </div>
           </div>
 
-          {/* Browse Leads Button */}
           <div>
             <Link
-              href="/dashboard/browser-leads"
-              className="inline-flex items-center justify-center px-8 py-3 rounded-full bg-[#00BC7D] hover:bg-[#00d68f] text-white font-bold text-sm shadow-xs transition-all cursor-pointer"
+              href="/dashboard/leads"
+              className="inline-flex cursor-pointer items-center justify-center rounded-full bg-[#00BC7D] px-8 py-3 text-sm font-bold text-white shadow-xs transition-all hover:bg-[#00d68f]"
             >
-              Browse Leads
+              View Leads
             </Link>
           </div>
         </div>

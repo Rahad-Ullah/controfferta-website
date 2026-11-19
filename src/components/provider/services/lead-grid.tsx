@@ -29,11 +29,11 @@ export default function ProviderServiceLeads({
   const router = useRouter();
   const { user, isLoading } = useCurrentUser();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [redirectTo, setRedirectTo] = useState("/dashboard/browser-leads");
+  const [redirectTo, setRedirectTo] = useState("/dashboard/leads");
   const leads = result?.leads ?? [];
 
   const unlockPath = (leadId: string) =>
-    `/dashboard/browser-leads?lead=${encodeURIComponent(leadId)}`;
+    `/dashboard/leads?lead=${encodeURIComponent(leadId)}`;
 
   const handleUnlock = (leadId: string) => {
     if (isLoading) return;

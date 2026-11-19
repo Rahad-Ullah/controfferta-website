@@ -259,11 +259,11 @@ export default function UnlockedLeadsPage() {
                   Try selecting another tab or browse new leads.
                 </p>
                 <Link
-                  href="/dashboard/browser-leads"
-                  className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#00BC7D] text-white text-xs font-bold hover:bg-[#00d68f] shadow-xs"
+                  href="/dashboard/leads"
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#00BC7D] px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-[#00d68f]"
                 >
-                  <Search className="w-3.5 h-3.5" />
-                  <span>Browse Leads</span>
+                  <Search className="h-3.5 w-3.5" />
+                  <span>View Leads</span>
                 </Link>
               </div>
             ) : (
