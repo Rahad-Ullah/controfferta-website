@@ -277,6 +277,27 @@ html::-webkit-scrollbar-thumb:hover {
   display: none;
 }
 
+/* Thin light scrollbar for dropdowns / panels on white surfaces */
+.scrollbar-thin-light {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225 / 0.9) transparent;
+}
+.scrollbar-thin-light::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin-light::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 6px;
+}
+.scrollbar-thin-light::-webkit-scrollbar-thumb {
+  background-color: rgb(203 213 225 / 0.9);
+  border-radius: 999px;
+}
+.scrollbar-thin-light::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(148 163 184 / 0.95);
+}
+
 /* Custom react-phone-number-input styling */
 .PhoneInput {
   display: flex;
