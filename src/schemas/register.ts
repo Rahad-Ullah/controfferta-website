@@ -26,12 +26,22 @@ export const registerFields = z
 
 export type RegisterFields = z.infer<typeof registerFields>;
 
-export function registerFieldErrors(error: z.ZodError) {
+const registerKeys = [
+  "firstName",
+  "lastName",
+  "company",
+  "email",
+  "password",
+  "confirmPassword",
+  "termsAccepted",
+] as const satisfies readonly (keyof RegisterFields)[];
+
+export function registerFieldErrors(error: z.ZodError<RegisterFields>) {
   const messages = error.flatten().fieldErrors;
   const next: Record<string, string> = {};
 
-  for (const [field, list] of Object.entries(messages)) {
-    const message = list?.[0];
+  for (const field of registerKeys) {
+    const message = messages[field]?.[0];
     if (message) next[field] = message;
   }
 
