@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import NavbarAuth from "@/components/shared/navbar-auth";
 
 const navLinks = [
   { label: "Home", href: "/provider" },
@@ -74,18 +75,7 @@ export default function ProviderNavbar() {
           </nav>
 
           <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
-            <Link
-              href="/login"
-              className="hidden whitespace-nowrap px-2 py-1 text-sm text-zinc-400 transition-colors hover:text-white xl:inline-flex"
-            >
-              Log In
-            </Link>
-            <Link
-              href="/register"
-              className="hidden items-center whitespace-nowrap rounded-full border border-[#00BC7D] px-4 py-2.5 text-sm font-semibold text-[#00BC7D] shadow-[0_0_15px_rgba(0,188,125,0.15)] transition-all duration-300 hover:bg-[#00BC7D] hover:text-white hover:shadow-[0_0_20px_rgba(0,188,125,0.4)] sm:inline-flex sm:px-5"
-            >
-              Register
-            </Link>
+            <NavbarAuth />
             <button
               type="button"
               onClick={() => setMobileMenuOpen((open) => !open)}
@@ -151,21 +141,8 @@ export default function ProviderNavbar() {
                       );
                     })}
                   </nav>
-                  <div className="space-y-2 border-t border-white/10 p-4">
-                    <Link
-                      href="/register"
-                      onClick={closeMenu}
-                      className="block rounded-xl bg-[#00BC7D] py-2.5 text-center text-sm font-semibold text-white"
-                    >
-                      Register
-                    </Link>
-                    <Link
-                      href="/login"
-                      onClick={closeMenu}
-                      className="block px-3 py-2 text-center text-sm text-zinc-300 hover:text-white"
-                    >
-                      Log In
-                    </Link>
+                  <div className="border-t border-white/10 p-4">
+                    <NavbarAuth variant="mobile" onNavigate={closeMenu} />
                   </div>
                 </motion.aside>
               </div>
