@@ -2,12 +2,24 @@
 
 import useSWR, { mutate } from "swr";
 import { apiKeys } from "@/lib/api/keys";
-import type { CurrentUser, CurrentUserResponse } from "@/types/user.interface";
+import type {
+  CurrentUser,
+  CurrentUserResponse,
+  UserProviderProfile,
+} from "@/types/user.interface";
 
 type UseCurrentUserOptions = {
   /** Set false to skip the request (e.g. on public pages). Default true. */
   enabled?: boolean;
 };
+
+/** Provider credit balance from populated `roleRef` on `/users/me`. */
+export function providerCreditBalance(user: CurrentUser | null | undefined): number | null {
+  const ref = user?.roleRef;
+  if (!ref || typeof ref === "string") return null;
+  const balance = (ref as UserProviderProfile).creditBalance;
+  return typeof balance === "number" && Number.isFinite(balance) ? balance : null;
+}
 
 /** Revalidate `/users/me` in the shared SWR cache (call after login / verify). */
 export function refreshCurrentUser() {
@@ -35,6 +47,7 @@ export function useCurrentUser(options: UseCurrentUserOptions = {}) {
 
   return {
     user,
+    credits: providerCreditBalance(user),
     error,
     isLoading,
     isValidating,

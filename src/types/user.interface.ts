@@ -11,6 +11,7 @@ export interface UserProviderProfile {
   businessType?: string;
   bio?: string;
   interestedCategories?: string[];
+  creditBalance?: number;
 }
 
 export interface CurrentUser {
