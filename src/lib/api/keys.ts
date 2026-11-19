@@ -8,6 +8,8 @@ export const apiKeys = {
   categories: "/categories",
   leads: "/leads",
   leadAccesses: "/lead-accesses",
+  creditPackages: "/credit-packages",
+  creditPurchases: "/credit-purchases",
   blogs: "/blogs",
   platformReviews: "/platform-reviews",
   supports: "/supports",

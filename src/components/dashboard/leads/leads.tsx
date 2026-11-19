@@ -633,7 +633,7 @@ export default function Leads() {
                 </button>
               ) : (
                 <Link
-                  href="/dashboard/buy-credits"
+                  href="/dashboard/credit-packages"
                   onClick={() => setConfirmModalLead(null)}
                   className="inline-flex cursor-pointer items-center rounded-full bg-slate-900 px-6 py-2.5 text-xs font-bold text-white shadow-xs transition-all hover:bg-slate-800"
                 >

@@ -8,6 +8,25 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/dashboard/buy-credits",
+        destination: "/dashboard/credit-packages",
+        permanent: true,
+      },
+      {
+        source: "/dashboard/browser-leads",
+        destination: "/dashboard/leads",
+        permanent: true,
+      },
+      {
+        source: "/dashboard/browse-leads",
+        destination: "/dashboard/leads",
+        permanent: true,
+      },
+    ];
+  },
   experimental: {
     serverActions: {
       allowedOrigins: [
