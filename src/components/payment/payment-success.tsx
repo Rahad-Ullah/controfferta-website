@@ -1,19 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Check, Loader2 } from "lucide-react";
 import { apiKeys } from "@/lib/api/keys";
-import { refreshCurrentUser, useCurrentUser } from "@/hooks/use-current-user";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import type {
   CreditPurchase,
   CreditPurchasePagination,
 } from "@/types/credit-purchase.interface";
 
-const POLL_MS = 2000;
-const MAX_POLLS = 15;
 const PENDING_PURCHASE_KEY = "pending-credit-purchase-id";
 const sessionPurchaseKey = (sessionId: string) =>
   `credit-purchase-session:${sessionId}`;
@@ -70,13 +68,12 @@ export default function PaymentSuccess() {
   const [lockedPurchaseId, setLockedPurchaseId] = useState<string | null>(() =>
     sessionId ? readStoredPurchaseId(sessionId) : null,
   );
-  const paidRef = useRef(false);
 
   const purchasesKey = sessionId
     ? `${apiKeys.creditPurchases}?limit=10&sort=-createdAt`
     : null;
 
-  const { data: listData, isLoading: listLoading, mutate: mutateList } = useSWR<{
+  const { data: listData, isLoading: listLoading } = useSWR<{
     data?: CreditPurchase[];
     pagination?: CreditPurchasePagination;
   }>(purchasesKey);
@@ -88,7 +85,6 @@ export default function PaymentSuccess() {
   const {
     data: purchaseData,
     isLoading: purchaseLoading,
-    mutate: mutatePurchase,
   } = useSWR<{ data?: CreditPurchase }>(purchaseKey);
 
   const matchedFromList = useMemo(() => {
@@ -107,49 +103,13 @@ export default function PaymentSuccess() {
     purchaseData?.data ?? matchedFromList ?? null;
 
   const creditsApplied = isPurchasePaid(matchedPurchase);
-  useEffect(() => {
-    paidRef.current = creditsApplied;
-  }, [creditsApplied]);
   const checkoutFound = Boolean(matchedPurchase);
   const isLoadingPurchase =
     Boolean(sessionId) && !checkoutFound && (listLoading || purchaseLoading);
 
   useEffect(() => {
-    if (!sessionId) return;
-
-    let attempts = 0;
-    let cancelled = false;
-
-    const tick = async () => {
-      if (cancelled || paidRef.current) return;
-      attempts += 1;
-      await Promise.all([
-        mutateList(),
-        mutatePurchase(),
-        refresh(),
-        refreshCurrentUser(),
-      ]);
-    };
-
-    void tick();
-    const timer = window.setInterval(() => {
-      if (cancelled || paidRef.current || attempts >= MAX_POLLS) {
-        window.clearInterval(timer);
-        return;
-      }
-      void tick();
-    }, POLL_MS);
-
-    return () => {
-      cancelled = true;
-      window.clearInterval(timer);
-    };
-  }, [mutateList, mutatePurchase, refresh, sessionId]);
-
-  useEffect(() => {
     if (!creditsApplied) return;
     void refresh();
-    void refreshCurrentUser();
   }, [creditsApplied, refresh]);
 
   const creditsAdded = matchedPurchase?.creditsAmount ?? 0;
