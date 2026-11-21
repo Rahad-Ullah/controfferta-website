@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import useSWR, { mutate } from "swr";
 import { apiKeys } from "@/lib/api/keys";
 import type {
@@ -45,13 +46,19 @@ export function useCurrentUser(options: UseCurrentUserOptions = {}) {
 
   const user: CurrentUser | null = data?.data ?? null;
 
+  const refresh = useCallback(() => mutateUser(), [mutateUser]);
+  const clear = useCallback(
+    () => mutateUser(undefined, { revalidate: false }),
+    [mutateUser],
+  );
+
   return {
     user,
     credits: providerCreditBalance(user),
     error,
     isLoading,
     isValidating,
-    refresh: () => mutateUser(),
-    clear: () => mutateUser(undefined, { revalidate: false }),
+    refresh,
+    clear,
   };
 }

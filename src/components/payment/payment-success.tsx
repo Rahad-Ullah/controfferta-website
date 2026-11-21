@@ -94,7 +94,7 @@ export default function PaymentSuccess() {
   const matchedFromList = useMemo(() => {
     const rows = Array.isArray(listData?.data) ? listData.data : [];
     return rows.find((purchase) => matchesSession(purchase, sessionId)) ?? null;
-  }, [listData?.data, sessionId]);
+  }, [listData, sessionId]);
 
   useEffect(() => {
     if (!sessionId || !matchedFromList?._id) return;
@@ -107,7 +107,9 @@ export default function PaymentSuccess() {
     purchaseData?.data ?? matchedFromList ?? null;
 
   const creditsApplied = isPurchasePaid(matchedPurchase);
-  paidRef.current = creditsApplied;
+  useEffect(() => {
+    paidRef.current = creditsApplied;
+  }, [creditsApplied]);
   const checkoutFound = Boolean(matchedPurchase);
   const isLoadingPurchase =
     Boolean(sessionId) && !checkoutFound && (listLoading || purchaseLoading);

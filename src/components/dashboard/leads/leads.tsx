@@ -159,7 +159,7 @@ export default function Leads() {
     }
 
     return mapped;
-  }, [accessByLeadId, deferredSearch, leadsResponse?.data, selectedRegion]);
+  }, [accessByLeadId, deferredSearch, leadsResponse, selectedRegion]);
 
   const { trigger: unlockLead, isMutating: unlocking } = useSWRMutation(
     apiKeys.leadAccesses,

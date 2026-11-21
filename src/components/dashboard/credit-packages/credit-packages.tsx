@@ -31,11 +31,7 @@ function packageBadge(pkg: CreditPackage) {
 }
 
 export default function CreditPackages() {
-  const { credits, isLoading: userLoading, refresh } = useCurrentUser();
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
+  const { credits, isLoading: userLoading } = useCurrentUser();
 
   const { data, error, isLoading } = useSWR<{
     data?: CreditPackage[];
@@ -44,7 +40,7 @@ export default function CreditPackages() {
 
   const packages = useMemo(
     () => (Array.isArray(data?.data) ? data.data : []),
-    [data?.data],
+    [data],
   );
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -71,6 +67,7 @@ export default function CreditPackages() {
     { populateCache: false },
   );
 
+  // handle purchase api
   const handlePurchase = async () => {
     if (!selectedPkg) return;
 
@@ -154,26 +151,23 @@ export default function CreditPackages() {
                     if (isMutating) return;
                     setSelectedId(pkg._id);
                   }}
-                  className={`relative flex flex-col justify-between rounded-2xl border-2 p-6 text-left transition-colors duration-150 ${
-                    isSelected
-                      ? "border-[#00BC7D] bg-[#F3FAF7] shadow-sm"
-                      : "border-slate-200/90 bg-white shadow-xs hover:border-slate-300"
-                  } ${
-                    isMutating
+                  className={`relative flex flex-col justify-between rounded-2xl border-2 p-6 text-left transition-colors duration-150 ${isSelected
+                    ? "border-[#00BC7D] bg-[#F3FAF7] shadow-sm"
+                    : "border-slate-200/90 bg-white shadow-xs hover:border-slate-300"
+                    } ${isMutating
                       ? isSelected
                         ? "cursor-wait"
                         : "pointer-events-none cursor-not-allowed opacity-50"
                       : "cursor-pointer"
-                  }`}
+                    }`}
                 >
                   {badge ? (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                       <span
-                        className={`rounded-full px-3 py-0.5 text-[11px] font-bold whitespace-nowrap shadow-xs ${
-                          badge.tone === "green"
-                            ? "bg-[#00BC7D] text-white"
-                            : "bg-[#0F172A] text-white"
-                        }`}
+                        className={`rounded-full px-3 py-0.5 text-[11px] font-bold whitespace-nowrap shadow-xs ${badge.tone === "green"
+                          ? "bg-[#00BC7D] text-white"
+                          : "bg-[#0F172A] text-white"
+                          }`}
                       >
                         {badge.label}
                       </span>
@@ -182,9 +176,8 @@ export default function CreditPackages() {
 
                   <div>
                     <p
-                      className={`text-2xl font-extrabold tracking-tight sm:text-3xl ${
-                        isSelected ? "text-[#00BC7D]" : "text-slate-900"
-                      }`}
+                      className={`text-2xl font-extrabold tracking-tight sm:text-3xl ${isSelected ? "text-[#00BC7D]" : "text-slate-900"
+                        }`}
                     >
                       {pkg.creditsAmount}
                     </p>
