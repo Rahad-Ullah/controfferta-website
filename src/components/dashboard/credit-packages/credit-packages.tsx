@@ -67,7 +67,6 @@ export default function CreditPackages() {
     { populateCache: false },
   );
 
-  // handle purchase api
   const handlePurchase = async () => {
     if (!selectedPkg) return;
 
@@ -84,9 +83,10 @@ export default function CreditPackages() {
       }
       if (purchaseId) {
         try {
+          // The Stripe return page can use this ID to look up the purchase in the same tab.
           sessionStorage.setItem("pending-credit-purchase-id", purchaseId);
         } catch {
-          /* ignore quota / private mode */
+          // Checkout can proceed if session storage is unavailable.
         }
       }
       window.location.assign(checkoutUrl);

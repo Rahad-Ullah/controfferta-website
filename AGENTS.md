@@ -12,4 +12,6 @@ For client data fetching, follow `docs/swr.md`. Use the root SWR fetcher. Do not
 
 For where files go and how they are named, follow `docs/project-structure.md`. File and folder names are lowercase with hyphens. Only the exported React component uses PascalCase.
 
+Use shadcn/ui for UI primitives across the project. Reuse components from `src/components/ui/`, and add missing shadcn primitives there when needed.
+
 For speed, caching, and SEO, follow `docs/performance-and-seo.md`. Use SWR for client data. Use the Next.js fetch cache for public data that rarely changes. Public pages must be server-rendered and indexable.

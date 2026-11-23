@@ -140,6 +140,7 @@ export default function Leads() {
     pagination?: LeadAccessPagination;
   }>(leadAccessKey);
 
+  // Join the public feed with the provider's separate access records for unlock state.
   const accessByLeadId = useMemo(() => {
     const map = new Map<string, LeadAccess>();
     for (const access of accessResponse?.data ?? []) {

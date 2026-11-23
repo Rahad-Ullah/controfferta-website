@@ -19,6 +19,7 @@ export function ArticleGrid({
   category?: string;
   limit: number;
 }) {
+  // Load more by growing the same list up to the API limit of 60 articles per request.
   const nextLimit = Math.min(limit + 6, 60, Math.max(total, limit));
   const canLoadMore = shown < total && nextLimit > limit;
 

@@ -1,5 +1,6 @@
 export const BLOG_PAGE_SIZE = 13;
 
+// Keep the title readable in the URL and use the trailing database ID for lookup.
 export function articleSlug(title: string, id: string) {
   const slug = title
     .normalize("NFKD")

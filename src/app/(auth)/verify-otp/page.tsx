@@ -31,6 +31,7 @@ type OtpTimers = {
   verifyAvailableAt: number;
 };
 
+// Keep the countdown deadlines scoped to the email and available after a reload in the same tab.
 function timerStorageKey(email: string) {
   return `otp-timers:${email.trim().toLowerCase()}`;
 }
@@ -132,6 +133,7 @@ function VerifyOtpContent() {
   }, [email]);
 
   useEffect(() => {
+    // Calculate from deadlines so throttled background ticks don't stretch the countdowns.
     const tick = () => {
       setExpiresIn(nowSecondsLeft(expiresAt));
       setResendIn(nowSecondsLeft(resendAvailableAt));

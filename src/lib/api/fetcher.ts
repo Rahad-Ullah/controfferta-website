@@ -29,7 +29,7 @@ function retryAfterFromHeaders(headers: Headers): number | undefined {
 
   const value = Number(reset);
   if (!Number.isFinite(value) || value < 0) return undefined;
-  // draft-7 uses a unix timestamp; draft-6 uses remaining seconds.
+  // Treat large values as Unix timestamps and smaller values as a delay in seconds.
   if (value > 1_000_000_000) return Math.max(0, Math.ceil(value - Date.now() / 1000));
   return Math.ceil(value);
 }
@@ -96,7 +96,7 @@ export async function nextFetch<T = unknown>({
       const body = await response.json();
       if (body && typeof body.message === "string") message = body.message;
     } catch {
-      // The body was not JSON.
+      // Keep the fallback message when the server returns an empty or non-JSON error body.
     }
     throw new ApiError(message, response.status, retryAfterFromHeaders(response.headers));
   }

@@ -97,7 +97,6 @@ export default function SubmitRequestPage() {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [requestRef, setRequestRef] = useState<string>("");
 
-  // Form State
   const [category, setCategory] = useState<string>("");
   const [serviceName, setServiceName] = useState<string>("");
   const [location, setLocation] = useState<string>("");
@@ -134,6 +133,7 @@ export default function SubmitRequestPage() {
       apiKeys.categories
     );
   const categories = Array.isArray(categoryList?.data) ? categoryList.data : [];
+  // Keep the URL's preselected category visible while the API options load.
   const categoryOptions =
     category && !categories.some((item) => item.name === category)
       ? [{ _id: category, name: category }, ...categories]
@@ -173,6 +173,7 @@ export default function SubmitRequestPage() {
       agreedToTerms,
     });
 
+    // The shared schema validates the whole form. Only current-step errors block progress here.
     if (!result.success) {
       const nextErrors = fieldErrors(result.error, fields);
       if (Object.keys(nextErrors).length > 0) {
@@ -220,6 +221,7 @@ export default function SubmitRequestPage() {
         return;
       }
 
+      // Return to the first earlier step with errors so the fields can be corrected.
       const earlierStep = ([1, 2] as const).find((step) => {
         return Object.keys(fieldErrors(result.error, stepFields[step])).length > 0;
       });

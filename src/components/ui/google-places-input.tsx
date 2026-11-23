@@ -50,7 +50,6 @@ export function GooglePlacesInput({
   const [inputVal, setInputVal] = useState(value);
   const [googleLoaded, setGoogleLoaded] = useState(false);
 
-  // Nominatim Fallback State
   const [suggestions, setSuggestions] = useState<Array<{ display_name: string; lat: string; lon: string; address?: any }>>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearchingFallback, setIsSearchingFallback] = useState(false);
@@ -58,6 +57,7 @@ export function GooglePlacesInput({
 
   const isInternalChangeRef = useRef(false);
 
+  // Skip the parent's echo of a local edit or place selection when syncing the input.
   useEffect(() => {
     if (!isInternalChangeRef.current) {
       setInputVal(value);
@@ -84,10 +84,10 @@ export function GooglePlacesInput({
     getApiKey();
   }, []);
 
-  // Setup Google Places Autocomplete
   useEffect(() => {
     if (!apiKey || !inputRef.current) return;
 
+    // The Maps loader shares its options across input instances.
     if (!optionsInitialized) {
       try {
         setOptions({ key: apiKey, v: 'weekly' });
@@ -137,7 +137,6 @@ export function GooglePlacesInput({
     };
   }, [country, types?.join(','), apiKey]);
 
-  // Handle click outside dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -153,14 +152,14 @@ export function GooglePlacesInput({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Fetch Nominatim fallback suggestions if Google Places is not loaded
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
     isInternalChangeRef.current = true;
     setInputVal(text);
     onTextChange?.(text);
 
-    if (googleLoaded) return; // Google Places autocomplete is active
+    // Google Places already handles input events when it loads, so only one service searches.
+    if (googleLoaded) return;
 
     if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
 
@@ -237,7 +236,6 @@ export function GooglePlacesInput({
         <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-muted-foreground z-10" />
       )}
 
-      {/* Fallback Autocomplete Suggestions Dropdown */}
       {!googleLoaded && showSuggestions && suggestions.length > 0 && (
         <div
           ref={dropdownRef}

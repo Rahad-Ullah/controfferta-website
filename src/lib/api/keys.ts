@@ -8,6 +8,7 @@ export const apiKeys = {
   categories: "/categories",
   leads: "/leads",
   leadAccesses: "/lead-accesses",
+  leadAccess: (id: string) => `/lead-accesses/${id}`,
   creditPackages: "/credit-packages",
   creditPurchases: "/credit-purchases",
   blogs: "/blogs",

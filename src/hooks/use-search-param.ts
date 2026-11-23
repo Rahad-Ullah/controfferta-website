@@ -19,6 +19,7 @@ export function useUpdateSearchParam() {
       }
 
       const query = params.toString();
+      // Keep the current scroll position and avoid adding a history entry for each filter edit.
       router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
     },
     [pathname, router, searchParams],

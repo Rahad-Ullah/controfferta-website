@@ -69,6 +69,7 @@ export default function PaymentSuccess() {
     sessionId ? readStoredPurchaseId(sessionId) : null,
   );
 
+  // The return URL identifies a Stripe session. The purchase list can resolve it to an API record.
   const purchasesKey = sessionId
     ? `${apiKeys.creditPurchases}?limit=10&sort=-createdAt`
     : null;
@@ -107,6 +108,7 @@ export default function PaymentSuccess() {
   const isLoadingPurchase =
     Boolean(sessionId) && !checkoutFound && (listLoading || purchaseLoading);
 
+  // The account balance has its own SWR key, so refresh it when the API marks the purchase as paid.
   useEffect(() => {
     if (!creditsApplied) return;
     void refresh();
