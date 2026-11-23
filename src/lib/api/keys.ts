@@ -16,4 +16,5 @@ export const apiKeys = {
   platformReviews: "/platform-reviews",
   supports: "/supports",
   settings: "/settings",
+  notifications: "/notifications/me",
 } as const;
