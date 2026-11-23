@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import useSWR from "swr";
@@ -90,7 +90,7 @@ function regionForLocation(value: string) {
   return "";
 }
 
-export default function SubmitRequestPage() {
+function SubmitRequestContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -840,6 +840,20 @@ export default function SubmitRequestPage() {
       </main>
 
     </div>
+  );
+}
+
+export default function SubmitRequestPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-[#ECEFF2] text-[#00BC7D]">
+          Loading request form…
+        </div>
+      }
+    >
+      <SubmitRequestContent />
+    </Suspense>
   );
 }
 
