@@ -17,4 +17,5 @@ export const apiKeys = {
   supports: "/supports",
   settings: "/settings",
   notifications: "/notifications/me",
+  analyticsProviderOverview: "/analytics/provider/overview",
 } as const;

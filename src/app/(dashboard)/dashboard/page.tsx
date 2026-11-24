@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
+import useSWR from "swr";
 import {
   AppWindow,
   Sun,
@@ -16,10 +17,67 @@ import {
   Coins,
 } from "lucide-react";
 import { toast } from "sonner";
-import { placeholderCompany, type PlaceholderLead } from "@/lib/placeholders";
+import { apiKeys } from "@/lib/api/keys";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import type { Lead, LeadPagination } from "@/types/lead.interface";
+import type { LeadAccess, LeadAccessPagination } from "@/types/lead-access.interface";
+import type { PlaceholderLead } from "@/lib/placeholders";
+
+type ApiListResponse<T, P> = { data?: T[]; pagination?: P };
+type ProviderOverview = {
+  availableCredits: number;
+  unlockedLeads: number;
+  availableLeads: number;
+  creditsUsed: number;
+};
+
+function formatDate(value: string | undefined) {
+  if (!value) return "";
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(value));
+}
+
+function leadToPreview(lead: Lead): PlaceholderLead & {
+  icon: typeof AppWindow;
+  subtitle: string;
+  cost: string;
+} {
+  const client = lead.client;
+  return {
+    id: lead._id,
+    icon: AppWindow,
+    subtitle: `${lead.address} · ${formatDate(lead.createdAt)}`,
+    cost: `${lead.category?.creditCost ?? 0}cr`,
+    category: lead.category?.name ?? "Lead",
+    status: "Available",
+    title: lead.title,
+    description: lead.description,
+    location: lead.address,
+    budget: lead.budgetRange
+      ? `€${lead.budgetRange.minimum.toLocaleString()} - €${lead.budgetRange.maximum.toLocaleString()}`
+      : "Not specified",
+    timeline: lead.timeline,
+    creditsRequired: lead.category?.creditCost ?? 0,
+    createdAt: formatDate(lead.createdAt),
+    customerName: client?.name ?? "Hidden until unlocked",
+    customerPhone: client ? `${client.phone.countryCode} ${client.phone.number}` : "",
+    customerEmail: client?.email ?? "",
+    customerAddress: client?.address ?? "",
+    isUnlocked: Boolean(client),
+  };
+}
 
 export default function DashboardHomePage() {
-  const user = placeholderCompany;
+  const { user: currentUser, credits } = useCurrentUser();
+  const user = { name: currentUser?.firstName ?? "Marco", credits: credits ?? 0 };
+  const { data: leadsResponse, isLoading: leadsLoading } = useSWR<ApiListResponse<Lead, LeadPagination>>(
+    `${apiKeys.leads}?limit=6&sort=-createdAt`,
+  );
+  const { data: accessResponse, isLoading: accessesLoading } = useSWR<ApiListResponse<LeadAccess, LeadAccessPagination>>(
+    `${apiKeys.leadAccesses}?limit=6&sort=-createdAt%20-_id`,
+  );
+  const { data: overviewResponse } = useSWR<{ data?: ProviderOverview }>(
+    apiKeys.analyticsProviderOverview,
+  );
   const [previewLead, setPreviewLead] = useState<PlaceholderLead | null>(null);
   const [unlockedSuccessModal] = useState<PlaceholderLead | null>(null);
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
@@ -192,6 +250,40 @@ export default function DashboardHomePage() {
     },
   ];
 
+  const liveRecentLeads = useMemo(
+    () => (leadsResponse?.data ?? []).map(leadToPreview),
+    [leadsResponse?.data],
+  );
+  const liveRecentlyUnlocked = useMemo(
+    () =>
+      (accessResponse?.data ?? []).map((access) => {
+        const lead = typeof access.lead === "string" ? null : access.lead;
+        const name = lead?.client?.name ?? "Unlocked lead";
+        const status = access.status === "in_progress"
+          ? "In Progress"
+          : access.status.charAt(0).toUpperCase() + access.status.slice(1);
+        return {
+          initial: name.charAt(0).toUpperCase(),
+          name,
+          service: `${lead?.category?.name ?? "Lead"} · ${formatDate(access.unlockedAt)}`,
+          status,
+          badgeClass:
+            access.status === "completed"
+              ? "bg-[#DCFCE7] text-[#16A34A] border border-emerald-200/80"
+              : access.status === "contacted" || access.status === "in_progress"
+                ? "bg-[#EFF6FF] text-[#2563EB] border border-blue-200/80"
+                : "bg-[#FEF3C7] text-[#D97706] border border-amber-200/80",
+        };
+      }),
+    [accessResponse?.data],
+  );
+  const displayRecentLeads = leadsLoading ? recentLeads : liveRecentLeads;
+  const displayRecentlyUnlocked = accessesLoading ? recentlyUnlocked : liveRecentlyUnlocked;
+  const overview = overviewResponse?.data;
+  const unlockedCount = overview?.unlockedLeads ?? accessResponse?.pagination?.total ?? 0;
+  const availableLeadCount = overview?.availableLeads ?? leadsResponse?.pagination?.total ?? 0;
+  const creditsUsed = overview?.creditsUsed ?? 0;
+
   return (
     <div className="space-y-6">
       {/* 1. Greeting Section */}
@@ -200,7 +292,7 @@ export default function DashboardHomePage() {
           Good morning, {user?.name || "Marco"}
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
-          You have <span className="font-bold text-[#00BC7D]">12 new leads</span> available in the last 24 hours.
+          <span className="font-bold text-[#00BC7D]">{availableLeadCount} leads</span> currently available.
         </p>
       </div>
 
@@ -208,26 +300,26 @@ export default function DashboardHomePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Available Credits */}
         <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <p className="text-3xl font-bold text-[#EA580C]">{user?.credits ?? 285}</p>
+          <p className="text-3xl font-bold text-[#EA580C]">{overview?.availableCredits ?? credits ?? "—"}</p>
           <p className="text-xs text-slate-500 mt-2 font-medium">Available Credits</p>
         </div>
 
         {/* Card 2: Unlocked Leads */}
         <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <p className="text-3xl font-bold text-[#0F172A]">54</p>
+          <p className="text-3xl font-bold text-[#0F172A]">{unlockedCount}</p>
           <p className="text-xs text-slate-500 mt-2 font-medium">Unlocked Leads</p>
         </div>
 
-        {/* Card 3: New Leads */}
+        {/* Card 3: Available Leads */}
         <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <p className="text-3xl font-bold text-[#2563EB]">23</p>
-          <p className="text-xs text-slate-500 mt-2 font-medium">New Leads</p>
+          <p className="text-3xl font-bold text-[#2563EB]">{availableLeadCount}</p>
+          <p className="text-xs text-slate-500 mt-2 font-medium">Available Leads</p>
         </div>
 
-        {/* Card 4: Leads Purchased / Month */}
+        {/* Card 4: Credits Used */}
         <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs flex flex-col justify-between">
-          <p className="text-3xl font-bold text-[#9333EA]">13</p>
-          <p className="text-xs text-slate-500 mt-2 font-medium">Leads Purchased / Month</p>
+          <p className="text-3xl font-bold text-[#9333EA]">{creditsUsed}</p>
+          <p className="text-xs text-slate-500 mt-2 font-medium">Credits Used</p>
         </div>
       </div>
 
@@ -247,12 +339,12 @@ export default function DashboardHomePage() {
           </div>
 
           <div className="divide-y divide-slate-100">
-            {recentLeads.map((item, idx) => {
+            {displayRecentLeads.map((item, idx) => {
               const Icon = item.icon;
               return (
                 <div
                   key={idx}
-                  onClick={() => setPreviewLead(item as unknown as PlaceholderLead)}
+                onClick={() => setPreviewLead(item as unknown as PlaceholderLead)}
                   className="py-3.5 flex items-center justify-between gap-3 hover:bg-slate-50/70 px-2 -mx-2 rounded-xl transition-colors cursor-pointer group"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
@@ -283,30 +375,29 @@ export default function DashboardHomePage() {
           <div className="bg-[#0B111D] rounded-2xl p-6 border border-slate-800 shadow-sm text-white">
             <div className="flex items-center justify-between">
               <span className="text-xs text-slate-400 font-medium">Credit Balance</span>
-              <button
-                type="button"
-                onClick={() => setTopUpModalOpen(true)}
+              <Link
+                href="/dashboard/credit-packages"
                 className="text-xs font-semibold text-[#00BC7D] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <span>Top up</span>
                 <span>→</span>
-              </button>
+              </Link>
             </div>
 
             <div className="mt-3">
               <p className="text-4xl font-black text-[#00BC7D] tracking-tight">
-                {user?.credits ?? 285}
+                {overview?.availableCredits ?? credits ?? "—"}
               </p>
-              <p className="text-xs text-slate-400 mt-1">≈ 19 unlockable leads</p>
+              <p className="text-xs text-slate-400 mt-1">{unlockedCount} leads unlocked</p>
             </div>
 
             <div className="mt-5">
               <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-[#00BC7D] rounded-full w-[43%]" />
+                <div className="h-full bg-[#00BC7D] rounded-full w-full" />
               </div>
               <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 font-mono">
-                <span>Used: 215</span>
-                <span>Total: 500</span>
+                <span>Available: {overview?.availableCredits ?? credits ?? "—"}</span>
+                <span>Unlocked: {unlockedCount}</span>
               </div>
             </div>
           </div>
@@ -324,7 +415,7 @@ export default function DashboardHomePage() {
             </div>
 
             <div className="divide-y divide-slate-100">
-              {recentlyUnlocked.map((item, idx) => (
+              {displayRecentlyUnlocked.map((item, idx) => (
                 <div
                   key={idx}
                   className="py-3 flex items-center justify-between gap-3 hover:bg-slate-50/70 px-2 -mx-2 rounded-xl transition-colors"
@@ -412,7 +503,7 @@ export default function DashboardHomePage() {
                 </p>
                 <div className="pt-1 flex items-center justify-between text-[11px] text-slate-500">
                   <span>Your current balance:</span>
-                  <span className="font-bold text-slate-900">{user?.credits ?? 285} credits</span>
+                  <span className="font-bold text-slate-900">{credits ?? "—"} credits</span>
                 </div>
               </div>
             )}
