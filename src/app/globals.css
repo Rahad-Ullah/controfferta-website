@@ -192,6 +192,31 @@ html::-webkit-scrollbar-thumb:hover {
   background-color: #00bc7d;
 }
 
+/* Dashboard content scroll area */
+.dashboard-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #00a875 #eaeff2;
+  scrollbar-gutter: stable;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar {
+  width: 9px;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-track {
+  background: #eaeff2;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-thumb {
+  background: #00a875;
+  border: 2px solid #eaeff2;
+  border-radius: 999px;
+}
+
+.dashboard-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #00bc7d;
+}
+
 /* Google Places Autocomplete dropdown (.pac-container is appended directly to <body>) */
 .pac-container {
   border: 1px solid #e5e7eb;
