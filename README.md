@@ -1,36 +1,204 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Controfferta Website
 
-## Getting Started
+Controfferta is a home-services lead marketplace for customers and companies in Italy. Customers can describe a project and receive relevant offers from qualified professionals. Companies can browse requests, unlock leads with credits, and manage their account through the company portal.
 
-First, run the development server:
+The project is a single Next.js application with separate experiences for the customer website, company marketing pages, authenticated company portal, and authentication screens.
+
+## Product surfaces
+
+| Surface | Main routes | Purpose |
+| --- | --- | --- |
+| Customer website | `/`, `/about`, `/services`, `/blog`, `/contact`, `/submit-request` | Public, indexable customer experience |
+| Company website | `/provider`, `/provider/about`, `/provider/services` | Public company acquisition and product information |
+| Company portal | `/dashboard` | Authenticated leads, credits, notifications, and profile management |
+| Authentication | `/login`, `/register`, `/forgot-password`, `/reset-password` | Sign-in and account recovery |
+| Onboarding | `/onboarding` | Role-selection entry point |
+
+## Technology
+
+- Next.js App Router
+- React and TypeScript
+- Tailwind CSS 4
+- shadcn/ui primitives
+- Lucide icons
+- Framer Motion for focused UI animation
+- SWR for browser-side authenticated data
+- Next.js fetch caching for public content
+- Sonner for toast notifications
+- Vercel Speed Insights
+
+## Requirements
+
+- Node.js 20 or newer
+- Yarn or npm
+- Access to the Controfferta backend API for data-backed pages
+
+## Local setup
+
+1. Install dependencies:
+
+   ```bash
+   yarn install
+   ```
+
+   npm is also supported:
+
+   ```bash
+   npm install
+   ```
+
+2. Create a local environment file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   On Windows PowerShell:
+
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+3. Set the backend URL in `.env`:
+
+   ```env
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
+   ```
+
+   Use the appropriate backend URL for your local or deployed environment. Never commit real credentials or tokens.
+
+4. Start the development server:
+
+   ```bash
+   yarn dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000).
+
+## Available commands
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+yarn dev          # Start the development server
+yarn lint         # Run ESLint
+yarn tsc --noEmit # Run TypeScript checks
+yarn build        # Create a production build
+yarn start        # Start the production server
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project structure
 
-You can start editing the page by modifying `src/app/(client)/page.tsx`. The page auto-updates as you edit the file.
+```text
+src/
+├── actions/              Server-side public data actions
+├── app/                  App Router routes and layouts
+│   ├── (client)/         Customer website
+│   ├── (provider)/       Company marketing website
+│   ├── (dashboard)/      Authenticated company portal
+│   ├── (auth)/           Authentication screens
+│   ├── api/              App-owned route handlers
+│   ├── onboarding/       Role-selection screen
+│   ├── robots.ts         Robots metadata route
+│   └── sitemap.ts        Sitemap metadata route
+├── components/
+│   ├── client/           Customer sections and chrome
+│   ├── dashboard/        Company portal components
+│   ├── provider/         Company marketing components
+│   ├── shared/           Shared application components
+│   └── ui/               Reusable shadcn/ui primitives
+├── hooks/                Shared React hooks
+├── lib/
+│   ├── api/              API keys and fetch utilities
+│   ├── auth-cookie.ts    Server-only auth cookie helpers
+│   └── env-config.ts     Environment configuration
+├── schemas/              Zod validation schemas
+├── types/                Shared TypeScript interfaces
+└── utils/                Small reusable utilities
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Data fetching
 
-## Learn More
+The application uses two intentional data-fetching patterns:
 
-To learn more about Next.js, take a look at the following resources:
+### Public content
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Public categories, reviews, settings, and blog content are loaded in Server Components through the cached `nextFetch` helper. This keeps meaningful content in the initial HTML for performance and SEO.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Authenticated company data
 
-## Deploy on Vercel
+Leads, credits, notifications, profile data, and other per-user data are loaded in Client Components with SWR. The root SWR configuration lives in `src/components/swr-config.tsx`, and the shared fetch logic lives in `src/lib/api/fetcher.ts`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Do not add another client-side cache or put user-specific data into the Next.js public fetch cache.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Authentication
+
+- Authentication uses an HttpOnly `auth_token` cookie.
+- Browser requests use credentials so the cookie reaches the backend.
+- The company dashboard checks the current user and requires the `provider` role.
+- Expired sessions are cleared and redirected to login.
+- Refresh and logout are handled through the app-owned routes under `src/app/api/auth/`.
+- Tokens must not be stored in `localStorage`, `sessionStorage`, or regular browser cookies.
+
+## API integration
+
+Backend endpoint paths and request conventions are documented in [`docs/api-integration.md`](docs/api-integration.md). The backend repository is treated as read-only from this project.
+
+Use the existing API utilities and keys instead of calling `fetch` directly from feature components:
+
+- `src/lib/api/fetcher.ts`
+- `src/lib/api/keys.ts`
+- `src/actions/`
+
+## SEO and performance
+
+Public pages are server-rendered and intended to remain indexable. The project includes:
+
+- Root metadata with title templates and descriptions
+- Open Graph and Twitter card metadata
+- Organization and WebSite JSON-LD structured data
+- `/robots.txt` through `src/app/robots.ts`
+- `/sitemap.xml` through `src/app/sitemap.ts`
+- Dynamic blog URLs in the sitemap
+- `next/image` optimization with AVIF and WebP output
+- `next/font` with display swapping
+- Vercel Speed Insights
+
+SEO guidance is documented in [`docs/performance-and-seo.md`](docs/performance-and-seo.md). Private dashboard and authentication routes should not be indexed.
+
+## Styling and UI conventions
+
+- Use Tailwind classes for layout and styling.
+- Reuse primitives from `src/components/ui/`.
+- Use `Link` for internal navigation and real anchors for external URLs.
+- Keep public pages responsive from phone to desktop widths.
+- Use accessible labels, meaningful image `alt` text, keyboard-friendly controls, and visible focus states.
+- Keep route files thin; place larger UI sections in the matching component folder.
+
+## Environment variables
+
+The main required variable is:
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | Backend API base URL |
+
+Google Maps configuration is optional and is read by `src/lib/env-config.ts` when map features are enabled. Keep all environment files containing real values local and out of version control.
+
+## Deployment checklist
+
+Before deploying:
+
+1. Set `NEXT_PUBLIC_API_BASE_URL` to the production backend.
+2. Confirm the production origin is `https://controfferta.it`.
+3. Run `yarn lint` and `yarn tsc --noEmit`.
+4. Run `yarn build`.
+5. Verify authentication, token refresh, logout, and dashboard redirects.
+6. Verify `/robots.txt`, `/sitemap.xml`, canonical public routes, and Open Graph previews.
+7. Confirm no secrets, local IP addresses, or development credentials are committed.
+
+## Further documentation
+
+- [`docs/tech-stack.md`](docs/tech-stack.md) — architecture and technology choices
+- [`docs/project-structure.md`](docs/project-structure.md) — file placement and naming conventions
+- [`docs/api-integration.md`](docs/api-integration.md) — backend integration rules
+- [`docs/swr.md`](docs/swr.md) — client-side fetching and cache behavior
+- [`docs/performance-and-seo.md`](docs/performance-and-seo.md) — performance and indexing rules
