@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { clearAuthToken, setAuthToken } from "@/lib/auth-cookie";
 
 const MAX_TOKEN_LENGTH = 4096;
@@ -11,10 +12,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
   }
 
-  const token =
+  const bodyToken =
     typeof body === "object" && body !== null && "token" in body
       ? (body as { token: unknown }).token
       : null;
+  const apiCookieToken = (await cookies()).get("accessToken")?.value;
+  const token = typeof bodyToken === "string" && bodyToken.trim().length > 0
+    ? bodyToken
+    : apiCookieToken;
 
   if (typeof token !== "string" || token.trim().length === 0 || token.length > MAX_TOKEN_LENGTH) {
     return NextResponse.json({ message: "A valid auth token is required." }, { status: 400 });

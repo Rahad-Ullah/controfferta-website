@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError, nextFetch } from "@/lib/api/fetcher";
 import { refreshCurrentUser } from "@/hooks/use-current-user";
+import { persistAuthToken } from "@/lib/auth-session";
 import { safeRedirectPath } from "@/utils/safe-redirect";
 
 const OTP_LENGTH = 6;
@@ -18,6 +19,7 @@ const RESEND_COOLDOWN_SECONDS = 60;
 type VerifyEmailResponse = {
   message?: string;
   data?: {
+    accessToken?: string;
     resetToken?: string;
     sessionId?: string;
     role?: string;
@@ -237,6 +239,7 @@ function VerifyOtpContent() {
         { throwOnError: true },
       );
 
+      await persistAuthToken(response?.data?.accessToken);
       const resetToken = response?.data?.resetToken;
       toast.success(response?.message || "Code verified successfully!");
       sessionStorage.removeItem(timerStorageKey(email));

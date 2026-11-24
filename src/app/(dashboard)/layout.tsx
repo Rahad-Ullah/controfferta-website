@@ -1,23 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import DashboardHeader from "@/components/dashboard/layout/header";
-import DashboardSidebar from "@/components/dashboard/layout/sidebar";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { clearCurrentUser, useCurrentUser } from "@/hooks/use-current-user";
+import DashboardShell from "@/components/dashboard/layout/dashboard-shell";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const router = useRouter();
+  const { user, error, isLoading } = useCurrentUser();
 
-  return (
-    <div className="flex min-h-screen overflow-hidden bg-[#EAEFF2] font-sans text-slate-800 selection:bg-[#00BC7D]/20 selection:text-[#00BC7D]">
-      <DashboardSidebar
-        mobileOpen={mobileMenuOpen}
-        onMobileOpenChange={setMobileMenuOpen}
-      />
+  useEffect(() => {
+    if (isLoading || !error) return;
 
-      <div className="flex h-screen min-w-0 flex-1 flex-col overflow-y-auto md:ml-64">
-        <DashboardHeader onOpenMobileMenu={() => setMobileMenuOpen(true)} />
-        <main className="mx-auto w-full flex-1 space-y-6 p-4 sm:p-6">{children}</main>
-      </div>
-    </div>
-  );
+    void fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    }).finally(() => {
+      void clearCurrentUser();
+      router.replace("/login?redirect=/dashboard&reason=session-expired");
+    });
+  }, [error, isLoading, router]);
+
+  useEffect(() => {
+    if (!isLoading && user && user.role !== "provider") router.replace("/");
+  }, [isLoading, router, user]);
+
+  if (isLoading || error || !user || user.role !== "provider") {
+    return <div className="min-h-screen bg-[#EAEFF2]" aria-busy="true" />;
+  }
+
+  return <DashboardShell>{children}</DashboardShell>;
 }
