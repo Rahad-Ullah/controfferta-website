@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SwrDefaults } from "@/components/swr-config";
 import "./globals.css";
 
@@ -42,6 +43,7 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-full flex flex-col bg-background text-foreground font-sans selection:bg-primary/20 selection:text-primary`}>
         <SwrDefaults>{children}</SwrDefaults>
         <Toaster richColors position="top-center" />
+        <SpeedInsights />
       </body>
     </html>
   );
