@@ -8,8 +8,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { LogOut, X } from "lucide-react";
 import { toast } from "sonner";
+import useSWR from "swr";
 import { nextFetch } from "@/lib/api/fetcher";
+import { apiKeys } from "@/lib/api/keys";
 import { clearCurrentUser } from "@/hooks/use-current-user";
+import type { Notification } from "@/types/notification.interface";
 import {
   dashboardNavLinks,
   isDashboardNavActive,
@@ -31,9 +34,11 @@ function BrandMark({ className = "h-5 w-auto" }: { className?: string }) {
 function NavItems({
   pathname,
   onNavigate,
+  unreadNotificationCount,
 }: {
   pathname: string;
   onNavigate?: () => void;
+  unreadNotificationCount: number;
 }) {
   return (
     <nav className="flex flex-col gap-1">
@@ -57,9 +62,9 @@ function NavItems({
               />
               {link.label}
             </span>
-            {link.badge ? (
+            {link.href === "/dashboard/notifications" && unreadNotificationCount > 0 ? (
               <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-zinc-300">
-                {link.badge}
+                {unreadNotificationCount > 99 ? "99+" : unreadNotificationCount}
               </span>
             ) : null}
           </Link>
@@ -74,6 +79,13 @@ type DashboardSidebarProps = {
   onMobileOpenChange: (open: boolean) => void;
 };
 
+type NotificationResponse =
+  | Notification[]
+  | {
+      data?: Notification[] | { notifications?: Notification[] };
+    }
+  | null;
+
 export default function DashboardSidebar({
   mobileOpen,
   onMobileOpenChange,
@@ -81,6 +93,16 @@ export default function DashboardSidebar({
   const pathname = usePathname();
   const router = useRouter();
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const { data: notificationResponse } =
+    useSWR<NotificationResponse>(apiKeys.notifications);
+  const notifications = Array.isArray(notificationResponse)
+    ? notificationResponse
+    : Array.isArray(notificationResponse?.data)
+      ? notificationResponse.data
+      : notificationResponse?.data?.notifications ?? [];
+  const unreadNotificationCount = notifications.filter(
+    (notification) => !notification.read,
+  ).length;
 
   const closeMobile = () => onMobileOpenChange(false);
 
@@ -123,7 +145,10 @@ export default function DashboardSidebar({
               <BrandMark className="h-4 w-auto xl:h-5" />
             </Link>
           </div>
-          <NavItems pathname={pathname} />
+          <NavItems
+            pathname={pathname}
+            unreadNotificationCount={unreadNotificationCount}
+          />
         </div>
 
         <div className="border-t border-white/10 p-5">
@@ -177,7 +202,11 @@ export default function DashboardSidebar({
                     </button>
                   </div>
                   <div className="flex-1 overflow-y-auto px-3 py-4">
-                    <NavItems pathname={pathname} onNavigate={closeMobile} />
+                    <NavItems
+                      pathname={pathname}
+                      onNavigate={closeMobile}
+                      unreadNotificationCount={unreadNotificationCount}
+                    />
                   </div>
                   <div className="border-t border-white/10 p-4">
                     <button

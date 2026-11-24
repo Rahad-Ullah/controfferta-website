@@ -13,17 +13,16 @@ export type DashboardNavLink = {
   label: string;
   href: string;
   icon: LucideIcon;
-  badge?: string;
   match?: "exact";
 };
 
 export const dashboardNavLinks: DashboardNavLink[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, match: "exact" },
-  { label: "Browse Leads", href: "/dashboard/leads", icon: Search, badge: "12" },
+  { label: "Browse Leads", href: "/dashboard/leads", icon: Search },
   { label: "Unlocked Leads", href: "/dashboard/unlock-lead", icon: Unlock },
   { label: "Credits", href: "/dashboard/credits", icon: Clock, match: "exact" },
   { label: "Buy Credits", href: "/dashboard/credit-packages", icon: ShoppingBag },
-  { label: "Notifications", href: "/dashboard/notifications", icon: Bell, badge: "3" },
+  { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
   { label: "Profile", href: "/dashboard/profile", icon: User },
 ];
 
