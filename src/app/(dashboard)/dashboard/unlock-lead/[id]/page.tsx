@@ -1,16 +1,9 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useParams } from "next/navigation";
 import UnlockedLeadDetail from "@/components/dashboard/unlock-lead/unlocked-lead-detail";
 
-export const metadata: Metadata = {
-  title: "Unlocked Lead Details",
-  robots: { index: false, follow: false },
-};
-
-type PageProps = {
-  params: Promise<{ id: string }>;
-};
-
-export default async function UnlockedLeadDetailPage({ params }: PageProps) {
-  const { id } = await params;
+export default function UnlockedLeadDetailPage() {
+  const { id } = useParams<{ id: string }>();
   return <UnlockedLeadDetail id={id} />;
 }
