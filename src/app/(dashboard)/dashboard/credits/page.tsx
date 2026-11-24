@@ -157,7 +157,7 @@ export default function CreditsPage() {
 
         {/* Columns Header Row */}
         <div className="overflow-x-auto bg-slate-50 [scrollbar-color:#6EE7B7_#F1F5F9] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-2.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-slate-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-emerald-300 [&::-webkit-scrollbar-thumb:hover]:bg-emerald-400">
-          <div className="min-w-[760px]">
+          <div className="min-w-190">
             <div className="grid grid-cols-12 px-6 py-3 border-t border-b border-slate-100 bg-slate-50/50 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               <div className="col-span-3 sm:col-span-2">Date</div>
               <div className="col-span-4 sm:col-span-4">Lead</div>
