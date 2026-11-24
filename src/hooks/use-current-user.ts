@@ -44,7 +44,9 @@ export function useCurrentUser(options: UseCurrentUserOptions = {}) {
     { shouldRetryOnError: false },
   );
 
-  const user: CurrentUser | null = data?.data ?? null;
+  // Do not keep showing a cached profile after the API rejects the session.
+  // SWR can retain stale data while exposing an error during revalidation.
+  const user: CurrentUser | null = error ? null : data?.data ?? null;
 
   const refresh = useCallback(() => mutateUser(), [mutateUser]);
   const clear = useCallback(
