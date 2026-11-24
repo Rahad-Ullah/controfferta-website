@@ -52,7 +52,9 @@ function NavItems({
             }`}
           >
             <span className="flex items-center gap-3">
-              <Icon className={`size-4 shrink-0 ${active ? "text-[#00BC7D]" : "text-zinc-500"}`} />
+              <Icon
+                className={`size-4 shrink-0 ${active ? "text-[#00BC7D]" : "text-zinc-500"}`}
+              />
               {link.label}
             </span>
             {link.badge ? (
@@ -114,7 +116,7 @@ export default function DashboardSidebar({
 
   return (
     <>
-      <aside className="fixed top-0 left-0 z-30 hidden h-screen w-64 shrink-0 flex-col justify-between border-r border-white/[0.08] bg-[#0F172A] md:flex">
+      <aside className="fixed top-0 left-0 z-30 hidden h-screen w-64 shrink-0 flex-col justify-between border-r border-white/8 bg-[#0F172A] lg:flex">
         <div className="flex flex-col gap-6 px-5 pt-6 pb-2">
           <div>
             <Link href="/dashboard" className="inline-flex items-center">
@@ -131,7 +133,7 @@ export default function DashboardSidebar({
           <button
             type="button"
             onClick={() => setLogoutModalOpen(true)}
-            className="flex cursor-pointer items-center gap-2.5 text-sm font-medium text-red-400 transition-colors hover:text-red-300"
+            className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
           >
             <LogOut className="size-4" />
             Log Out
@@ -143,7 +145,10 @@ export default function DashboardSidebar({
         createPortal(
           <AnimatePresence>
             {mobileOpen ? (
-              <div key="dashboard-mobile-nav" className="fixed inset-0 z-50 md:hidden">
+              <div
+                key="dashboard-mobile-nav"
+                className="fixed inset-0 z-50 lg:hidden"
+              >
                 <motion.button
                   type="button"
                   aria-label="Close navigation menu"
@@ -187,7 +192,7 @@ export default function DashboardSidebar({
                         closeMobile();
                         setLogoutModalOpen(true);
                       }}
-                      className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-red-400 hover:bg-white/5 hover:text-red-300"
+                      className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
                     >
                       <LogOut className="size-4" />
                       Log Out
@@ -219,7 +224,9 @@ export default function DashboardSidebar({
             <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-red-50 text-red-500">
               <LogOut className="size-6" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">Log out of your account?</h3>
+            <h3 className="text-lg font-bold text-slate-900">
+              Log out of your account?
+            </h3>
             <p className="mt-1.5 mb-6 text-sm leading-relaxed text-slate-500">
               You will need to sign in again to access the dashboard.
             </p>

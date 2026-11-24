@@ -38,7 +38,7 @@ export default function DashboardHeader({ onOpenMobileMenu }: DashboardHeaderPro
           <button
             type="button"
             onClick={onOpenMobileMenu}
-            className="cursor-pointer rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-200/80 hover:text-slate-900 md:hidden"
+            className="cursor-pointer rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-200/80 hover:text-slate-900 lg:hidden"
             aria-label="Open navigation menu"
           >
             <Menu className="size-5" />
