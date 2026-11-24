@@ -1,17 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { Category } from "@/types/category.interface";
-import QuickRequestModal from "./quick-request-modal";
 
 export default function PopularCategories({
   categories,
 }: {
   categories: Category[] | null;
 }) {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const visibleCategories =
     categories === null ? null : categories.slice(0, 8);
 
@@ -44,13 +42,9 @@ export default function PopularCategories({
               </p>
             ) : (
               visibleCategories.map((category) => (
-                <button
+                <Link
                   key={category._id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedCategory(category.name);
-                    setIsModalOpen(true);
-                  }}
+                  href={`/submit-request?category=${encodeURIComponent(category.name)}`}
                   className="group bg-gray-50 hover:bg-white/50 rounded-xl p-4 sm:p-4.5 flex flex-col items-center justify-center text-center border border-[#DCDCDC] hover:border-[#00BC7D] hover:shadow-sm transition-all duration-200 cursor-pointer"
                 >
                   {category.iconUrl ? (
@@ -65,7 +59,7 @@ export default function PopularCategories({
                   <span className="mt-2.5 text-xs sm:text-[13px] font-medium text-slate-800 group-hover:text-[#00BC7D] transition-colors leading-tight">
                     {category.name}
                   </span>
-                </button>
+                </Link>
               ))
               )}
           </div>
@@ -84,11 +78,6 @@ export default function PopularCategories({
           </div>
         </div>
       </div>
-      <QuickRequestModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        initialService={selectedCategory}
-      />
     </section>
   );
 }
