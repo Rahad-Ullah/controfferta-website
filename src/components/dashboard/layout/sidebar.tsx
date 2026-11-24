@@ -119,12 +119,9 @@ export default function DashboardSidebar({
       <aside className="fixed top-0 left-0 z-30 hidden h-screen w-64 shrink-0 flex-col justify-between border-r border-white/8 bg-[#0F172A] lg:flex">
         <div className="flex flex-col gap-6 px-5 pt-6 pb-2">
           <div>
-            <Link href="/dashboard" className="inline-flex items-center">
+            <Link href="/provider" className="inline-flex items-center">
               <BrandMark className="h-4 w-auto xl:h-5" />
             </Link>
-            <p className="mt-3 text-[11px] font-semibold tracking-wide text-[#00BC7D] uppercase">
-              Company Portal
-            </p>
           </div>
           <NavItems pathname={pathname} />
         </div>
@@ -180,9 +177,6 @@ export default function DashboardSidebar({
                     </button>
                   </div>
                   <div className="flex-1 overflow-y-auto px-3 py-4">
-                    <p className="mb-3 px-3 text-[11px] font-semibold tracking-wide text-[#00BC7D] uppercase">
-                      Company Portal
-                    </p>
                     <NavItems pathname={pathname} onNavigate={closeMobile} />
                   </div>
                   <div className="border-t border-white/10 p-4">
