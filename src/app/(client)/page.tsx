@@ -17,7 +17,7 @@ export const metadata = {
 
 export default async function HomePage() {
   const [categories, reviews] = await Promise.all([
-    getCategories({ limit: 8 }),
+    getCategories({ limit: "8" }),
     getPlatformReviews({ limit: "12", sort: "-createdAt" }),
   ]);
   const categoryList = categories ? categories.data : null;
