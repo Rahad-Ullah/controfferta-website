@@ -15,6 +15,7 @@ type LoginResponse = {
   message?: string;
   data?: {
     accessToken?: string;
+    refreshToken?: string;
     sessionId?: string;
     role?: string;
     _id?: string;
@@ -67,7 +68,7 @@ function LoginFormContent() {
         { email: trimmedEmail, password },
         { throwOnError: true },
       );
-      await persistAuthToken(response?.data?.accessToken);
+      await persistAuthToken(response?.data?.accessToken, response?.data?.refreshToken);
       toast.success(response?.message || "Logged in successfully.");
       await refreshCurrentUser();
       router.push(redirectTo);
@@ -108,7 +109,7 @@ function LoginFormContent() {
               }
             }}
             placeholder="company@gmail.com"
-            className={`h-[46px] w-full rounded-xl border bg-[#E5E9EC] px-4 text-xs text-slate-800 outline-none transition-colors placeholder:text-zinc-400 hover:bg-[#dfe4e8] sm:text-sm ${
+            className={`h-11.5 w-full rounded-xl border bg-[#E5E9EC] px-4 text-xs text-slate-800 outline-none transition-colors placeholder:text-zinc-400 hover:bg-[#dfe4e8] sm:text-sm ${
               errors.email || errors.general
                 ? "border-red-400 bg-red-50/20 focus:border-red-500"
                 : "border-slate-300/80 focus:border-[#00BC7D] focus:bg-white"
@@ -144,8 +145,8 @@ function LoginFormContent() {
                   setErrors((prev) => ({ ...prev, password: undefined, general: undefined }));
                 }
               }}
-              placeholder="••••••••"
-              className={`h-[46px] w-full rounded-xl border bg-[#E5E9EC] py-0 pr-11 pl-4 text-xs text-slate-800 outline-none transition-colors placeholder:text-zinc-400 hover:bg-[#dfe4e8] sm:text-sm ${
+              placeholder="•••••••••"
+              className={`h-11.5 w-full rounded-xl border bg-[#E5E9EC] py-0 pr-11 pl-4 text-xs text-slate-800 outline-none transition-colors placeholder:text-zinc-400 hover:bg-[#dfe4e8] sm:text-sm ${
                 errors.password || errors.general
                   ? "border-red-400 bg-red-50/20 focus:border-red-500"
                   : "border-slate-300/80 focus:border-[#00BC7D] focus:bg-white"
@@ -178,7 +179,7 @@ function LoginFormContent() {
           <button
             type="submit"
             disabled={isMutating}
-            className="flex h-[46px] w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#00BC7D] text-xs font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[#00d68f] disabled:opacity-50 sm:text-sm"
+            className="flex h-11.5 w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#00BC7D] text-xs font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[#00d68f] disabled:opacity-50 sm:text-sm"
           >
             {isMutating ? <Loader2 className="size-4 animate-spin" /> : <span>Log In</span>}
           </button>

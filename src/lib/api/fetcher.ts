@@ -53,6 +53,37 @@ export type NextFetchOptions = {
   signal?: AbortSignal;
 };
 
+let refreshPromise: Promise<boolean> | null = null;
+
+function canRefreshOnClient(url: string) {
+  return typeof window !== "undefined" && !url.startsWith("/auth/");
+}
+
+async function refreshClientSession() {
+  if (!refreshPromise) {
+    refreshPromise = nextFetch({
+      url: "/auth/refresh-token",
+      method: "POST",
+      payload: {},
+    })
+      .then(async () => {
+        const sessionResponse = await fetch("/api/auth/session", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: "{}",
+        });
+        return sessionResponse.ok;
+      })
+      .catch(() => false)
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  return refreshPromise;
+}
+
 async function resolveUrl(url: string) {
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
   const { apiBaseUrl } = await envConfig();
@@ -80,7 +111,8 @@ export async function nextFetch<T = unknown>({
     requestHeaders.set("Authorization", `Bearer ${token}`);
   }
 
-  const response = await fetch(await resolveUrl(url), {
+  const requestUrl = await resolveUrl(url);
+  const requestInit: RequestInit & { next?: NextFetchOptions["next"] } = {
     method,
     headers: requestHeaders,
     credentials: "include",
@@ -88,7 +120,14 @@ export async function nextFetch<T = unknown>({
     cache,
     next,
     signal,
-  });
+  };
+
+  let response = await fetch(requestUrl, requestInit);
+
+  if (response.status === 401 && canRefreshOnClient(url)) {
+    const refreshed = await refreshClientSession();
+    if (refreshed) response = await fetch(requestUrl, requestInit);
+  }
 
   if (!response.ok) {
     let message = "An error occurred while fetching the data.";

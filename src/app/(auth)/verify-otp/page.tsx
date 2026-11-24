@@ -20,6 +20,7 @@ type VerifyEmailResponse = {
   message?: string;
   data?: {
     accessToken?: string;
+    refreshToken?: string;
     resetToken?: string;
     sessionId?: string;
     role?: string;
@@ -239,7 +240,7 @@ function VerifyOtpContent() {
         { throwOnError: true },
       );
 
-      await persistAuthToken(response?.data?.accessToken);
+      await persistAuthToken(response?.data?.accessToken, response?.data?.refreshToken);
       const resetToken = response?.data?.resetToken;
       toast.success(response?.message || "Code verified successfully!");
       sessionStorage.removeItem(timerStorageKey(email));
@@ -370,7 +371,7 @@ function VerifyOtpContent() {
           <button
             type="submit"
             disabled={!canVerify}
-            className="flex h-[46px] w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#00BC7D] text-xs font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[#00d68f] disabled:opacity-50 sm:text-sm"
+            className="flex h-11.5 w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#00BC7D] text-xs font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[#00d68f] disabled:opacity-50 sm:text-sm"
           >
             {isVerifying ? (
               <Loader2 className="size-4 animate-spin" />

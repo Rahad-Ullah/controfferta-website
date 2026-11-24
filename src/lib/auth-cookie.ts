@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 
 export const AUTH_COOKIE = "auth_token";
+export const AUTH_REFRESH_COOKIE = "auth_refresh_token";
 
 const WEEK_SECONDS = 60 * 60 * 24 * 7;
 
@@ -19,12 +20,25 @@ export async function setAuthToken(token: string) {
   jar.set(AUTH_COOKIE, token, authCookieOptions());
 }
 
+export async function setAuthTokens(accessToken: string, refreshToken: string) {
+  const jar = await cookies();
+  const options = authCookieOptions();
+  jar.set(AUTH_COOKIE, accessToken, options);
+  jar.set(AUTH_REFRESH_COOKIE, refreshToken, options);
+}
+
 export async function getAuthToken() {
   const jar = await cookies();
   return jar.get(AUTH_COOKIE)?.value ?? null;
 }
 
+export async function getAuthRefreshToken() {
+  const jar = await cookies();
+  return jar.get(AUTH_REFRESH_COOKIE)?.value ?? null;
+}
+
 export async function clearAuthToken() {
   const jar = await cookies();
   jar.delete(AUTH_COOKIE);
+  jar.delete(AUTH_REFRESH_COOKIE);
 }
