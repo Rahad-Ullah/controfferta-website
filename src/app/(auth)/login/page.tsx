@@ -30,12 +30,20 @@ function LoginFormContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+    general?: string;
+  }>({});
 
   const { trigger, isMutating } = useSWRMutation(
     "login",
     (_key: string, { arg }: { arg: { email: string; password: string } }) =>
-      nextFetch<LoginResponse>({ url: "/auth/login", method: "POST", payload: arg }),
+      nextFetch<LoginResponse>({
+        url: "/auth/login",
+        method: "POST",
+        payload: arg,
+      }),
   );
 
   const validate = () => {
@@ -49,8 +57,6 @@ function LoginFormContent() {
 
     if (!password) {
       next.password = "Password is required";
-    } else if (password.length < 8) {
-      next.password = "Password must be at least 8 characters";
     }
 
     setErrors(next);
@@ -68,15 +74,22 @@ function LoginFormContent() {
         { email: trimmedEmail, password },
         { throwOnError: true },
       );
-      await persistAuthToken(response?.data?.accessToken, response?.data?.refreshToken);
+      await persistAuthToken(
+        response?.data?.accessToken,
+        response?.data?.refreshToken,
+      );
       toast.success(response?.message || "Logged in successfully.");
       await refreshCurrentUser();
       router.push(redirectTo);
     } catch (error) {
       if (error instanceof ApiError && error.status === 407) {
-        toast.info(error.message || "Please verify your account, then try to login again.");
+        toast.info(
+          error.message ||
+            "Please verify your account, then try to login again.",
+        );
         const verifyQuery = new URLSearchParams({ email: trimmedEmail });
-        if (redirectTo !== "/dashboard") verifyQuery.set("redirect", redirectTo);
+        if (redirectTo !== "/dashboard")
+          verifyQuery.set("redirect", redirectTo);
         router.push(`/verify-otp?${verifyQuery.toString()}`);
         return;
       }
@@ -90,8 +103,12 @@ function LoginFormContent() {
   return (
     <div className="w-full max-w-md rounded-3xl border border-slate-300/40 bg-[#ECEFF2] p-8 text-slate-900 shadow-2xl sm:p-10">
       <div className="mb-6 space-y-1 text-center">
-        <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">Log in to your account</h1>
-        <p className="text-xs text-zinc-500 sm:text-sm">Welcome back! Enter your company credentials.</p>
+        <h1 className="text-xl font-bold text-slate-900 sm:text-2xl">
+          Log in to your account
+        </h1>
+        <p className="text-xs text-zinc-500 sm:text-sm">
+          Welcome back! Enter your company credentials.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
@@ -105,7 +122,11 @@ function LoginFormContent() {
             onChange={(e) => {
               setEmail(e.target.value);
               if (errors.email || errors.general) {
-                setErrors((prev) => ({ ...prev, email: undefined, general: undefined }));
+                setErrors((prev) => ({
+                  ...prev,
+                  email: undefined,
+                  general: undefined,
+                }));
               }
             }}
             placeholder="company@gmail.com"
@@ -142,7 +163,11 @@ function LoginFormContent() {
               onChange={(e) => {
                 setPassword(e.target.value);
                 if (errors.password || errors.general) {
-                  setErrors((prev) => ({ ...prev, password: undefined, general: undefined }));
+                  setErrors((prev) => ({
+                    ...prev,
+                    password: undefined,
+                    general: undefined,
+                  }));
                 }
               }}
               placeholder="•••••••••"
@@ -158,7 +183,11 @@ function LoginFormContent() {
               className="absolute top-1/2 right-3.5 -translate-y-1/2 cursor-pointer text-slate-400 transition-colors hover:text-slate-600"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              {showPassword ? (
+                <EyeOff className="size-4" />
+              ) : (
+                <Eye className="size-4" />
+              )}
             </button>
           </div>
           {errors.password ? (
@@ -181,14 +210,21 @@ function LoginFormContent() {
             disabled={isMutating}
             className="flex h-11.5 w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#00BC7D] text-xs font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-[#00d68f] disabled:opacity-50 sm:text-sm"
           >
-            {isMutating ? <Loader2 className="size-4 animate-spin" /> : <span>Log In</span>}
+            {isMutating ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <span>Log In</span>
+            )}
           </button>
         </div>
       </form>
 
       <div className="mt-6 text-center text-xs text-zinc-500">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-bold text-[#00BC7D] hover:underline">
+        <Link
+          href="/register"
+          className="font-bold text-[#00BC7D] hover:underline"
+        >
           Sign Up
         </Link>
       </div>
