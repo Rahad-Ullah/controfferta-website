@@ -26,35 +26,31 @@ export default function ClientFooter() {
               <h4 className="text-sm lg:text-base font-bold uppercase tracking-wider text-zinc-200">Platform</h4>
               <ul className="space-y-2 text-sm lg:text-base text-zinc-400 break-words">
                 <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
-                <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
                 <li><Link href="/services" className="hover:text-white transition-colors">Services</Link></li>
                 <li><Link href="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
                 <li><Link href="/reviews" className="hover:text-white transition-colors">Reviews</Link></li>
                 <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
               </ul>
             </div>
 
             <div className="space-y-3">
-              <h4 className="text-sm lg:text-base font-bold uppercase tracking-wider text-zinc-200">Account</h4>
+              <h4 className="text-sm lg:text-base font-bold uppercase tracking-wider text-zinc-200">Company</h4>
               <ul className="space-y-2 text-sm lg:text-base text-zinc-400 break-words">
-                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+                <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Terms &amp; Conditions</Link></li>
+              </ul>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="text-sm lg:text-base font-bold uppercase tracking-wider text-zinc-200">Quick Links</h4>
+              <ul className="space-y-2 text-sm lg:text-base text-zinc-400 break-words">
+                <li><Link href="/submit-request" className="hover:text-white transition-colors">Submit a Request</Link></li>
+                <li><Link href="/provider" className="hover:text-white transition-colors">For Companies</Link></li>
                 <li><Link href="/register" className="hover:text-white transition-colors">Sign Up</Link></li>
                 <li><Link href="/login" className="hover:text-white transition-colors">Log In</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors">Terms</Link></li>
-              </ul>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-sm lg:text-base font-bold uppercase tracking-wider text-zinc-200">Sector Portals</h4>
-              <ul className="space-y-2 text-sm lg:text-base text-zinc-400 break-words">
-                <li><a href="#" className="hover:text-[#00BC7D] transition-colors">FotovoltaicoPerTe.com</a></li>
-                <li><a href="#" className="hover:text-[#00BC7D] transition-colors">RisparmioEnergeticoPerTe.com</a></li>
-                <li><a href="#" className="hover:text-[#00BC7D] transition-colors">InfissiPerTe.com</a></li>
-                <li><a href="#" className="hover:text-[#00BC7D] transition-colors">EdiliziaPerTe.com</a></li>
-                <li><a href="#" className="hover:text-[#00BC7D] transition-colors">TraslocoPerTe.com</a></li>
-                <li><a href="#" className="hover:text-[#00BC7D] transition-colors">PreventiviPerTe.com</a></li>
+                <li><Link href="/dashboard" className="hover:text-white transition-colors">Company Dashboard</Link></li>
               </ul>
             </div>
           </div>

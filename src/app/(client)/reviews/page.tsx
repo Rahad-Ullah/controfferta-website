@@ -1,5 +1,4 @@
 import { getPlatformReviews } from "@/actions/platform-review";
-import { ReviewForm } from "@/components/client/reviews/review-form";
 import { ReviewGrid } from "@/components/client/reviews/review-grid";
 import { ReviewsHero } from "@/components/client/reviews/reviews-hero";
 
@@ -26,7 +25,6 @@ export default async function ReviewsPage() {
           ) : (
             <ReviewGrid reviews={list} />
           )}
-          <ReviewForm />
         </div>
       </section>
     </div>
