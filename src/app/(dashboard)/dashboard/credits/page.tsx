@@ -214,7 +214,7 @@ export default function CreditsPage() {
                     {ledgerTypeLabel(entry.type)}
                   </div>
                   <div className="col-span-2 sm:col-span-2 text-right sm:text-left">
-                    <span className={`inline-flex items-center justify-center min-w-[2.2rem] px-2.5 py-0.5 rounded-full font-bold text-xs font-mono ${amountClass}`}>
+                    <span className={`inline-flex items-center justify-center min-w-[2.2rem] px-2.5 py-0.5 rounded-full font-bold text-xs ${amountClass}`}>
                       {amountLabel}
                     </span>
                   </div>

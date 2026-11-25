@@ -297,14 +297,14 @@ export default function Leads() {
                         {label === "Customer phone" && value ? (
                           <a
                             href={`tel:${value}`}
-                            className="font-mono font-bold text-[#00BC7D] hover:underline"
+                            className="font-bold text-[#00BC7D] hover:underline"
                           >
                             {value}
                           </a>
                         ) : label === "Customer email" && value ? (
                           <a
                             href={`mailto:${value}`}
-                            className="font-mono font-bold text-[#00BC7D] hover:underline"
+                            className="font-bold text-[#00BC7D] hover:underline"
                           >
                             {value}
                           </a>
@@ -670,7 +670,7 @@ export default function Leads() {
                 {successModalLead.customerPhone ? (
                   <a
                     href={`tel:${successModalLead.customerPhone}`}
-                    className="font-mono font-bold text-[#00BC7D]"
+                    className="font-bold text-[#00BC7D]"
                   >
                     {successModalLead.customerPhone}
                   </a>
@@ -683,7 +683,7 @@ export default function Leads() {
                 {successModalLead.customerEmail ? (
                   <a
                     href={`mailto:${successModalLead.customerEmail}`}
-                    className="font-mono font-bold text-[#00BC7D]"
+                    className="font-bold text-[#00BC7D]"
                   >
                     {successModalLead.customerEmail}
                   </a>

@@ -202,21 +202,21 @@ export default function PaymentSuccess() {
         ) : null}
         <div className="flex items-center justify-between">
           <span className="text-slate-500">Credits added</span>
-          <span className="font-mono font-bold text-[#00BC7D]">{creditsAdded}</span>
+          <span className="font-bold text-[#00BC7D]">{creditsAdded}</span>
         </div>
         <div className="flex items-center justify-between">
           <span className="text-slate-500">New balance</span>
-          <span className="font-mono font-bold text-slate-900">{displayBalance}</span>
+          <span className="font-bold text-slate-900">{displayBalance}</span>
         </div>
         <div className="my-2 border-t border-slate-200/60" />
         <div className="flex items-center justify-between gap-3">
           <span className="shrink-0 text-slate-500">Session</span>
-          <span className="truncate font-mono text-[11px] text-slate-600">{sessionId}</span>
+          <span className="truncate text-[11px] text-slate-600">{sessionId}</span>
         </div>
         {transactionId(matchedPurchase) ? (
           <div className="flex items-center justify-between gap-3">
             <span className="shrink-0 text-slate-500">Transaction</span>
-            <span className="truncate font-mono text-[11px] text-slate-600">
+            <span className="truncate text-[11px] text-slate-600">
               {transactionId(matchedPurchase)}
             </span>
           </div>

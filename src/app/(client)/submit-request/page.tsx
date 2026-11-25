@@ -788,7 +788,7 @@ function SubmitRequestContent() {
             <div className="bg-slate-50 rounded-xl p-4 text-xs text-zinc-600 text-left space-y-1.5 border border-slate-200/70">
               <div className="flex justify-between">
                 <span className="text-zinc-400">Request Ref:</span>
-                <span className="font-mono font-bold text-slate-800">{requestRef}</span>
+                <span className="font-bold text-slate-800">{requestRef}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-zinc-400">Contact:</span>

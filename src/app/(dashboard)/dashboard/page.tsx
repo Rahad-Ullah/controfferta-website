@@ -360,7 +360,7 @@ export default function DashboardHomePage() {
                       </p>
                     </div>
                   </div>
-                  <span className="text-xs sm:text-sm font-bold text-[#00BC7D] shrink-0 font-mono">
+                  <span className="text-xs sm:text-sm font-bold text-[#00BC7D] shrink-0">
                     {item.cost}
                   </span>
                 </div>
@@ -395,7 +395,7 @@ export default function DashboardHomePage() {
               <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                 <div className="h-full bg-[#00BC7D] rounded-full w-full" />
               </div>
-              <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 font-mono">
+              <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2">
                 <span>Available: {overview?.availableCredits ?? credits ?? "—"}</span>
                 <span>Unlocked: {unlockedCount}</span>
               </div>
@@ -548,13 +548,13 @@ export default function DashboardHomePage() {
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-left text-xs space-y-2 mb-5">
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">Phone:</span>
-                <a href={`tel:${unlockedSuccessModal.customerPhone}`} className="font-mono font-bold text-[#00BC7D]">
+                <a href={`tel:${unlockedSuccessModal.customerPhone}`} className="font-bold text-[#00BC7D]">
                   {unlockedSuccessModal.customerPhone}
                 </a>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">Email:</span>
-                <a href={`mailto:${unlockedSuccessModal.customerEmail}`} className="font-mono text-slate-800">
+                <a href={`mailto:${unlockedSuccessModal.customerEmail}`} className="text-slate-800">
                   {unlockedSuccessModal.customerEmail}
                 </a>
               </div>
