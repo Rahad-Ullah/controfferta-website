@@ -7,22 +7,19 @@ import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import { apiKeys } from "@/lib/api/keys";
 import { nextFetch } from "@/lib/api/fetcher";
-import type { Notification } from "@/types/notification.interface";
+import type {
+  Notification,
+  NotificationListResponse,
+} from "@/types/notification.interface";
 
 export default function NotificationsPage() {
   const {
     data: response,
     error,
     isLoading,
-  } = useSWR<Notification[] | { data?: Notification[] } | null>(
-    apiKeys.notifications,
-  );
+  } = useSWR<NotificationListResponse>(apiKeys.notifications);
 
-  const notifications: Notification[] = Array.isArray(response)
-    ? response
-    : Array.isArray(response?.data)
-      ? response.data
-      : [];
+  const notifications: Notification[] = response?.data?.data ?? [];
 
   const { trigger: markAsRead, isMutating: markingAsRead } = useSWRMutation(
     apiKeys.notifications,
@@ -70,7 +67,7 @@ export default function NotificationsPage() {
   };
 
   const getCardStyle = (item: Notification, idx: number) => {
-    if (!item.read) {
+    if (!item.isRead) {
       if (idx === 0) {
         return "bg-[#E0F5EC]/70 border border-[#00BC7D]/40";
       }
@@ -194,14 +191,14 @@ export default function NotificationsPage() {
       <div className="space-y-3.5">
         {notifications.map((item, idx) => (
           <div
-            key={item.id}
-            onClick={() => !item.read && handleMarkRead(item.id)}
+            key={item._id}
+            onClick={() => !item.isRead && handleMarkRead(item._id)}
             className={`rounded-2xl p-5 sm:p-6 shadow-xs relative transition-all cursor-pointer hover:shadow-sm ${getCardStyle(
               item,
               idx,
             )}`}
           >
-            {!item.read && (
+            {!item.isRead && (
               <span className="w-2.5 h-2.5 rounded-full bg-[#00BC7D] absolute top-6 right-6" />
             )}
             <div className="pr-8">
@@ -211,7 +208,9 @@ export default function NotificationsPage() {
               <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
                 {item.message}
               </p>
-              <p className="text-xs text-slate-400 mt-2.5">{item.time}</p>
+              <p className="text-xs text-slate-400 mt-2.5">
+                {item.timeAgo ?? new Date(item.createdAt).toLocaleDateString()}
+              </p>
             </div>
           </div>
         ))}

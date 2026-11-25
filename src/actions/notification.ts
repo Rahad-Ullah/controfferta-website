@@ -18,7 +18,7 @@ export async function getNotifications(): Promise<
       url: apiKeys.notifications,
       next: { revalidate: 60, tags: [apiKeys.notifications] },
     });
-    const notifications = Array.isArray(body.data) ? body.data : [];
+    const notifications = body.data?.data ?? [];
     return {
       notifications,
       pagination: body.pagination ?? null,

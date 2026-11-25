@@ -32,12 +32,6 @@ async function signOutAfterPasswordChange() {
     // Cookies may still clear on a successful Set-Cookie; ignore API errors.
   }
 
-  try {
-    await fetch("/api/auth/logout", { method: "POST" });
-  } catch {
-    // Ignore Next cookie clear failures.
-  }
-
   await clearCurrentUser();
 }
 

@@ -66,15 +66,7 @@ async function refreshClientSession() {
       method: "POST",
       payload: {},
     })
-      .then(async () => {
-        const sessionResponse = await fetch("/api/auth/session", {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: "{}",
-        });
-        return sessionResponse.ok;
-      })
+      .then(() => true)
       .catch(() => false)
       .finally(() => {
         refreshPromise = null;

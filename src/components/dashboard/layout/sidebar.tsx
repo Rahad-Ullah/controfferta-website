@@ -8,11 +8,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { LogOut, X } from "lucide-react";
 import { toast } from "sonner";
-import useSWR from "swr";
 import { nextFetch } from "@/lib/api/fetcher";
+import useSWR from "swr";
 import { apiKeys } from "@/lib/api/keys";
 import { clearCurrentUser } from "@/hooks/use-current-user";
-import type { Notification } from "@/types/notification.interface";
+import type { NotificationListResponse } from "@/types/notification.interface";
 import {
   dashboardNavLinks,
   isDashboardNavActive,
@@ -79,13 +79,6 @@ type DashboardSidebarProps = {
   onMobileOpenChange: (open: boolean) => void;
 };
 
-type NotificationResponse =
-  | Notification[]
-  | {
-      data?: Notification[] | { notifications?: Notification[] };
-    }
-  | null;
-
 export default function DashboardSidebar({
   mobileOpen,
   onMobileOpenChange,
@@ -94,15 +87,8 @@ export default function DashboardSidebar({
   const router = useRouter();
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const { data: notificationResponse } =
-    useSWR<NotificationResponse>(apiKeys.notifications);
-  const notifications = Array.isArray(notificationResponse)
-    ? notificationResponse
-    : Array.isArray(notificationResponse?.data)
-      ? notificationResponse.data
-      : notificationResponse?.data?.notifications ?? [];
-  const unreadNotificationCount = notifications.filter(
-    (notification) => !notification.read,
-  ).length;
+    useSWR<NotificationListResponse>(apiKeys.notifications);
+  const unreadNotificationCount = notificationResponse?.data?.unreadCount ?? 0;
 
   const closeMobile = () => onMobileOpenChange(false);
 
@@ -124,12 +110,7 @@ export default function DashboardSidebar({
     try {
       await nextFetch({ url: "/auth/logout", method: "POST", payload: {} });
     } catch {
-      // Still leave the dashboard if the API call fails.
-    }
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch {
-      // Ignore Next cookie clear failures.
+      // The local session is cleared even when the backend session is already expired.
     }
     await clearCurrentUser();
     toast.success("Signed out.");

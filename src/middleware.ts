@@ -1,16 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-const AUTH_COOKIE = "auth_token";
-
-export function middleware(request: NextRequest) {
-  if (request.cookies.has(AUTH_COOKIE)) return NextResponse.next();
-
-  const loginUrl = new URL("/login", request.url);
-  loginUrl.searchParams.set(
-    "redirect",
-    `${request.nextUrl.pathname}${request.nextUrl.search}`,
-  );
-  return NextResponse.redirect(loginUrl);
+// Authentication is checked by the client dashboard layout through the
+// backend session. Backend HttpOnly cookies are host-only and are not visible
+// to this frontend middleware.
+export function middleware() {
+  return NextResponse.next();
 }
 
 export const config = {

@@ -8,7 +8,6 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError, nextFetch } from "@/lib/api/fetcher";
 import { refreshCurrentUser } from "@/hooks/use-current-user";
-import { persistAuthToken } from "@/lib/auth-session";
 import { safeRedirectPath } from "@/utils/safe-redirect";
 
 type LoginResponse = {
@@ -73,10 +72,6 @@ function LoginFormContent() {
       const response = await trigger(
         { email: trimmedEmail, password },
         { throwOnError: true },
-      );
-      await persistAuthToken(
-        response?.data?.accessToken,
-        response?.data?.refreshToken,
       );
       toast.success(response?.message || "Logged in successfully.");
       await refreshCurrentUser();

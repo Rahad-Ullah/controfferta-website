@@ -1,12 +1,26 @@
-export type NotificationType = "lead" | "credit" | "system";
+export type NotificationType =
+  | "account_updated"
+  | "coupon_created"
+  | "policy_updated"
+  | "refund_failed"
+  | "new_matching_lead"
+  | "lead_status_changed"
+  | "credit_purchase_success"
+  | "credit_purchase_failed"
+  | "credit_refunded"
+  | "low_credit_balance";
 
 export interface Notification {
-  id: string;
+  _id: string;
+  type: NotificationType;
   title: string;
   message: string;
-  time: string;
-  read: boolean;
-  type: NotificationType;
+  receiver: string;
+  referenceId: string;
+  isRead: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  timeAgo?: string;
 }
 
 export interface NotificationPagination {
@@ -19,7 +33,10 @@ export interface NotificationPagination {
 export interface NotificationListResponse {
   success: boolean;
   message?: string;
-  data: Notification[];
+  data: {
+    data: Notification[];
+    unreadCount: number;
+  };
   pagination?: NotificationPagination;
 }
 

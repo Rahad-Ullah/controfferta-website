@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { clearCurrentUser, useCurrentUser } from "@/hooks/use-current-user";
 import DashboardShell from "@/components/dashboard/layout/dashboard-shell";
 import DashboardLoading from "@/components/dashboard/layout/dashboard-loading";
+import { nextFetch } from "@/lib/api/fetcher";
 
 export default function DashboardLayout({
   children,
@@ -17,10 +18,7 @@ export default function DashboardLayout({
   useEffect(() => {
     if (isLoading || !error) return;
 
-    void fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    }).finally(() => {
+    void nextFetch({ url: "/auth/logout", method: "POST", payload: {} }).catch(() => undefined).finally(() => {
       void clearCurrentUser();
       router.replace("/login?redirect=/dashboard&reason=session-expired");
     });

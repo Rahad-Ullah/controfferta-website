@@ -43,12 +43,7 @@ export default function NavbarAuth({ onNavigate, variant = "desktop" }: NavbarAu
     try {
       await nextFetch({ url: "/auth/logout", method: "POST", payload: {} });
     } catch {
-      // Still clear local state if the API call fails.
-    }
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } catch {
-      // Ignore Next cookie clear failures.
+      // The local session is cleared even when the backend session is already expired.
     }
     await clearCurrentUser();
     toast.success("Signed out.");
