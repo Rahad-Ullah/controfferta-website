@@ -142,7 +142,7 @@ export default function NavbarAuth({ onNavigate, variant = "desktop" }: NavbarAu
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="inline-flex max-w-[12rem] cursor-pointer items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pr-3 pl-1.5 text-left transition-colors hover:bg-white/10 xl:max-w-[14rem]"
+        className="inline-flex max-w-48 cursor-pointer items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pr-3 pl-1.5 text-left transition-colors hover:bg-white/10 xl:max-w-56"
         aria-label="Account menu"
       >
         <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#00BC7D]/20 text-xs font-semibold text-[#00BC7D]">

@@ -7,6 +7,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError, nextFetch } from "@/lib/api/fetcher";
 import { refreshCurrentUser } from "@/hooks/use-current-user";
+import { clearOnboardingPreference } from "@/lib/onboarding-storage";
 import { safeRedirectPath } from "@/utils/safe-redirect";
 
 const OTP_LENGTH = 6;
@@ -252,6 +253,7 @@ function VerifyOtpContent() {
         return;
       }
 
+      clearOnboardingPreference();
       await refreshCurrentUser();
       router.push(redirectTo);
     } catch (err) {

@@ -191,7 +191,7 @@ Google Maps configuration is optional and is read by `src/lib/env-config.ts` whe
 
 Before deploying:
 
-1. Set `NEXT_PUBLIC_API_BASE_URL` to the backend API prefix, for example `https://rahad5000.naimulhassan.me/api/v1`.
+1. Set `NEXT_PUBLIC_API_BASE_URL` to the backend API prefix, for example `https://rahad-ullah.vercel.app/api/v1`.
 2. Confirm the production origin is `https://controfferta.it`.
 3. Run `yarn lint` and `yarn tsc --noEmit`.
 4. Run `yarn build`.

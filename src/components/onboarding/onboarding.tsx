@@ -5,45 +5,37 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Search, Mail, Check, ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-
-type RoleType = "provider" | "customer";
+import {
+  saveOnboardingRole,
+  type OnboardingRole,
+} from "@/lib/onboarding-storage";
 
 interface OnboardingScreenProps {
-  onSelectCustomer?: () => void;
+  onSelectClient?: () => void;
 }
 
-export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenProps) {
+export default function OnboardingScreen({
+  onSelectClient,
+}: OnboardingScreenProps) {
   const router = useRouter();
-  // Set default to "customer" as first option
-  const [selectedRole, setSelectedRole] = useState<RoleType>("customer");
+  // Set default to "client" as first option
+  const [selectedRole, setSelectedRole] = useState<OnboardingRole>("client");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleRoleSelect = (role: RoleType) => {
-    setSelectedRole(role);
-  };
-
-  const handleContinue = (role: RoleType) => {
+  const handleContinue = (role: OnboardingRole) => {
     setIsSubmitting(true);
-    try {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("user_role", role);
-        localStorage.setItem("has_seen_onboarding", "true");
-        document.cookie = `user_role=${role}; path=/; max-age=2592000; SameSite=Lax`;
-      }
-    } catch {
-      // ignore storage errors
-    }
+    saveOnboardingRole(role);
 
-    if (role === "customer") {
-      if (onSelectCustomer) {
-        onSelectCustomer();
+    if (role === "client") {
+      if (onSelectClient) {
+        onSelectClient();
         setIsSubmitting(false);
       } else {
-        router.push("/");
+        router.replace("/");
       }
     } else {
-      // 2. Portal: Redirect to signup page (/register)
-      router.push("/register");
+      // Providers sign up first; the saved role routes them back to the provider surface later.
+      router.replace("/register");
     }
   };
 
@@ -64,17 +56,17 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
       {/* Background ambient radial glow lighting */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         {/* Top-center ambient glow */}
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[750px] h-[450px] bg-[#00BC7D]/[0.08] blur-[150px] rounded-full pointer-events-none" />
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-187.5 h-112.5 bg-[#00BC7D]/8 blur-[150px] rounded-full pointer-events-none" />
 
         {/* Ambient glow matching the active card */}
         <div
           className={`absolute top-1/3 ${
-            selectedRole === "customer" ? "right-[10%]" : "left-[10%]"
-          } w-[550px] h-[550px] bg-[#00BC7D]/[0.09] blur-[160px] rounded-full transition-all duration-700 pointer-events-none`}
+            selectedRole === "client" ? "right-[10%]" : "left-[10%]"
+          } w-137.5 h-137.5 bg-[#00BC7D]/9 blur-[160px] rounded-full transition-all duration-700 pointer-events-none`}
         />
 
         {/* Subtle mesh background overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] bg-size-[24px_24px] opacity-40 pointer-events-none" />
       </div>
 
       {/* Main Container */}
@@ -132,28 +124,29 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
 
           {/* Subtitle description */}
           <p className="text-xs sm:text-sm md:text-[14.5px] text-zinc-400 font-normal leading-relaxed max-w-xl mx-auto px-2">
-            Tell us what you&apos;re looking for and we&apos;ll tailor your experience - the platform works a little differently depending on which side of the marketplace you&apos;re on.
+            Tell us what you&apos;re looking for and we&apos;ll tailor your
+            experience - the platform works a little differently depending on
+            which side of the marketplace you&apos;re on.
           </p>
         </div>
 
         {/* 2-Role Choice Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 lg:gap-7 w-full max-w-3xl lg:max-w-4xl mx-auto mt-10 sm:mt-12 items-stretch">
-          
-          {/* FLOW 1: Customer Role – "I have a requirement to submit" */}
+          {/* FLOW 1: client Role – "I have a requirement to submit" */}
           <motion.div
             whileHover={{ y: -4, transition: { duration: 0.2 } }}
-            onClick={() => handleContinue("customer")}
+            onClick={() => handleContinue("client")}
             className={`group relative flex flex-col justify-between rounded-2xl sm:rounded-3xl p-6 sm:p-8 cursor-pointer transition-all duration-300 backdrop-blur-xl ${
-              selectedRole === "customer"
+              selectedRole === "client"
                 ? "bg-[#111922]/90 border border-[#00BC7D] shadow-[0_0_35px_rgba(0,188,125,0.22)] ring-1 ring-[#00BC7D]/50"
-                : "bg-[#0e151d]/75 border border-white/[0.08] hover:border-white/15 hover:bg-[#111922]/80 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+                : "bg-[#0e151d]/75 border border-white/8 hover:border-white/15 hover:bg-[#111922]/80 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
             }`}
           >
             <div>
               {/* Icon Container */}
               <div
                 className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                  selectedRole === "customer"
+                  selectedRole === "client"
                     ? "bg-[#00BC7D]/20 border border-[#00BC7D]/50 text-[#00BC7D] shadow-[0_0_15px_rgba(0,188,125,0.3)]"
                     : "bg-[#0c241b]/50 border border-[#00BC7D]/25 text-[#00BC7D]"
                 }`}
@@ -164,13 +157,14 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
               {/* Title & Description */}
               <div className="mt-5 sm:mt-6">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#00BC7D] bg-[#00BC7D]/10 px-2.5 py-0.5 rounded-full border border-[#00BC7D]/30 inline-block mb-2">
-                  Customer Flow · No Auth Required
+                  client Flow · No Auth Required
                 </span>
                 <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
                   I have a requirement to submit
                 </h2>
                 <p className="mt-2 text-xs sm:text-sm text-zinc-400 leading-relaxed">
-                  I want to submit a request for companies to respond to. Browse the website and submit requirements freely.
+                  I want to submit a request for companies to respond to. Browse
+                  the website and submit requirements freely.
                 </p>
               </div>
 
@@ -181,7 +175,10 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
                   "Browse the website & submit requirements easily",
                   "Get matched with verified professionals",
                 ].map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-[13px] text-zinc-300">
+                  <li
+                    key={idx}
+                    className="flex items-start gap-2.5 text-xs sm:text-[13px] text-zinc-300"
+                  >
                     <Check className="w-4 h-4 text-[#00BC7D] stroke-[2.5] mt-0.5 shrink-0" />
                     <span className="leading-snug">{feature}</span>
                   </li>
@@ -195,7 +192,7 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleContinue("customer");
+                  handleContinue("client");
                 }}
                 disabled={isSubmitting}
                 className="w-full py-3 sm:py-3.5 px-4 rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all duration-300 bg-[#00BC7D] hover:bg-[#00d68f] text-white shadow-[0_4px_20px_rgba(0,188,125,0.35)] cursor-pointer"
@@ -206,14 +203,14 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
             </div>
           </motion.div>
 
-          {/* FLOW 2: Portal Role – "I'm looking for customers" */}
+          {/* FLOW 2: Portal Role – "I'm looking for clients" */}
           <motion.div
             whileHover={{ y: -4, transition: { duration: 0.2 } }}
             onClick={() => handleContinue("provider")}
             className={`group relative flex flex-col justify-between rounded-2xl sm:rounded-3xl p-6 sm:p-8 cursor-pointer transition-all duration-300 backdrop-blur-xl ${
               selectedRole === "provider"
                 ? "bg-[#111922]/90 border border-[#00BC7D] shadow-[0_0_35px_rgba(0,188,125,0.22)] ring-1 ring-[#00BC7D]/50"
-                : "bg-[#0e151d]/75 border border-white/[0.08] hover:border-white/15 hover:bg-[#111922]/80 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+                : "bg-[#0e151d]/75 border border-white/8 hover:border-white/15 hover:bg-[#111922]/80 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
             }`}
           >
             <div>
@@ -234,10 +231,11 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
                   Portal / Company Flow
                 </span>
                 <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                  I&apos;m looking for customers
+                  I&apos;m looking for clients
                 </h2>
                 <p className="mt-2 text-xs sm:text-sm text-zinc-400 leading-relaxed">
-                  I run a company or agency and want to find new, verified customer requests in my service area.
+                  I run a company or agency and want to find new, verified
+                  client requests in my service area.
                 </p>
               </div>
 
@@ -245,10 +243,13 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
               <ul className="mt-6 space-y-3 sm:space-y-3.5">
                 {[
                   "Redirect to signup & login to access portal",
-                  "Browse live customer requests by category & location",
+                  "Browse live client requests by category & location",
                   "Unlock full contact details with dashboard credits",
                 ].map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-[13px] text-zinc-300">
+                  <li
+                    key={idx}
+                    className="flex items-start gap-2.5 text-xs sm:text-[13px] text-zinc-300"
+                  >
                     <Check className="w-4 h-4 text-[#00BC7D] stroke-[2.5] mt-0.5 shrink-0" />
                     <span className="leading-snug">{feature}</span>
                   </li>
@@ -265,7 +266,7 @@ export default function OnboardingScreen({ onSelectCustomer }: OnboardingScreenP
                   handleContinue("provider");
                 }}
                 disabled={isSubmitting}
-                className="w-full py-3 sm:py-3.5 px-4 rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all duration-300 bg-[#182330] hover:bg-[#1f2d3d] text-zinc-200 hover:text-white border border-white/[0.1] hover:border-[#00BC7D]/50 cursor-pointer"
+                className="w-full py-3 sm:py-3.5 px-4 rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all duration-300 bg-[#182330] hover:bg-[#1f2d3d] text-zinc-200 hover:text-white border border-white/10 hover:border-[#00BC7D]/50 cursor-pointer"
               >
                 <span>Sign Up for Portal</span>
                 <ArrowRight className="w-4 h-4" />

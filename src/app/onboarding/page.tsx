@@ -1,4 +1,4 @@
-import OnboardingScreen from "@/components/onboarding/onboarding";
+import OnboardingRoute from "@/components/onboarding/onboarding-route";
 
 export const metadata = {
   title: "Onboarding | CONTROFFERTA.IT",
@@ -6,6 +6,5 @@ export const metadata = {
 };
 
 export default function OnboardingPage() {
-  return <OnboardingScreen />;
+  return <OnboardingRoute />;
 }
-

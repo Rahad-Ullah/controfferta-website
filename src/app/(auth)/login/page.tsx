@@ -8,6 +8,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError, nextFetch } from "@/lib/api/fetcher";
 import { refreshCurrentUser } from "@/hooks/use-current-user";
+import { clearOnboardingPreference } from "@/lib/onboarding-storage";
 import { safeRedirectPath } from "@/utils/safe-redirect";
 
 type LoginResponse = {
@@ -74,6 +75,7 @@ function LoginFormContent() {
         { throwOnError: true },
       );
       toast.success(response?.message || "Logged in successfully.");
+      clearOnboardingPreference();
       await refreshCurrentUser();
       router.push(redirectTo);
     } catch (error) {
