@@ -1,17 +1,17 @@
-# Controfferta Website
+# Controfferta Web App
 
-Controfferta is a home-services lead marketplace for customers and companies in Italy. Customers can describe a project and receive relevant offers from qualified professionals. Companies can browse requests, unlock leads with credits, and manage their account through the company portal.
+Controfferta Web App is a home-services lead marketplace for customers and companies in Italy. Customers can describe a project and receive relevant offers from qualified professionals. Providers can browse requests, unlock leads with credits, and manage their account through the company portal.
 
-The project is a single Next.js application with separate experiences for the customer website, company marketing pages, authenticated company portal, and authentication screens.
+The project is a single Next.js application with separate customer, provider, dashboard, and authentication surfaces.
 
 ## Product surfaces
 
 | Surface | Main routes | Purpose |
 | --- | --- | --- |
-| Customer website | `/`, `/about`, `/services`, `/blog`, `/contact`, `/submit-request` | Public, indexable customer experience |
-| Company website | `/provider`, `/provider/about`, `/provider/services` | Public company acquisition and product information |
+| Customer surface | `/`, `/about`, `/services`, `/blog`, `/contact`, `/submit-request` | Public, indexable customer experience |
+| Provider surface | `/provider`, `/provider/about`, `/provider/services` | Public provider acquisition and product information |
 | Company portal | `/dashboard` | Authenticated leads, credits, notifications, and profile management |
-| Authentication | `/login`, `/register`, `/forgot-password`, `/reset-password` | Sign-in and account recovery |
+| Authentication | `/login`, `/register`, `/verify-otp`, `/forgot-password`, `/reset-password` | Sign-in, email verification, and account recovery |
 | Onboarding | `/onboarding` | Role-selection entry point |
 
 ## Technology
@@ -62,7 +62,7 @@ The project is a single Next.js application with separate experiences for the cu
 3. Set the backend URL in `.env`:
 
    ```env
-   NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:4000/api/v1
    ```
 
    Use the appropriate backend URL for your local or deployed environment. Never commit real credentials or tokens.
@@ -91,11 +91,10 @@ yarn start        # Start the production server
 src/
 ├── actions/              Server-side public data actions
 ├── app/                  App Router routes and layouts
-│   ├── (client)/         Customer website
-│   ├── (provider)/       Company marketing website
+│   ├── (client)/         Customer surface
+│   ├── (provider)/       Provider surface
 │   ├── (dashboard)/      Authenticated company portal
 │   ├── (auth)/           Authentication screens
-│   ├── api/              App-owned route handlers
 │   ├── onboarding/       Role-selection screen
 │   ├── robots.ts         Robots metadata route
 │   └── sitemap.ts        Sitemap metadata route
@@ -108,8 +107,8 @@ src/
 ├── hooks/                Shared React hooks
 ├── lib/
 │   ├── api/              API keys and fetch utilities
-│   ├── auth-cookie.ts    Server-only auth cookie helpers
-│   └── env-config.ts     Environment configuration
+│   ├── env-config.ts      Environment configuration
+│   └── placeholders.ts    Temporary screen data
 ├── schemas/              Zod validation schemas
 ├── types/                Shared TypeScript interfaces
 └── utils/                Small reusable utilities
@@ -131,12 +130,17 @@ Do not add another client-side cache or put user-specific data into the Next.js 
 
 ## Authentication
 
-- Authentication uses an HttpOnly `auth_token` cookie.
-- Browser requests use credentials so the cookie reaches the backend.
-- The company dashboard checks the current user and requires the `provider` role.
-- Expired sessions are cleared and redirected to login.
-- Refresh and logout are handled through the app-owned routes under `src/app/api/auth/`.
-- Tokens must not be stored in `localStorage`, `sessionStorage`, or regular browser cookies.
+Authentication is handled by the backend API using HttpOnly cookies. The browser sends those cookies with API requests through `credentials: "include"`; the frontend never reads or stores access or refresh tokens.
+
+- Login and email verification call the backend directly through `nextFetch`.
+- Dashboard data is loaded client-side through SWR.
+- The dashboard layout validates the current session with `GET /users/me` and requires the `provider` role.
+- A `401` response triggers the backend refresh-token endpoint, then retries the original request.
+- Expired sessions are cleared from the SWR cache and redirected to `/login`.
+- Logout calls the backend logout endpoint directly.
+- Middleware does not make authentication decisions because backend cookies are host-only and unavailable to the frontend middleware.
+
+Never store tokens in `localStorage`, `sessionStorage`, or regular browser cookies.
 
 ## API integration
 
@@ -187,7 +191,7 @@ Google Maps configuration is optional and is read by `src/lib/env-config.ts` whe
 
 Before deploying:
 
-1. Set `NEXT_PUBLIC_API_BASE_URL` to the production backend.
+1. Set `NEXT_PUBLIC_API_BASE_URL` to the backend API prefix, for example `https://rahad5000.naimulhassan.me/api/v1`.
 2. Confirm the production origin is `https://controfferta.it`.
 3. Run `yarn lint` and `yarn tsc --noEmit`.
 4. Run `yarn build`.
