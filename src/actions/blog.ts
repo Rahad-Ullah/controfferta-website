@@ -23,7 +23,7 @@ export async function getBlog(id: string): Promise<Blog | null> {
   try {
     const body = await nextFetch<{ data?: Blog }>({
       url: `${apiKeys.blogs}/${id}`,
-      next: { revalidate: 3600, tags: [apiKeys.blogs] },
+      next: { revalidate: 300, tags: [apiKeys.blogs] },
     });
     if (!body.data?._id) return null;
     return body.data;
@@ -42,7 +42,7 @@ export async function getBlogs(query?: BlogQuery): Promise<{
       pagination?: BlogPagination;
     }>({
       url: blogListUrl(query),
-      next: { revalidate: 3600, tags: [apiKeys.blogs] },
+      next: { revalidate: 300, tags: [apiKeys.blogs] },
     });
     if (!Array.isArray(body.data)) return { data: [], pagination: null };
     return { data: body.data, pagination: body.pagination ?? null };
