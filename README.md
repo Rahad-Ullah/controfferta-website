@@ -6,13 +6,13 @@ The project is a single Next.js application with separate customer, provider, da
 
 ## Product surfaces
 
-| Surface | Main routes | Purpose |
-| --- | --- | --- |
-| Customer surface | `/`, `/about`, `/services`, `/blog`, `/contact`, `/submit-request` | Public, indexable customer experience |
-| Provider surface | `/provider`, `/provider/about`, `/provider/services` | Public provider acquisition and product information |
-| Company portal | `/dashboard` | Authenticated leads, credits, notifications, and profile management |
-| Authentication | `/login`, `/register`, `/verify-otp`, `/forgot-password`, `/reset-password` | Sign-in, email verification, and account recovery |
-| Onboarding | `/onboarding` | Role-selection entry point |
+| Surface          | Main routes                                                                 | Purpose                                                             |
+| ---------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Customer surface | `/`, `/about`, `/services`, `/blog`, `/contact`, `/submit-request`          | Public, indexable customer experience                               |
+| Provider surface | `/provider`, `/provider/about`, `/provider/services`                        | Public provider acquisition and product information                 |
+| Company portal   | `/dashboard`                                                                | Authenticated leads, credits, notifications, and profile management |
+| Authentication   | `/login`, `/register`, `/verify-otp`, `/forgot-password`, `/reset-password` | Sign-in, email verification, and account recovery                   |
+| Onboarding       | `/onboarding`                                                               | Role-selection entry point                                          |
 
 ## Technology
 
@@ -181,8 +181,8 @@ SEO guidance is documented in [`docs/performance-and-seo.md`](docs/performance-a
 
 The main required variable is:
 
-| Variable | Purpose |
-| --- | --- |
+| Variable                   | Purpose              |
+| -------------------------- | -------------------- |
 | `NEXT_PUBLIC_API_BASE_URL` | Backend API base URL |
 
 Google Maps configuration is optional and is read by `src/lib/env-config.ts` when map features are enabled. Keep all environment files containing real values local and out of version control.
@@ -206,3 +206,15 @@ Before deploying:
 - [`docs/api-integration.md`](docs/api-integration.md) — backend integration rules
 - [`docs/swr.md`](docs/swr.md) — client-side fetching and cache behavior
 - [`docs/performance-and-seo.md`](docs/performance-and-seo.md) — performance and indexing rules
+
+## Developer
+
+Built with ❤️ by [**Rahad Ullah**](mailto:rahadullah10@gmail.com)
+
+> "Taking complex ideas from zero to production—building scalable backends and intuitive interfaces that users love."
+
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Rahad-Ullah) [![Portfolio](https://img.shields.io/badge/Portfolio-FF5722?style=for-the-badge&logo=react&logoColor=white)](https://rahad-ullah.vercel.app/)
+
+---
+
+### Happy Coding 🚀
